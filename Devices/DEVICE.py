@@ -12,13 +12,13 @@ class DEVICE:
 
     def __init__(self,kind,adress,port):
         if (kind == "serial"):
-            self.com = TCPLink(adress, port)
+            self.com = TCPLink(kind,adress, port)
             pass
         elif (kind == "lan"):
-            self.com = TCPLink(adress, port)
+            self.com = TCPLink(kind,adress, port)
             pass
         elif (kind == "gpib"):
-            self.com = vxi11.Instrument(adress, port)
+            self.com = vxi11.Instrument(kind,adress, port)
             pass
         pass
 
