@@ -6,8 +6,8 @@ from DEVICE import DEVICE
 class ISEG:
     dv = None
 
-    def __init__(self,adress,port):
-        self.dv = DEVICE(kind="serial", adress=adress, port=port)
+    def __init__(self,kind,adress,port):
+        self.dv = DEVICE(kind=kind, adress=adress, port=port)
 
     def userCmd(self,cmd):
     	print "userCmd: %s" % cmd

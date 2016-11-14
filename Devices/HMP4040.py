@@ -6,8 +6,8 @@ from DEVICE import DEVICE
 class HMP4040:
     dv = None
 
-    def __init__(self,adress,port):
-        self.dv = DEVICE(kind="lan", adress=adress, port=port)
+    def __init__(self,kind,adress,port):
+        self.dv = DEVICE(kind=kind, adress=adress, port=port)
 
     def userCmd(self,cmd):
         print "userCmd: %s" % cmd
@@ -36,10 +36,10 @@ class HMP4040:
     def enableOutput(self,iOutput,bValue):
         if bValue == True:
             self.dv.write("INST OUT%i"%iOutput)
-            self.dv.write("OUT 1")
+            self.dv.write("OUT OFF")
         elif bValue == False:
             self.dv.write("INST OUT%i"%iOutput)
-            self.dv.write("OUT 0")
+            self.dv.write("OUT ON")
 
     def close(self):
         self.dv.close()

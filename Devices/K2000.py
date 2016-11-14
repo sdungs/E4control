@@ -8,8 +8,8 @@ class K2000:
     dv = None
     #mode = None
 
-    def __init__(self,adress,port):
-        self.dv = DEVICE(kind="gpib", adress=adress, port=port)
+    def __init__(self,kind,adress,port):
+        self.dv = DEVICE(kind=kind, adress=adress, port=port)
 
     def userCmd(self,cmd):
     	print "userCmd: %s" % cmd
@@ -48,7 +48,7 @@ class K2000:
         elif (sKind == "T"): self.dv.write("F8X")
         pass
 
-    def setRange(slef,sRange):
+    def setRange(self,sRange):
         if (sRange == "R0") : self.dv.write("R0X")
         elif (sRange == "R1") : self.dv.write("R1X")
         elif (sRange == "R2") : self.dv.write("R2X")
@@ -59,16 +59,15 @@ class K2000:
         elif (sRange == "R7") : self.dv.write("R7X")
 
     def getStatus(self):
-        self.dv.ask("U0X")
+        return self.dv.ask("U0X")
 
     def getKind(self):
-        s = self.dv.read()
-        return s[0:4]self.dv.write("N%i"%channel)
+        s = self.dv.ask("U0X")
+        return s[0:4]
 
     def getValue(self):
-        v = self.dv.read()
-        #v = self.dv.ask("U7X")
-        return float(v[4:16])
+        v = self.dv.ask("U7X")
+        return float(v[4:])
 
     def getResistance(self, channel):
         self.dv.write("N%iX"%channel)
@@ -80,19 +79,19 @@ class K2000:
         fV = self.getValue()
         return fV
 
-    def  getTempPT100(self, channel):
+    def getTempPT100(self, channel):
         a = 3.90802E-3
         b = -5.802E-7
         R0 = 100.00
         R = self.getResistance(channel)
-        return (-a/(2*b)-sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+        return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
     def  getTempPT1000(self, channel):
         a = 3.90802E-3
         b = -5.802E-7
         R0 = 1000.00
         R = self.getResistance(channel)
-        return (-a/(2*b)-sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+        return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
     def getHumidity(self, fTemp):
         a=0.0315

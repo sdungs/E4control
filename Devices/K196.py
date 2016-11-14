@@ -7,25 +7,25 @@ import math
 class K196:
     dv = None
 
-    def __init__(self,adress,port):
-        self.dv = DEVICE(kind="gpib", adress=adress, port=port)
+    def __init__(self,kind,adress,port):
+        self.dv = DEVICE(kind=kind, adress=adress, port=port)
 
     def userCmd(self,cmd):
     	print "userCmd: %s" % cmd
     	return self.dv.ask(cmd)
 
-def initialize(self, sMode):
-    if (sMode == "H"):
-        self.setKind("DCV")
-        self.setRange("RO")
+    def initialize(self, sMode):
+        if (sMode == "H"):
+            self.setKind("DCV")
+            self.setRange("RO")
+            pass
+        elif (sMode == "T2W"):
+            self.setKind("OHM")
+            self.setRange("R2")
+            pass
+        else:
+             print("Initializing not possible: Unknown mode!")
         pass
-    elif (sMode == "T2W"):
-        self.setKind("OHM")
-        self.setRange("R2")
-        pass
-    else:
-        print("Initializing not possible: Unknown mode!")
-    pass
 
     def setKind(self, sKind):
         if (sKind == "DCV"): self.dv.write("F0X")
@@ -47,7 +47,6 @@ def initialize(self, sMode):
 
     def getValue(self):
         v = self.dv.read()
-        #v = self.dv.ask("U7X")
         return float(v[4:16])
 
     def  getTempPT100(self):

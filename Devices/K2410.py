@@ -8,8 +8,8 @@ from time import sleep
 class K2410:
     dv = None
 
-    def __init__(self,adress,port):
-        self.dv = DEVICE(kind="gpib", adress=adress, port=port)
+    def __init__(self,kind,adress,port):
+        self.dv = DEVICE(kind=kind, adress=adress, port=port)
 
     def userCmd(self,cmd):
         print "userCmd: %s" % cmd

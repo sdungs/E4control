@@ -7,8 +7,8 @@ from time import sleep
 class K487:
     dv = None
 
-    def __init__(self,adress,port):
-        self.dv = DEVICE(kind="gpib", adress=adress, port=port)
+    def __init__(self,kind,adress,port):
+        self.dv = DEVICE(kind=kind, adress=adress, port=port)
 
     def userCmd(self,cmd):
         print "userCmd: %s" % cmd
@@ -35,7 +35,7 @@ class K487:
         return fv
 
     def getCurrent(self):
-        v = self.dv.ask("U6X"))
+        v = self.dv.ask("U6X")
         fv = float(v[v.find("=")+1:v.find("E")])*10**float(v[v.find("E")+1:v.find("E")+4])
         return fv
 
@@ -72,7 +72,7 @@ class K487:
             self.dv.write("R7X")
             self.dv.write("C2X")
             pass
-        else print("No new range set!")
+        else: print("No new range set!")
         pass
 
     def setTrigger(self, sTrigger):
@@ -83,7 +83,7 @@ class K487:
         elif (sTrigger == "P1") : self.dv.write("P1X")
         elif (sTrigger == "P2") : self.dv.write("P2X")
         elif (sTrigger == "P3") : self.dv.write("P3X")
-        else print("No new filter set!")
+        else: print("No new filter set!")
         pass
 
     def rampVoltage(self,fVnew,iSteps,iDelay):
@@ -98,7 +98,7 @@ class K487:
         while s < (iSteps):
             self.setVoltage((Vstep*s+V))
             sleep(iDelay)
-            print "Voltage: %.4f"%(Vstep*s+V)
+            print "Voltage: %.4f V"%(Vstep*s+V)
             s += 1
             pass
 
