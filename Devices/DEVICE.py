@@ -34,6 +34,8 @@ class DEVICE:
         s = ""
         try:
             s = self.com.read()
+            s.replace("\r","")
+            s.replace("\n","")
             return s
         except:
             print("Timeout while reading!")
