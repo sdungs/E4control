@@ -34,17 +34,15 @@ class DEVICE:
         s = ""
         try:
             s = self.com.read()
-            if self.verbose: print("DEVICE::read : %s" % s)
             return s
         except:
-            if self.verbose: print("DEVICE::read : TIMEOUT")
+            print("Timeout while reading!")
             pass
         return s
 
     def write(self,cmd):
         cmd = cmd + self.trm
         self.com.write(cmd)
-        if self.verbose: print("DEVICE::write : %s" %cmd)
         pass
 
     def ask(self,cmd):

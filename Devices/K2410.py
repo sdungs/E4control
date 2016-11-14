@@ -17,11 +17,11 @@ class K2410:
 
     def setCurrentAutoRange(self,bsetCurrentAutoRange):
         if bsetCurrentAutoRange: self.dv.write(":SOUR:CURR:RANG:AUTO ON")
-        else self.dv.write(":SOUR:CURR:RANG:AUTO OFF")
+        else: self.dv.write(":SOUR:CURR:RANG:AUTO OFF")
 
     def setVoltageAutoRange(self,bsetVoltageAutoRange):
         if bsetVoltageAutoRange: self.dv.write(":SOUR:VOLT:RANG:AUTO ON")
-        else self.dv.write(":SOUR:VOLT:RANG:AUTO OFF")
+        else: self.dv.write(":SOUR:VOLT:RANG:AUTO OFF")
 
     def setCurrentLimit(self,fIlim):
         self.dv.write(":SENSE:CURR:PROT %f"%fIlim)
@@ -47,7 +47,7 @@ class K2410:
         return float(v.split(",")[0])
 
     def getCurrent(self):
-        v = self.dv.ask(":READ?"))
+        v = self.dv.ask(":READ?")
         return float(v.split(",")[1])
 
     def rampVoltage(self,fVnew,iSteps,iDelay):
@@ -62,7 +62,7 @@ class K2410:
         while s < (iSteps):
             self.setVoltage((Vstep*s+V))
             sleep(iDelay)
-            print "Voltage: %.4f"%(Vstep*s+V)
+            print "Voltage: %.4f V"%(Vstep*s+V)
             s += 1
             pass
 
