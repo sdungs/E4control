@@ -1,6 +1,6 @@
- # E4control
+### E4control
 
-### Following devices are supported:
+# Following devices are supported:
 * Keithley 196 (Multimeter)
 * Keithley 487 (Picoammeter/Voltage Source)
 * Keithley 2000 (Multimeter)
