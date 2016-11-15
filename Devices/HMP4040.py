@@ -36,10 +36,10 @@ class HMP4040:
     def enableOutput(self,iOutput,bValue):
         if bValue == True:
             self.dv.write("INST OUT%i"%iOutput)
-            self.dv.write("OUT OFF")
+            self.dv.write("OUTP OFF")
         elif bValue == False:
             self.dv.write("INST OUT%i"%iOutput)
-            self.dv.write("OUT ON")
+            self.dv.write("OUTP ON")
 
     def close(self):
         self.dv.close()
