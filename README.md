@@ -1,4 +1,4 @@
-# E4control
+# E4control (under construction)
 E4control is a python based software for device controling and data taking.
 
 #### Following devices are currently supported:
