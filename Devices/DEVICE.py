@@ -9,16 +9,23 @@ from pylink import TCPLink
 class DEVICE:
     com = None
     trm = "\r\n"
+    kind = None
+    adress = None
+    port = None
 
     def __init__(self,kind,adress,port):
+        self.kind = kind
+        self.adress = adress
+        self.port = port
+
         if (kind == "serial"):
-            self.com = TCPLink(kind,adress, port)
+            self.com = TCPLink(adress, port)
             pass
         elif (kind == "lan"):
-            self.com = TCPLink(kind,adress, port)
+            self.com = TCPLink(adress, port)
             pass
         elif (kind == "gpib"):
-            self.com = vxi11.Instrument(kind,adress, port)
+            self.com = vxi11.Instrument(adress, port)
             pass
         pass
 
@@ -30,12 +37,17 @@ class DEVICE:
         self.com.close()
         pass
 
+    def reconnect(self):
+        self.close()
+        self.open()
+        pass
+
     def read(self):
         s = ""
         try:
             s = self.com.read()
-            s.replace("\r","")
-            s.replace("\n","")
+            s = s.replace("\r","")
+            s = s.replace("\n","")
             return s
         except:
             print("Timeout while reading!")
@@ -44,7 +56,14 @@ class DEVICE:
 
     def write(self,cmd):
         cmd = cmd + self.trm
-        self.com.write(cmd)
+        try:
+            self.com.write(cmd)
+        except:
+            self.reconnect()
+            try:
+                self.com.write(cmd)
+            except:
+                print("Timeout while writeing")
         pass
 
     def ask(self,cmd):
