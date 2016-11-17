@@ -13,32 +13,41 @@ class ISEG:
     	print "userCmd: %s" % cmd
     	return self.dv.ask(cmd)
 
+    def initialize(self):
+        pass
+
     def getVoltage(self,channel):
-        V = self.dv.ask("U%i"%channel)
-        fV=float(V[:-3])*10**float(V[-3:])
-        return fV
+        v = self.dv.ask("U%i"%channel)
+        v = v.replace("U%i"%channel,"")
+        fv=float(v[:-3])*10**float(v[-3:])
+        return fv
 
     def getCurrent(self,channel):
-        I = self.dv.ask("I%i"%channel)
-        fI = float(I[:-3])*10**float(I[-3:])
-        return fI
+        v = self.dv.ask("I%i"%channel)
+        v = v.replace("I%i"%channel,"")
+        fv = float(v[:-3])*10**float(v[-3:])
+        return fv
 
     def getVoltageLimit(self,channel):
         voltLim = self.dv.ask("M%i"%channel)
-        return float(voltLim);
+        voltLim = voltLim.replace("M%i"%channel,"")
+        return float(voltLim)
 
     def getCurrentLimit(self,channel):
         currentLim = self.dv.ask("N%i"%channel)
-        return float(currentLim);
+        currentLim = currentLim.replace("N%i"%channel,"")
+        return float(currentLim)
 
     def getSetVoltage(self,channel):
         sV = self.dv.ask("D%i"%channel)
+        sV = sV.replace("D%i"%channel,"")
         fsV = float(sV[:-3])*10**float(sV[-3:])
-        return fsV;
+        return fsV
 
     def getRampSpeed(self,channel):
         rS = self.dv.ask("V%i"%channel)
-        return int(rS);
+        rS = rS.replace("V%i"%channel,"")
+        return int(rS)
 
     def setVoltage(self,channel,fvalVolts):
         self.dv.write("D%i=%4.2f"%(channel,fvalVolts))
@@ -64,17 +73,19 @@ class ISEG:
         while s < (iSteps):
             self.setVoltage((Vstep*s+V))
             sleep(iDelay)
-            print "Voltage: %.4f"%(Vstep*s+V)
+            print "Voltage: %.2f"%(Vstep*s+V)
             s += 1
             pass
 
     def getStatus(self,channel):
         s = self.dv.ask("S%i"%channel)
+        s = s.replace("S%i="%channel,"")
         return s
 
     def startRampU(self,channel):
-        status = self.dv.ask("G%i"%channel)
-        print(status)
+        s = self.dv.ask("G%i"%channel)
+        s = s.replace("G%i"%channel,"")
+        print(s)
         pass
 
     def close(self):
