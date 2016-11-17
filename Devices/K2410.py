@@ -15,6 +15,9 @@ class K2410:
         print "userCmd: %s" % cmd
         return self.dv.ask(cmd)
 
+    def initialize(self):
+        pass
+
     def setCurrentAutoRange(self,bsetCurrentAutoRange):
         if bsetCurrentAutoRange: self.dv.write(":SOUR:CURR:RANG:AUTO ON")
         else: self.dv.write(":SOUR:CURR:RANG:AUTO OFF")
@@ -62,7 +65,7 @@ class K2410:
         while s < (iSteps):
             self.setVoltage((Vstep*s+V))
             sleep(iDelay)
-            print "Voltage: %.4f V"%(Vstep*s+V)
+            print "Voltage: %.2f V"%(Vstep*s+V)
             s += 1
             pass
 

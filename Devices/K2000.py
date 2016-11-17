@@ -17,6 +17,7 @@ class K2000:
 
 
     def initialize(self, sMode):
+        #self.dv.write(":SYTS:BEEP:STAT OFF")
         if (sMode == "H"):
             self.setKind("DCV")
             self.setRange("RO")
@@ -66,7 +67,7 @@ class K2000:
         return s[0:4]
 
     def getValue(self):
-        v = self.dv.ask("U7X")
+        v = self.dv.ask("U0X")
         return float(v[4:])
 
     def getResistance(self, channel):

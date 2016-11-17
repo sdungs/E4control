@@ -13,6 +13,9 @@ class HMP4040:
         print "userCmd: %s" % cmd
         return self.dv.ask(cmd)
 
+    def initialize(self):
+        pass
+
     def setVoltageLimit(self,iOutput,fValue):
         self.dv.write("INST OUT%i"%iOutput)
         self.dv.write("VOLT:PROT %f"%fValue)

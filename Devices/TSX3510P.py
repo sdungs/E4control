@@ -13,6 +13,9 @@ class TSX3510P:
         print "userCmd: %s" % cmd
         return self.dv.ask(cmd)
 
+    def initialize(self):
+        pass
+
     def setVoltageLimit(self,fValue):
         self.dv.write("OVP %f"%fValue)
 
@@ -28,7 +31,7 @@ class TSX3510P:
 
     def getVoltage(self):
         v = self.dv.ask("VO?")
-	return float(v[:4])
+	return float(v[:v.find("V")])
 
     def getVoltageSet(self):
         v = self.dv.ask("V?")
@@ -36,20 +39,21 @@ class TSX3510P:
 
     def getCurrent(self):
         v = self.dv.ask("IO?")
-	return float(v[:4])
+	return float(v[:v.find("A")])
 
     def getCurrentSet(self):
         v = self.dv.ask("I?")
 	return float(v[2:])
 
     def getPower(self):
-        return self.dv.ask("POWER?")
+        v = self.dv.ask("POWER?")
+        return float(v[:v.find("W")])
 
     def enableOutput(self,bValue):
         if bValue == True:
-            self.dv.write("OP ON")
+            self.dv.write("OP 1")
         elif bValue == False:
-            self.dv.write("OP OFF")
+            self.dv.write("OP 0")
 
     def close(self):
         self.dv.close()

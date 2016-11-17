@@ -16,6 +16,7 @@ class K487:
 
     def initialize(self):
         self.dv.write("G0O0C1X")
+        self.dv.write("L4X") 
         pass
 
     def setVoltage(self,fsetValVolts):
