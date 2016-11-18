@@ -13,7 +13,7 @@ class ISEG:
     	print "userCmd: %s" % cmd
     	return self.dv.ask(cmd)
 
-    def initialize(self):
+    def initialize(self,channel):
         pass
 
     def getVoltage(self,channel):
@@ -49,11 +49,11 @@ class ISEG:
         rS = rS.replace("V%i"%channel,"")
         return int(rS)
 
-    def setVoltage(self,channel,fvalVolts):
+    def setVoltage(self,fvalVolts,channel):
         self.dv.write("D%i=%4.2f"%(channel,fvalVolts))
       	pass
 
-    def setRampSpeed(self,channel,rampSpeed):
+    def setRampSpeed(self,rampSpeed,channel):
         if rampSpeed < 2 or rampSpeed > 255:
             print("Set RampSpeed is out off range!")
             pass
@@ -61,7 +61,7 @@ class ISEG:
             self.dv.ask("V%i=%3i"%(channel,rampSpeed))
             pass
 
-    def rampVoltage(self,fVnew,iSteps,iDelay):
+    def rampVoltage(self,fVnew,iSteps,iDelay,channel): #channel include
         V = self.getVoltage()
         V = round(V,4)
         if abs(fVnew-V)<1:

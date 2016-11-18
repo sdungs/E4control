@@ -15,7 +15,7 @@ class K2410:
         print "userCmd: %s" % cmd
         return self.dv.ask(cmd)
 
-    def initialize(self):
+    def initialize(self,channel=-1):
         pass
 
     def setCurrentAutoRange(self,bsetCurrentAutoRange):
@@ -26,34 +26,34 @@ class K2410:
         if bsetVoltageAutoRange: self.dv.write(":SOUR:VOLT:RANG:AUTO ON")
         else: self.dv.write(":SOUR:VOLT:RANG:AUTO OFF")
 
-    def setCurrentLimit(self,fIlim):
+    def setCurrentLimit(self,fIlim,channel=-1):
         self.dv.write(":SENSE:CURR:PROT %f"%fIlim)
 
-    def setVoltageLimit(self,fVlim):
+    def setVoltageLimit(self,fVlim,channel=-1):
         self.dv.write(":SENSE:VOLT:PROT %f"%fVlim)
 
-    def setCurrent(self,fsetI):
-        self.dv.write(":SOUR:CURR %f"%fsetI)
+    def setCurrent(self,fIset,channel=-1):
+        self.dv.write(":SOUR:CURR %f"%fIset)
 
-    def setVoltage(self,fsetV):
-        self.dv.write(":SOUR:VOLT %f"%fsetV)
+    def setVoltage(self,fVset,channel=-1):
+        self.dv.write(":SOUR:VOLT %f"%fVset)
 
-    def enableOutput(self,bEnable):
+    def enableOutput(self,bEnable,channel=-1):
         if bEnable == True:
             self.dv.write(":OUTPUT ON")
         elif bEnable == False:
             self.dv.write(":OUTPUT OFF")
 
-    def getVoltage(self):
+    def getVoltage(self,channel=-1):
         v = self.dv.ask(":READ?")
         if not "," in v: return -999.
         return float(v.split(",")[0])
 
-    def getCurrent(self):
+    def getCurrent(self,channel=-1):
         v = self.dv.ask(":READ?")
         return float(v.split(",")[1])
 
-    def rampVoltage(self,fVnew,iSteps,iDelay):
+    def rampVoltage(self,fVnew,iSteps,iDelay,channel=-1):
         V = self.getVoltage()
         V = round(V,4)
         if abs(fVnew-V)<1:

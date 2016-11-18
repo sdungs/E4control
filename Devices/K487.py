@@ -14,33 +14,33 @@ class K487:
         print "userCmd: %s" % cmd
         return self.dv.ask(cmd)
 
-    def initialize(self):
+    def initialize(self,channel=-1):
         self.dv.write("G0O0C1X")
-        self.dv.write("L4X") 
+        self.dv.write("L4X")
         pass
 
-    def setVoltage(self,fsetValVolts):
+    def setVoltage(self,fsetValVolts,channel=-1):
         self.dv.write("V%.3f,1,1X"%fsetValVolts)
         pass
 
-    def enableOutput(self,bEnable):
+    def enableOutput(self,bEnable,channel=-1):
         if bEnable == True:
             self.dv.write("O1X")
         elif bEnable == False:
             self.dv.write("O0X")
         pass
 
-    def getVoltage(self):
+    def getVoltage(self,channel=-1):
         v = self.dv.ask("U8X")
         fv = fv = float(v[v.find("=")+1:v.find("E")])*10**float(v[v.find("E")+1:v.find("E")+4])
         return fv
 
-    def getCurrent(self):
+    def getCurrent(self,channel=-1):
         v = self.dv.ask("U6X")
         fv = float(v[v.find("=")+1:v.find("E")])*10**float(v[v.find("E")+1:v.find("E")+4])
         return fv
 
-    def setRange(self,sRange):
+    def setRange(self,sRange,channel=-1):
         if (sRange == "R0") :
             self.dv.write("R0X")
             self.dv.write("C2X")
@@ -76,10 +76,10 @@ class K487:
         else: print("No new range set!")
         pass
 
-    def setTrigger(self, sTrigger):
+    def setTrigger(self, sTrigger,channel=-1):
         pass
 
-    def setFilterMode(self, sFilter):
+    def setFilterMode(self, sFilter,channel=-1):
         if (sTrigger == "P0") : self.dv.write("P0X")
         elif (sTrigger == "P1") : self.dv.write("P1X")
         elif (sTrigger == "P2") : self.dv.write("P2X")
@@ -87,7 +87,7 @@ class K487:
         else: print("No new filter set!")
         pass
 
-    def rampVoltage(self,fVnew,iSteps,iDelay):
+    def rampVoltage(self,fVnew,iSteps,iDelay,channel=-1):
         V = self.getVoltage()
         V = round(V,4)
         if abs(fVnew-V)<1:
