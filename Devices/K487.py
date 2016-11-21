@@ -111,13 +111,13 @@ class K487:
         V = round(V,4)
         if abs(fVnew-V)<=self.rampSpeed_step:
             self.setVoltage(fVnew,channel)
+            print "Voltage reached: %.2f V"%(fVnew)
             return
-        while (abs(fVnew-V)>self.rampSpeed_step):
+        else:
             self.setVoltage(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V))
+            print "Ramp Voltage: %.2f V"%(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V))
             sleep(self.rampSpeed_delay)
-            print "Voltage: %.2f"%(Vstep*s+V,channel)
-            V = self.getVoltage(channel)
-            V = round(V,4)
+            self.rampVoltage(fVnew,channel)
             pass
 
     def reset(self):

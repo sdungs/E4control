@@ -5,6 +5,7 @@ import os
 import argparse
 import time
 import sys
+import ROOT
 sys.path.append("./../Devices/")
 #possible devices for IV measurements:
 from ISEG import ISEG
@@ -69,26 +70,18 @@ Is = []
 Ns = []
 
 plt.ion()
-
 fig = plt.figure(figsize=(8,8))
 ax1 = plt.subplot2grid((3,2),(0,0), colspan=2, rowspan=2)
 ax2 = plt.subplot2grid((3,2), (2, 0), colspan=2)
-
-#fig, (ax1, ax2) = plt.subplots(2,1, figsize=(8,6))
 ax1.errorbar(Us, Imeans, yerr=Irms, fmt="o")
 ax1.set_xlabel(r"$U $ $ [\mathrm{V}]$")
 ax1.set_ylabel(r"$I_{mean} $ $ [\mathrm{uA}]$")
 ax1.set_title(r"IV curve")
-#ax1.set_xlim(args.v_min,args.v_max)
-
 ax2.plot(Ns,Is,"o")
 ax2.set_xlabel(r"$No.$")
 ax2.set_ylabel(r"$I $ $ [\mathrm{uA}]$")
 ax2.set_title(r"Voltage steps")
-#ax2.set_xlim(-0.5,args.ndaqs-1+0.5)
-
 plt.tight_layout()
-
 fig.canvas.draw()
 
 print("Start measurement")
@@ -99,7 +92,6 @@ for i in xrange(args.v_steps):
     time.sleep(1)
     Is = []
     Ns = []
-
     for j in xrange(args.ndaqs):
         current = d.getCurrent(args.channel)*1E6
         print "Get current: %.2f uA" % (current)

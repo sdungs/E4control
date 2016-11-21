@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from DEVICE import DEVICE
+from time import sleep
 
 class ISEG:
     dv = None
