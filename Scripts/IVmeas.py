@@ -59,7 +59,7 @@ elif args.device == "K487": d = K487(args.kind,args.adress,args.port)
 
 d.initialize(args.channel)
 d.setCurrentLimit(args.I_lim/1E6,args.channel)
-d.setVoltage(args.v_min,args.channel)
+d.setVoltage(0,args.channel)
 d.enableOutput(True,args.channel)
 
 Us = []
@@ -76,14 +76,14 @@ ax2 = plt.subplot2grid((3,2), (2, 0), colspan=2)
 
 #fig, (ax1, ax2) = plt.subplots(2,1, figsize=(8,6))
 ax1.errorbar(Us, Imeans, yerr=Irms, fmt="o")
-ax1.set_xlabel(r"$U / \mathrm{V}$")
-ax1.set_ylabel(r"$I_{mean} / \mathrm{uA}$")
+ax1.set_xlabel(r"$U $ $ [\mathrm{V}]$")
+ax1.set_ylabel(r"$I_{mean} $ $ [\mathrm{uA}]$")
 ax1.set_title(r"IV curve")
 #ax1.set_xlim(args.v_min,args.v_max)
 
 ax2.plot(Ns,Is,"o")
 ax2.set_xlabel(r"$No.$")
-ax2.set_ylabel(r"$I / \mathrm{uA}$")
+ax2.set_ylabel(r"$I $ $ [\mathrm{uA}]$")
 ax2.set_title(r"Voltage steps")
 #ax2.set_xlim(-0.5,args.ndaqs-1+0.5)
 
@@ -95,7 +95,7 @@ print("Start measurement")
 for i in xrange(args.v_steps):
     voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
     print "Set voltage: %.2f V" % voltage
-    d.setVoltage(voltage,args.channel)
+    d.rampVoltage(voltage,args.channel)
     time.sleep(1)
     Is = []
     Ns = []
@@ -108,7 +108,7 @@ for i in xrange(args.v_steps):
         ax2.clear()
         ax2.set_title(r"Voltage step : %0.2f V"%voltage)
         ax2.set_xlabel(r"$No.$")
-        ax2.set_ylabel(r"$I / \mathrm{uA}$")
+        ax2.set_ylabel(r"$I $ $ [\mathrm{uA}]$")
         ax2.plot(Ns,Is,"r--o")
         plt.draw()
         plt.tight_layout()
@@ -121,10 +121,6 @@ for i in xrange(args.v_steps):
     plt.tight_layout()
     pass
 
-print(Us)
-print(Imeans)
-print(Irms)
-
 print("Open and fill txt file")
 fw = open("%s.txt"%outputname, "w")
 print("write txt file")
@@ -136,15 +132,14 @@ plt.close("all")
 plt.errorbar(Us, Imeans, yerr=Irms, fmt="o")
 plt.grid()
 plt.title(r"IV curve: %s"%outputname)
-plt.xlabel(r"$U / \mathrm{V}$")
-plt.ylabel(r"$I_{mean} / \mathrm{uA}$")
+plt.xlabel(r"$U $ $ [\mathrm{V}]$")
+plt.ylabel(r"$I_{mean} $ $ [\mathrm{uA}]$")
 plt.xlim(min(Us)-5,max(Us)+5)
 plt.tight_layout()
-print("outputname")
 plt.savefig("%s.pdf"%outputname)
 
 print("Ramp down voltage")
-d.setVoltage(0,args.channel)
+d.rampVoltage(0,args.channel)
 
 print("Close files and devices")
 d.enableOutput(False)
