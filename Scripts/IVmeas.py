@@ -127,6 +127,9 @@ print("write txt file")
 for i in range(len(Us)):
     fw.write(str(Us[i])+"\t"+str(Imeans[i])+"\t"+str(Irms[i])+"\n")
 
+print("Ramp down voltage")
+d.rampVoltage(0,args.channel)
+
 print("Show and save IV curve plot")
 plt.close("all")
 plt.errorbar(Us, Imeans, yerr=Irms, fmt="o")
@@ -137,9 +140,6 @@ plt.ylabel(r"$I_{mean} $ $ [\mathrm{uA}]$")
 plt.xlim(min(Us)-5,max(Us)+5)
 plt.tight_layout()
 plt.savefig("%s.pdf"%outputname)
-
-print("Ramp down voltage")
-d.rampVoltage(0,args.channel)
 
 print("Close files and devices")
 d.enableOutput(False)
