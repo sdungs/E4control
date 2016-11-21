@@ -29,10 +29,6 @@ parser.add_argument("-c","--channel",type=int,default=1)
 parser.add_argument("-n","--ndaqs",type=int,default=10)
 args=parser.parse_args()
 
-outputname = args.output.split("/")[-1]
-if not os.path.isdir(args.output): os.mkdir(args.output)
-os.chdir(args.output)
-
 print("IV measurement settings:")
 if args.device == "ISEG": print("Device: ISEG")
 elif args.device == "K2410": print("Device: K2410")
@@ -48,6 +44,10 @@ q = raw_input("Settings correct? (y/n)")
 if q == "yes": pass
 elif q == "y": pass
 else: sys.exit("Measurement aborted!")
+
+outputname = args.output.split("/")[-1]
+if not os.path.isdir(args.output): os.mkdir(args.output)
+os.chdir(args.output)
 
 if args.device == "ISEG":
     port = int(args.port)
