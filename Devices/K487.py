@@ -6,6 +6,8 @@ from time import sleep
 
 class K487:
     dv = None
+    rampSpeed_step = 5
+    rampSpeed_delay = 1 #s
 
     def __init__(self,kind,adress,port):
         self.dv = DEVICE(kind=kind, adress=adress, port=port)
@@ -87,20 +89,35 @@ class K487:
         else: print("No new filter set!")
         pass
 
-    def rampVoltage(self,fVnew,iSteps,iDelay,channel=-1):
-        V = self.getVoltage()
+    def setRampSpeed(self,iRampSpeed,iDelay):
+        if iRrampSpeed < 1 or iRampSpeed > 255:
+            print("Set RampSpeed size is out off range!")
+            pass
+        else:
+            self.rampSpeed_step = iRampSpeed
+            pass
+        if iDelay < 0:
+            print("No negativ Delay is possible!")
+            pass
+        else:
+            self.rampSpeed_delay = iDelay
+            pass
+
+    def getRampSpeed(self):
+        return([int(self.rampSpeed_step),int(self.rampSpeed_delay)])
+
+    def rampVoltage(self,fVnew,channel):
+        V = self.getVoltage(channel)
         V = round(V,4)
-        if abs(fVnew-V)<1:
-            self.setVoltage(fVnew)
+        if abs(fVnew-V)<=self.rampSpeed_step:
+            self.setVoltage(fVnew,channel)
             return
-        s = 1
-        iSteps = int(iSteps+1)
-        Vstep = float((fVnew-V)/(iSteps-1))
-        while s < (iSteps):
-            self.setVoltage((Vstep*s+V))
-            sleep(iDelay)
-            print "Voltage: %.4f V"%(Vstep*s+V)
-            s += 1
+        while (abs(fVnew-V)>self.rampSpeed_step):
+            self.setVoltage(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V))
+            sleep(self.rampSpeed_delay)
+            print "Voltage: %.2f"%(Vstep*s+V,channel)
+            V = self.getVoltage(channel)
+            V = round(V,4)
             pass
 
     def reset(self):

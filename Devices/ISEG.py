@@ -5,9 +5,13 @@ from DEVICE import DEVICE
 
 class ISEG:
     dv = None
+    rampSpeed_step = 5
+    rampSpeed_delay = 1 #s
 
     def __init__(self,kind,adress,port):
         self.dv = DEVICE(kind=kind, adress=adress, port=port)
+        self.setHardwareRampSpeed(255,1)
+        self.setHardwareRampSpeed(255,2)
 
     def userCmd(self,cmd):
     	print "userCmd: %s" % cmd
@@ -44,7 +48,7 @@ class ISEG:
         fsV = float(sV[:-3])*10**float(sV[-3:])
         return fsV
 
-    def getRampSpeed(self,channel):
+    def getHardwareRampSpeed(self,channel):
         rS = self.dv.ask("V%i"%channel)
         rS = rS.replace("V%i"%channel,"")
         return int(rS)
@@ -53,28 +57,43 @@ class ISEG:
         self.dv.write("D%i=%4.2f"%(channel,fvalVolts))
       	pass
 
-    def setRampSpeed(self,rampSpeed,channel):
-        if rampSpeed < 2 or rampSpeed > 255:
+    def setHardwareRampSpeed(self,iRampSpeed,channel):
+        if iRrampSpeed < 2 or iRampSpeed > 255:
             print("Set RampSpeed is out off range!")
             pass
         else:
-            self.dv.ask("V%i=%3i"%(channel,rampSpeed))
+            self.dv.ask("V%i=%3i"%(channel,iRampSpeed))
             pass
 
-    def rampVoltage(self,fVnew,iSteps,iDelay,channel): #channel include
-        V = self.getVoltage()
+    def setRampSpeed(self,iRampSpeed,iDelay):
+        if iRrampSpeed < 1 or iRampSpeed > 255:
+            print("Set RampSpeed size is out off range!")
+            pass
+        else:
+            self.rampSpeed_step = iRampSpeed
+            pass
+        if iDelay < 0:
+            print("No negativ Delay is possible!")
+            pass
+        else:
+            self.rampSpeed_delay = iDelay
+            pass
+
+    def getRampSpeed(self):
+        return([int(self.rampSpeed_step),int(self.rampSpeed_delay)])
+
+    def rampVoltage(self,fVnew,channel):
+        V = self.getVoltage(channel)
         V = round(V,4)
-        if abs(fVnew-V)<1:
-            self.setVoltage(fVnew)
+        if abs(fVnew-V)<=self.rampSpeed_step:
+            self.setVoltage(fVnew,channel)
+            print "Voltage reached: %.2f V"%(fVnew)
             return
-        s = 1
-        iSteps = int(iSteps+1)
-        Vstep = float((fVnew-V)/(iSteps-1))
-        while s < (iSteps):
-            self.setVoltage((Vstep*s+V))
-            sleep(iDelay)
-            print "Voltage: %.2f"%(Vstep*s+V)
-            s += 1
+        else:
+            self.setVoltage(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V))
+            print "Ramp Voltage: %.2f V"%(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V))
+            sleep(self.rampSpeed_delay)
+            self.rampVoltage(fVnew,channel)
             pass
 
     def getStatus(self,channel):
