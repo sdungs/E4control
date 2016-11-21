@@ -29,6 +29,10 @@ parser.add_argument("-c","--channel",type=int,default=1)
 parser.add_argument("-n","--ndaqs",type=int,default=10)
 args=parser.parse_args()
 
+outputname = args.output.split("/")[-1]
+if not os.path.isdir(args.output): os.mkdir(args.output)
+os.chdir(args.output)
+
 print("IV measurement settings:")
 if args.device == "ISEG": print("Device: ISEG")
 elif args.device == "K2410": print("Device: K2410")
@@ -66,16 +70,20 @@ Ns = []
 
 plt.ion()
 
-fig, (ax1, ax2) = plt.subplots(2,1, figsize=(8,6))
+fig = plt.figure(figsize=(8,8))
+ax1 = plt.subplot2grid((3,2),(0,0), colspan=2, rowspan=2)
+ax2 = plt.subplot2grid((3,2), (2, 0), colspan=2)
+
+#fig, (ax1, ax2) = plt.subplots(2,1, figsize=(8,6))
 ax1.errorbar(Us, Imeans, yerr=Irms, fmt="o")
-ax1.set_xlabel(r'$U / \mathrm{V}$')
-ax1.set_ylabel(r'$I_{mean} / \mathrm{uA}$')
+ax1.set_xlabel(r"$U / \mathrm{V}$")
+ax1.set_ylabel(r"$I_{mean} / \mathrm{uA}$")
 ax1.set_title(r"IV curve")
 #ax1.set_xlim(args.v_min,args.v_max)
 
 ax2.plot(Ns,Is,"o")
-ax2.set_xlabel(r'$No.$')
-ax2.set_ylabel(r'$I / \mathrm{uA}$')
+ax2.set_xlabel(r"$No.$")
+ax2.set_ylabel(r"$I / \mathrm{uA}$")
 ax2.set_title(r"Voltage steps")
 #ax2.set_xlim(-0.5,args.ndaqs-1+0.5)
 
@@ -93,52 +101,50 @@ for i in xrange(args.v_steps):
     Ns = []
 
     for j in xrange(args.ndaqs):
-        current = d.getCurrent(args.channel)
-        print "Get current: %.2f uA" % (current*1E6)
+        current = d.getCurrent(args.channel)*1E6
+        print "Get current: %.2f uA" % (current)
         Is.append(current)
         Ns.append(j+1)
-        #p2.set_xdata(Ns)
-        #p2.set_ydata(Is)
         ax2.clear()
         ax2.set_title(r"Voltage step : %0.2f V"%voltage)
-        ax2.set_xlabel(r'$No.$')
-        ax2.set_ylabel(r'$I / \mathrm{uA}$')
+        ax2.set_xlabel(r"$No.$")
+        ax2.set_ylabel(r"$I / \mathrm{uA}$")
         ax2.plot(Ns,Is,"r--o")
         plt.draw()
-        #fig.canvas.draw()
+        plt.tight_layout()
         pass
     Us.append(voltage)
     Imeans.append(np.mean(Is))
     Irms.append(sem(Is))
-    #p1.set_xdata(Us)
-    #p1.set_ydata(Imeans)
     ax1.errorbar(Us, Imeans, yerr=Irms, fmt="g--o")
     plt.draw()
-    #fig.canvas.draw()
+    plt.tight_layout()
     pass
 
 print(Us)
 print(Imeans)
 print(Irms)
 
-print("open txt file")
-fw = open("%s.txt"%args.output, "w")
+print("Open and fill txt file")
+fw = open("%s.txt"%outputname, "w")
 print("write txt file")
 for i in range(len(Us)):
     fw.write(str(Us[i])+"\t"+str(Imeans[i])+"\t"+str(Irms[i])+"\n")
 
-print("save IV curve plot")
-#plt.off()
-#plt.clf()
-#plt.errorbar(Us, Imeans, yerr=Irms, fmt="o")
-#plt.grid()
-#plt.title(r"IV curve")
-#plt.xlabel(r'$U / \mathrm{V}$')
-#plt.ylabel(r'$I_{mean} / \mathrm{uA}$'
-#plt.savefig('s.pdf')
+print("Show and save IV curve plot")
+plt.close("all")
+plt.errorbar(Us, Imeans, yerr=Irms, fmt="o")
+plt.grid()
+plt.title(r"IV curve: %s"%outputname)
+plt.xlabel(r"$U / \mathrm{V}$")
+plt.ylabel(r"$I_{mean} / \mathrm{uA}$")
+plt.xlim(min(Us)-5,max(Us)+5)
+plt.tight_layout()
+print("outputname")
+plt.savefig("%s.pdf"%outputname)
 
-
-print("ramp down voltage")
+print("Ramp down voltage")
+d.setVoltage(0,args.channel)
 
 print("Close files and devices")
 d.enableOutput(False)
