@@ -6,6 +6,7 @@ import argparse
 import time
 import sys
 import ROOT
+import array
 sys.path.append("./../Devices/")
 #possible devices for IV measurements:
 from ISEG import ISEG
@@ -46,10 +47,6 @@ if q == "yes": pass
 elif q == "y": pass
 else: sys.exit("Measurement aborted!")
 
-outputname = args.output.split("/")[-1]
-if not os.path.isdir(args.output): os.mkdir(args.output)
-os.chdir(args.output)
-
 if args.device == "ISEG":
     port = int(args.port)
     d = ISEG(args.kind,args.adress,port)
@@ -57,6 +54,22 @@ elif args.device == "K2410":
     port = int(args.port)
     d = K2410(args.kind,args.adress,port)
 elif args.device == "K487": d = K487(args.kind,args.adress,args.port)
+
+outputname = args.output.split("/")[-1]
+if not os.path.isdir(args.output): os.mkdir(args.output)
+os.chdir(args.output)
+
+print "Open ROOT file allocate Tree"
+fwroot = ROOT.TFile("%s.root"%outputname,"RECREATE")
+ntuple = ROOT.TTree("IV","")
+timestamps = array.array("L",(0,))
+measurepoints = array.array("I",(0,))
+voltages = array.array("f",(0,))
+currents = array.array("f",(0,))
+ntuple.Branch("timestamps", timestamps, "timestamps/i")
+ntuple.Branch("measurepoints", measurepoints, "measurepoints/i")
+ntuple.Branch("voltages",   voltages,   "voltages/F")
+ntuple.Branch("currents",   currents,   "currents/F")
 
 d.initialize(args.channel)
 d.setCurrentLimit(args.I_lim/1E6,args.channel)
@@ -93,9 +106,17 @@ for i in xrange(args.v_steps):
     Is = []
     Ns = []
     for j in xrange(args.ndaqs):
+        getVoltage = d.getVoltage(args.channel)
+        print "Get voltage: %.2f V" % (getVoltage)
         current = d.getCurrent(args.channel)*1E6
         print "Get current: %.2f uA" % (current)
         Is.append(current)
+        voltages[0]=getVoltage
+        currents[0]=current
+        measurepoints[0]=i
+        timestamps[0]=int(time.time())
+        ntuple.Fill()
+
         Ns.append(j+1)
         ax2.clear()
         ax2.set_title(r"Voltage step : %0.2f V"%voltage)
@@ -114,10 +135,9 @@ for i in xrange(args.v_steps):
     pass
 
 print("Open and fill txt file")
-fw = open("%s.txt"%outputname, "w")
-print("write txt file")
+fwtxt = open("%s.txt"%outputname, "w")
 for i in range(len(Us)):
-    fw.write(str(Us[i])+"\t"+str(Imeans[i])+"\t"+str(Irms[i])+"\n")
+    fwtxt.write(str(Us[i])+"\t"+str(Imeans[i])+"\t"+str(Irms[i])+"\n")
 
 print("Ramp down voltage")
 d.rampVoltage(0,args.channel)
@@ -136,6 +156,8 @@ plt.savefig("%s.pdf"%outputname)
 print("Close files and devices")
 d.enableOutput(False)
 d.close()
-fw.close()
+fwtxt.close()
+ntuple.Write()
+fwroot.Close()
 
 raw_input()
