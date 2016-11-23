@@ -63,11 +63,13 @@ class K2000:
         return self.dv.ask("U0X")
 
     def getKind(self):
-        s = self.dv.ask("U0X")
+        self.dv.ask("U0X")
+	s = self.dv.read()
         return s[0:4]
 
     def getValue(self):
-        v = self.dv.ask("U0X")
+        self.dv.ask("U0X")
+	v = self.dv.read()
         return float(v[4:])
 
     def getResistance(self, channel):

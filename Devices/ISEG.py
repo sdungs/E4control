@@ -55,19 +55,20 @@ class ISEG:
         return int(rS)
 
     def setVoltage(self,fvalVolts,channel):
-        self.dv.write("D%i=%4.2f"%(channel,fvalVolts))
-      	pass
+        self.dv.ask("D%i=%.1f"%(channel,fvalVolts))
+      	self.startRampU(channel)
+	pass
 
     def setHardwareRampSpeed(self,iRampSpeed,channel):
-        if iRrampSpeed < 2 or iRampSpeed > 255:
+        if iRampSpeed < 2 or iRampSpeed > 255:
             print("Set RampSpeed is out off range!")
             pass
         else:
-            self.dv.ask("V%i=%3i"%(channel,iRampSpeed))
+            self.dv.ask("V%i=%i"%(channel,iRampSpeed))
             pass
 
     def setRampSpeed(self,iRampSpeed,iDelay):
-        if iRrampSpeed < 1 or iRampSpeed > 255:
+        if iRampSpeed < 1 or iRampSpeed > 255:
             print("Set RampSpeed size is out off range!")
             pass
         else:
@@ -91,7 +92,7 @@ class ISEG:
             print "Voltage reached: %.2f V"%(fVnew)
             return
         else:
-            self.setVoltage(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V))
+            self.setVoltage(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V),channel)
             print "Ramp Voltage: %.2f V"%(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V))
             sleep(self.rampSpeed_delay)
             self.rampVoltage(fVnew,channel)
