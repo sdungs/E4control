@@ -56,7 +56,7 @@ class K2410:
         return float(v.split(",")[1])
 
     def setRampSpeed(self,iRampSpeed,iDelay):
-        if iRrampSpeed < 1 or iRampSpeed > 255:
+        if iRampSpeed < 1 or iRampSpeed > 255:
             print("Set RampSpeed size is out off range!")
             pass
         else:
@@ -72,7 +72,7 @@ class K2410:
     def getRampSpeed(self):
         return([int(self.rampSpeed_step),int(self.rampSpeed_delay)])
 
-    def rampVoltage(self,fVnew,channel):
+    def rampVoltage(self,fVnew,channel=-1):
         V = self.getVoltage(channel)
         V = round(V,4)
         if abs(fVnew-V)<=self.rampSpeed_step:

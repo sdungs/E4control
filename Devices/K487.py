@@ -106,7 +106,7 @@ class K487:
     def getRampSpeed(self):
         return([int(self.rampSpeed_step),int(self.rampSpeed_delay)])
 
-    def rampVoltage(self,fVnew,channel):
+    def rampVoltage(self,fVnew,channel=-1):
         V = self.getVoltage(channel)
         V = round(V,4)
         if abs(fVnew-V)<=self.rampSpeed_step:
