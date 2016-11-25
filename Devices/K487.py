@@ -18,7 +18,7 @@ class K487:
 
     def initialize(self,channel=-1):
         self.dv.write("G0O0C1X")
-        self.dv.write("L4X")
+        #self.dv.write("L4X")
         pass
 
     def setVoltage(self,fsetValVolts,channel=-1):
@@ -90,7 +90,7 @@ class K487:
         pass
 
     def setRampSpeed(self,iRampSpeed,iDelay):
-        if iRrampSpeed < 1 or iRampSpeed > 255:
+        if iRampSpeed < 1 or iRampSpeed > 255:
             print("Set RampSpeed size is out off range!")
             pass
         else:
