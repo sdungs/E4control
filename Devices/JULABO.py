@@ -32,7 +32,7 @@ class JULABO:
 
     def getPowerStatus(self):
         s = self.dv.ask("in_mode_05")
-        if (s == 1): return "ON"
+        if (s == "1"): return "ON"
         else: return "OFF"
 
     def getStatus(self):
@@ -51,11 +51,14 @@ class JULABO:
     def getSetTemperature(self):
         return float(self.dv.ask("in_sp_00"))
 
-    def getInTemperatureIn(self):
+    def getInTemperature(self):
         return float(self.dv.ask("in_pv_00"))
 
     def getExTemperature(self):
         return float(self.dv.ask("in_pv_02"))
+
+    def getHeaterPower(self):
+	pass
 
     def setOperationMode(self,sMode):
         if (sMode == "int"): self.dv.write("out_mode_04 0")
@@ -64,7 +67,7 @@ class JULABO:
         pass
 
     def getOperationMode(self):
-        if (self.dv.ask("in_mode_04") == 0):
+        if (self.dv.ask("in_mode_04") == "0"):
             return("int")
         else: return("ext")
 
