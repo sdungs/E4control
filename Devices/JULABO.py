@@ -58,7 +58,7 @@ class JULABO:
         return float(self.dv.ask("in_pv_02"))
 
     def getHeaterPower(self):
-	pass
+        return(self.ask("in_pv_01"))
 
     def setOperationMode(self,sMode):
         if (sMode == "int"): self.dv.write("out_mode_04 0")
