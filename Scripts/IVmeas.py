@@ -47,19 +47,22 @@ if q == "yes": pass
 elif q == "y": pass
 else: sys.exit("Measurement aborted!")
 
+if (args.kind == "gpib"):
+    port = args.port
+else: port = int(args.port)
+
 if args.device == "ISEG":
-    port = int(args.port)
     d = ISEG(args.kind,args.adress,port)
 elif args.device == "K2410":
-    port = int(args.port)
     d = K2410(args.kind,args.adress,port)
-elif args.device == "K487": d = K487(args.kind,args.adress,args.port)
+elif args.device == "K487": d = K487(args.kind,args.adress,port)
 
+print("Create directory")
 outputname = args.output.split("/")[-1]
 if not os.path.isdir(args.output): os.mkdir(args.output)
 os.chdir(args.output)
 
-print "Open ROOT file allocate Tree"
+print("Open ROOT file allocate Tree")
 fwroot = ROOT.TFile("%s.root"%outputname,"RECREATE")
 ntuple = ROOT.TTree("IV","")
 timestamps = array.array("L",(0,))
