@@ -24,9 +24,9 @@ parser.add_argument("output",help="output file")
 parser.add_argument("-I","--I_lim",help="current limit (uA)",type=float,default=3)
 parser.add_argument("-s","--v_steps",help="number of volt steps",type=int,default=1)
 parser.add_argument("-d","--device",default="K2410")
-parser.add_argument("-ḱ","--kind",default="serial")
-parser.add_argument("-a","--adress",default="flexnut01")
-parser.add_argument("-p","--port",default="1002")
+parser.add_argument("-ḱ","--kind",default="gpib")
+parser.add_argument("-a","--adress",default="gpib01")
+parser.add_argument("-p","--port",default="gpib0,24")
 parser.add_argument("-c","--channel",type=int,default=1)
 parser.add_argument("-n","--ndaqs",type=int,default=10)
 args=parser.parse_args()
@@ -57,6 +57,12 @@ elif args.device == "K2410":
     d = K2410(args.kind,args.adress,port)
 elif args.device == "K487": d = K487(args.kind,args.adress,port)
 
+print("Check Current Limit")
+Ihard = d.getCurrentLimit(args.channel) * 1E6
+print("I_lim: %.2f uA"%args.I_lim)
+print("I_lim hardware %.2f uA"%Ihard)
+if (Ihard <= args.I_lim): sys.exit("Hardware Limit is lower than Software Limit!")
+
 print("Create directory")
 outputname = args.output.split("/")[-1]
 if not os.path.isdir(args.output): os.mkdir(args.output)
@@ -75,7 +81,7 @@ ntuple.Branch("voltages",   voltages,   "voltages/F")
 ntuple.Branch("currents",   currents,   "currents/F")
 
 d.initialize(args.channel)
-d.setCurrentLimit(args.I_lim/1E6,args.channel)
+#d.setCurrentLimit(args.I_lim/1E6,args.channel)
 d.setVoltage(0,args.channel)
 d.enableOutput(True,args.channel)
 
@@ -84,6 +90,7 @@ Imeans = []
 Irms = []
 Is = []
 Ns = []
+softLimit = False
 
 plt.ion()
 fig = plt.figure(figsize=(8,8))
@@ -113,6 +120,10 @@ for i in xrange(args.v_steps):
         print "Get voltage: %.2f V" % (getVoltage)
         current = d.getCurrent(args.channel)*1E6
         print "Get current: %.2f uA" % (current)
+        if (current > args.I_lim):
+            print("Software Limit reached!")
+            softLimit = True
+            break
         Is.append(current)
         voltages[0]=getVoltage
         currents[0]=current
@@ -129,6 +140,7 @@ for i in xrange(args.v_steps):
         plt.draw()
         plt.tight_layout()
         pass
+    if softLimit: break
     Us.append(voltage)
     Imeans.append(np.mean(Is))
     Irms.append(sem(Is))
