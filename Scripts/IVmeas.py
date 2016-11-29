@@ -26,7 +26,7 @@ parser.add_argument("-s","--v_steps",help="number of volt steps",type=int,defaul
 parser.add_argument("-d","--device",default="K2410")
 parser.add_argument("-ḱ","--kind",default="gpib")
 parser.add_argument("-a","--adress",default="gpib01")
-parser.add_argument("-p","--port",default="gpib0,24")
+parser.add_argument("-p","--port",type=int,default=24)
 parser.add_argument("-c","--channel",type=int,default=1)
 parser.add_argument("-n","--ndaqs",type=int,default=10)
 args=parser.parse_args()
@@ -47,15 +47,13 @@ if q == "yes": pass
 elif q == "y": pass
 else: sys.exit("Measurement aborted!")
 
-if (args.kind == "gpib"):
-    port = args.port
-else: port = int(args.port)
 
 if args.device == "ISEG":
-    d = ISEG(args.kind,args.adress,port)
+    d = ISEG(args.kind,args.adress,args.port)
 elif args.device == "K2410":
-    d = K2410(args.kind,args.adress,port)
-elif args.device == "K487": d = K487(args.kind,args.adress,port)
+    d = K2410(args.kind,args.adress,args.port)
+elif args.device == "K487":
+    d = K487(args.kind,args.adress,args.port)
 
 print("Check Current Limit")
 Ihard = d.getCurrentLimit(args.channel) * 1E6

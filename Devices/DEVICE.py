@@ -25,7 +25,8 @@ class DEVICE:
             self.com = TCPLink(adress, port)
             pass
         elif (kind == "gpib"):
-            self.com = vxi11.Instrument(adress, port)
+            sPort="gpib0,%i"%port
+            self.com = vxi11.Instrument(adress, sPort)
             pass
         pass
 
