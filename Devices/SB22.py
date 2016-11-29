@@ -70,7 +70,10 @@ class SB22:
 
     def getAndSetParameter(self):
         s = self.getStatus()
-        p = s.split("#")[1]
+        if (s.find("#") >= 0):
+            p = s.split("#")[1]
+        else:
+            p = s.split("$")[1]
         line = p[p.find("R")+1:p.find("R")+8]
         self.Power = line[0]
         self.D2 = line[1]
@@ -93,7 +96,10 @@ class SB22:
 
     def getTemperature(self):
         s = self.getStatus()
-        p = s.split("#")[0]
+        if (s.find("#") >= 0):
+            p = s.split("#")[0]
+        else:
+            p = s.split("$")[0]
         v = p[p.find("T")+1:p.find("F")]
         return float(v)
 
@@ -107,13 +113,19 @@ class SB22:
 
     def getHumidity(self):
         s = self.getStatus()
-        p = s.split("#")[0]
+        if (s.find("#") >= 0):
+            p = s.split("#")[0]
+        else:
+            p = s.split("$")[0]
         v = p[p.find("F")+1:p.find("P")]
         return int(v)
 
     def getError(self):
         s = self.getStatus()
-        v = s[s.find("#")+1:p.find("T")]
+        if (s.find("#") >= 0):
+            v = s[s.find("#")+1:p.find("T")]
+        else:
+            v = s[s.find("$")+1:p.find("T")]
         return v
 
     def setOperationMode(self,sMode):
