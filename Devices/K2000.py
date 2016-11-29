@@ -10,6 +10,7 @@ class K2000:
 
     def __init__(self,kind,adress,port):
         self.dv = DEVICE(kind=kind, adress=adress, port=port)
+        self.initialize("T4W")
 
     def userCmd(self,cmd):
     	print "userCmd: %s" % cmd
