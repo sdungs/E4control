@@ -31,15 +31,15 @@ class HP4284A:
         self.dv.write(":AMPL:ALC ON");
         self.setFrequency(10000)
         self.setVoltage(0.050)
-        self.setMeasurementMode(CPD)
-        self.setTriggerMode(BUS)
-        self.setIntegrationTimeAndAveragingRate(SHOR,1)
+        self.setMeasurementMode("CPD")
+        self.setTriggerMode("BUS")
+        self.setIntegrationTimeAndAveragingRate("SHOR",1)
         pass
 
     def getValues(self):
         v = self.dv.ask("*TRG")
         R = float(v[0:12])
-        C = float(v[12:])
+        C = float(v[13:25])
         return [R,C]
 
     def getR(self):
@@ -55,7 +55,7 @@ class HP4284A:
         pass
 
     def getFrequency(self):
-        return float(self.dv.ask(":FREQ?""))
+        return float(self.dv.ask(":FREQ?"))
 
     def setOpenCorrection(self, bOC):
         if (bOC == True): self.dv.write(":CORR:OPEN:STAT ON")
@@ -64,27 +64,27 @@ class HP4284A:
 
     def setLoadCorrection(self, bLC):
         if (bLC == True): self.dv.write(":CORR:LOAD:STAT ON")
-    else : self.dv.write(":CORR:LOAD:STAT OFF")
+   	else : self.dv.write(":CORR:LOAD:STAT OFF")
         pass
 
     def setShortCorrection(self, bSC):
         if (bSC == True): self.dv.write(":CORR:SHOR:STAT ON")
-    else : self.dv.write(":CORR:SHOR:STAT OFF")
+   	else : self.dv.write(":CORR:SHOR:STAT OFF")
         pass
 
     def setMeasurementMode(self, sMode):
-        if (sMode == CPD): self.dv.write(":FUNC:IMP CPD")
-        elif (sMode == CPRP): self.dv.write(":FUNC:IMP CPRP")
-        elif (sMode == CSD): self.dv.write(":FUNC:IMP CSD")
-        elif (sMode == CSRS): self.dv.write(":FUNC:IMP CSRS")
+        if (sMode == "CPD"): self.dv.write(":FUNC:IMP CPD")
+        elif (sMode == "CPRP"): self.dv.write(":FUNC:IMP CPRP")
+        elif (sMode == "CSD"): self.dv.write(":FUNC:IMP CSD")
+        elif (sMode == "CSRS"): self.dv.write(":FUNC:IMP CSRS")
         else: print("Setting measurement mode failed!")
         pass
 
     def setTriggerMode(self, sMode):
-        if (sMode == INT): self.dv.write(":TRIG:SOUR INT")
-        elif (sMode == EXT): self.dv.write(":TRIG:SOUR EXT")
-        elif (sMode == BUS): self.dv.write(":TRIG:SOUR BUS")
-        elif (sMode == HOLD): self.dv.write(":TRIG:SOUR HOLD")
+        if (sMode == "INT"): self.dv.write(":TRIG:SOUR INT")
+        elif (sMode == "EXT"): self.dv.write(":TRIG:SOUR EXT")
+        elif (sMode == "BUS"): self.dv.write(":TRIG:SOUR BUS")
+        elif (sMode == "HOLD"): self.dv.write(":TRIG:SOUR HOLD")
         else: print("Setting trigger mode failed!")
         pass
 
@@ -93,9 +93,9 @@ class HP4284A:
         pass
 
     def setIntegrationTimeAndAveragingRate(self, sType, iAR):
-        if (sType == SHOR): self.dv.write(":APER SHOR,%i"%iAR)
-        elif (sType == MED): self.dv.write(":APER MED,%i"%iAR)
-        elif (sType == LONG): self.dv.write(":APER LONG,%i"%iAR)
+        if (sType == "SHOR"): self.dv.write(":APER SHOR,%i"%iAR)
+        elif (sType == "MED"): self.dv.write(":APER MED,%i"%iAR)
+        elif (sType == "LONG"): self.dv.write(":APER LONG,%i"%iAR)
         else: print("Setting ITVR failed!")
         pass
 
