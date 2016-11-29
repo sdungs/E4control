@@ -55,6 +55,14 @@ class K2410:
         v = self.dv.ask(":READ?")
         return float(v.split(",")[1])
 
+    def getCurrentLimit(self,channel=-1):
+        v = self.dv.ask(":SENSE:CURR:PROT?")
+        return float(v)
+
+    def getVoltageLimit(self,channel=-1):
+        v = self.dv.ask(":SENSE:VOLT:PROT?")
+        return float(v)
+
     def setRampSpeed(self,iRampSpeed,iDelay):
         if iRampSpeed < 1 or iRampSpeed > 255:
             print("Set RampSpeed size is out off range!")
