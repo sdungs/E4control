@@ -90,7 +90,7 @@ class K2000:
         R = self.getResistance(channel)
         return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
-    def  getTempPT1000(self, channel):
+    def getTempPT1000(self, channel):
         a = 3.90802E-3
         b = -5.802E-7
         R0 = 1000.00
@@ -101,7 +101,7 @@ class K2000:
         a=0.0315
         b=0.826
         V = self.getVoltage(channel)
-        return ((-V-b)/a)/(1.0546-0.00216*fTemp);
+        return ((V-b)/a)/(1.0546-0.00216*fTemp);
 
     def restart(self):
         self.dv.write("L0X")

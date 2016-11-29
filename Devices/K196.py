@@ -49,14 +49,14 @@ class K196:
         v = self.dv.read()
         return float(v[4:16])
 
-    def  getTempPT100(self):
+    def getTempPT100(self):
         a = 3.90802E-3
         b = -5.802E-7
         R0 = 100.00
         R = self.getValue()
         return (-a/(2*b)-sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
-    def  getTempPT1000(self):
+    def getTempPT1000(self):
         a = 3.90802E-3
         b = -5.802E-7
         R0 = 1000.00
@@ -67,7 +67,7 @@ class K196:
         a=0.0315
         b=0.826
         V = self.getValue()
-        return ((-V-b)/a)/(1.0546-0.00216*fTemp);
+        return ((V-b)/a)/(1.0546-0.00216*fTemp);
 
     def setRange(slef,sRange):
         if (sRange == "R0") : self.dv.write("R0X")
