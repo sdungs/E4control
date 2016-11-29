@@ -5,6 +5,7 @@ E4control is a python based software for device controling and data taking.
 * Hameg HMP4040 (Power Supply)
 * HP 4284A (LCR Meter)
 * Iseg SHQ (Source Meter)
+* Julabo FP88 (Chiller)
 * Keithley 196 (Multimeter)
 * Keithley 487 (Picoammeter/Voltage Source)
 * Keithley 2000 (Multimeter)
