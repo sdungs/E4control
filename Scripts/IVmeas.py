@@ -120,7 +120,7 @@ for i in xrange(args.v_steps):
         print "Get voltage: %.2f V" % (getVoltage)
         current = d.getCurrent(args.channel)*1E6
         print "Get current: %.2f uA" % (current)
-        if (current > args.I_lim):
+        if (abs(current) > args.I_lim):
             print("Software Limit reached!")
             softLimit = True
             break
