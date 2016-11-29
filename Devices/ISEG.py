@@ -33,6 +33,14 @@ class ISEG:
         fv = float(v[:-3])*10**float(v[-3:])
         return fv
 
+    def setCurrentLimit(self,channel):
+        #just manual setting possible
+        pass
+
+    def setVoltageLimit(self,channel):
+        #just manual setting possible
+        pass
+
     def getVoltageLimit(self,channel):
         voltLim = self.dv.ask("M%i"%channel)
         voltLim = voltLim.replace("M%i"%channel,"")
