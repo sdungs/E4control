@@ -45,25 +45,25 @@ class K196:
         s = self.dv.read()
         return s[0:4]
 
-    def getValue(self):
+    def getValue(self,channel=-1):
         v = self.dv.read()
         return float(v[4:16])
 
-    def getTempPT100(self):
+    def getTempPT100(self,channel=-1):
         a = 3.90802E-3
         b = -5.802E-7
         R0 = 100.00
         R = self.getValue()
         return (-a/(2*b)-sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
-    def getTempPT1000(self):
+    def getTempPT1000(self,channel=-1):
         a = 3.90802E-3
         b = -5.802E-7
         R0 = 1000.00
         R = self.getValue()
         return (-a/(2*b)-sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
-    def getHumidity(self, fTemp):
+    def getHumidity(self, fTemp,channel=-1):
         a=0.0315
         b=0.826
         V = self.getValue()
