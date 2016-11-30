@@ -1,5 +1,5 @@
 # E4control (under construction)
-E4control is a python based software for device controling and data taking.
+E4control is a python based software for device controlling and data taking.
 
 #### Following devices are currently supported:
 * Hameg HMP4040 (Power Supply)
@@ -13,6 +13,6 @@ E4control is a python based software for device controling and data taking.
 * TTi TSX3510P (Power Supply)
 * Weiss SB22 (Climate Chamber)
 
-##### This packages are used for the communication and have to be installed separatly:
+##### This packages are used for the communication and have to be installed separately:
 * PyLink
 * python-vxi11
