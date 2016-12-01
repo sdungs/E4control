@@ -220,7 +220,7 @@ Sdv.rampVoltage(0,S_channel)
 
 print("Show and save CV curve plot")
 plt.close("all")
-plt.errorbar(Us, Cmeans, yerr=Crms, fmt="o")
+plt.errorbar(Us, 1/Cmeans**2, yerr=Crms, fmt="o")
 plt.grid()
 plt.title(r"CV curve: %s"%outputname)
 plt.xlabel(r"$U $ $ [\mathrm{V}]$")
