@@ -221,8 +221,6 @@ Sdv.rampVoltage(0,S_channel)
 print("Show and save CV curve plot")
 ncs = np.array(Cmeans)
 ncm = 1/ncs**2
-print ncs
-print ncm
 plt.close("all")
 
 plt.errorbar(Us, ncm, yerr=Crms, fmt="o")
