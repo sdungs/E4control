@@ -198,7 +198,7 @@ for i in xrange(args.v_steps):
         ax2.set_title(r"Voltage step : %0.2f V"%voltage)
         ax2.set_xlabel(r"$No.$")
         ax2.set_ylabel(r"$C $ $ [\mathrm{pF}]$")
-        ax2.plot(Ns,Is,"r--o")
+        ax2.plot(Ns,Cs,"r--o")
         plt.draw()
         plt.tight_layout()
         pass
