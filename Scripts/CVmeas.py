@@ -216,7 +216,7 @@ for i in range(len(Us)):
     fwtxt.write(str(Us[i])+"\t"+str(Cmeans[i])+"\t"+str(Crms[i])+"\n")
 
 print("Ramp down voltage")
-d.rampVoltage(0,args.channel)
+Sdv.rampVoltage(0,S_channel)
 
 print("Show and save CV curve plot")
 plt.close("all")
