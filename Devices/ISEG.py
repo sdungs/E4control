@@ -21,6 +21,9 @@ class ISEG:
     def initialize(self,channel):
         pass
 
+    def enableOutput(self,bEnable,channel=-1):
+        pass
+
     def getVoltage(self,channel):
         v = self.dv.ask("U%i"%channel)
         v = v.replace("U%i"%channel,"")
