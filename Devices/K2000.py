@@ -10,7 +10,7 @@ class K2000:
 
     def __init__(self,kind,adress,port):
         self.dv = DEVICE(kind=kind, adress=adress, port=port)
-        self.initialize("T4W")
+        self.initialize("T")
 
     def userCmd(self,cmd):
     	print "userCmd: %s" % cmd
@@ -29,7 +29,7 @@ class K2000:
             self.setRange("R2")
             #self.mode = "T2W"
             pass
-        elif (sMode == "T4W"):
+        elif (sMode == "T"):
             self.setKind("OHM4")
             self.setRange("R2")
             #self.mode = "T4W"

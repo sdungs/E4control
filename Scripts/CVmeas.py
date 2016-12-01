@@ -137,7 +137,7 @@ if T_active:
 Sdv.initialize(S_channel)
 Ldv.initialize()
 if T_active:
-    Tdv.initialize("T4W")
+    Tdv.initialize("T")
 Sdv.setVoltage(0,S_channel)
 Sdv.enableOutput(True,S_channel)
 

@@ -19,7 +19,7 @@ class K196:
             self.setKind("DCV")
             self.setRange("RO")
             pass
-        elif (sMode == "T2W"):
+        elif (sMode == "T"):
             self.setKind("OHM")
             self.setRange("R2")
             pass
