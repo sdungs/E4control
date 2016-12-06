@@ -1,2 +1,2 @@
-S ISEG  serial	flexnut01 1002  1
-L	HP4284A gpib  gpib01 17  -1
+S ISEG serial flexnut01 1002 1
+L HP4284A gpib gpib01 17 -1

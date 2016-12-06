@@ -49,33 +49,33 @@ print("Read config file")
 
 for line in open(args.config):
     m = line.replace("\n","")
-    n = m.split("\t")
+    n = m.split(" ")
     if (n[0] == "S"):
         S_device = n[1]
         S_kind = n[2]
         S_adress = n[3]
         S_port = int(n[4])
-        S_channel = n[5]
+        S_channel = int(n[5])
     elif (n[0] == "L"):
         L_device = n[1]
         L_kind = n[2]
         L_adress = n[3]
         L_port = int(n[4])
-        L_channel = n[5]
+        L_channel = int(n[5])
     elif (n[0] == "T"):
         T_active = True
         T_device = n[1]
         T_kind = n[2]
         T_adress = n[3]
         T_port = int(n[4])
-        T_channel = n[5]
+        T_channel = int(n[5])
     else: print("Unknown Device!")
 
 print("CV measurement settings:")
-print("L: "+L_device+"  "+L_kind+"  "+L_adress+"  "+str(L_port)+"  "+L_channel)
-print("S: "+S_device+"  "+S_kind+"  "+S_adress+"  "+str(S_port)+"  "+S_channel)
+print("L: "+L_device+"  "+L_kind+"  "+L_adress+"  "+str(L_port)+"  "+str(L_channel))
+print("S: "+S_device+"  "+S_kind+"  "+S_adress+"  "+str(S_port)+"  "+str(S_channel))
 if T_active:
-    print("T: "+T_device+"  "+T_kind+"  "+T_adress+"  "+str(T_port)+"  "+T_channel)
+    print("T: "+T_device+"  "+T_kind+"  "+T_adress+"  "+str(T_port)+"  "+str(T_channel))
 else: print("No temperature device")
 print("v_min: %.2f V"%args.v_min)
 print("v_max: %.2f V"%args.v_max)
@@ -88,14 +88,12 @@ else: sys.exit("Measurement aborted!")
 
 if L_device == "HP4284A":
     Ldv = HP4284A(L_kind,L_adress,L_port)
-    print("L ist")
 else: sys.exit("LCR Device is not correct")
 
 if S_device == "ISEG":
     Sdv = ISEG(S_kind,S_adress,S_port)
 elif S_device == "K2410":
     Sdv = K2410(S_kind,S_adress,S_port)
-    print("S ist")
 elif S_device == "K487":
     Sdv = K487(S_kind,S_adress,S_port)
 else: sys.exit("Source Device is not correct")
