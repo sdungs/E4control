@@ -54,14 +54,12 @@ for line in open(args.config):
         S_device = n[1]
         S_kind = n[2]
         S_adress = n[3]
-        S_port = n[4]
         S_port = int(n[4])
         S_channel = n[5]
     elif (n[0] == "L"):
         L_device = n[1]
         L_kind = n[2]
         L_adress = n[3]
-        L_port = n[4]
         L_port = int(n[4])
         L_channel = n[5]
     elif (n[0] == "T"):
@@ -69,7 +67,6 @@ for line in open(args.config):
         T_device = n[1]
         T_kind = n[2]
         T_adress = n[3]
-        T_port = n[4]
         T_port = int(n[4])
         T_channel = n[5]
     else: print("Unknown Device!")
