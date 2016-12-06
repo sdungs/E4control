@@ -96,15 +96,16 @@ class ISEG:
         return([int(self.rampSpeed_step),int(self.rampSpeed_delay)])
 
     def rampVoltage(self,fVnew,channel):
-        V = self.getVoltage(channel)
+        fVnew = abs(fVnew)
+	V = self.getVoltage(channel)
         V = round(V,4)
-        if abs(fVnew-V)<=self.rampSpeed_step:
+        if abs(fVnew-abs(V))<=self.rampSpeed_step:
             self.setVoltage(fVnew,channel)
             print "Voltage reached: %.2f V"%(fVnew)
             return
         else:
-            self.setVoltage(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V),channel)
-            print "Ramp Voltage: %.2f V"%(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V))
+            self.setVoltage(abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V)),channel)
+            print "Ramp Voltage: %.2f V"%(abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V)))
             sleep(self.rampSpeed_delay)
             self.rampVoltage(fVnew,channel)
             pass
