@@ -66,7 +66,7 @@ class ISEG:
         return int(rS)
 
     def setVoltage(self,fvalVolts,channel):
-        self.dv.ask("D%i=%.1f"%(channel,fvalVolts))
+        self.dv.ask("D%i=%.1f"%(channel,abs(fvalVolts)))
       	self.startRampU(channel)
 	pass
 
