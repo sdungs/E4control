@@ -38,17 +38,17 @@ class HP4284A:
 
     def getValues(self):
         v = self.dv.ask("*TRG")
-        R = float(v[0:12])
-        C = float(v[13:25])
-        return [R,C]
+        C = float(v[0:12])
+        R = float(v[13:25])
+        return [C,R]
 
     def getR(self):
         v = self.getValues()
-        return v[0]
+        return v[1]
 
     def getC(self):
         v = self.getValues()
-        return v[1]
+        return v[0]
 
     def setFrequency(self, fFreq):
         self.dv.write(":FREQ %f"%fFreq)

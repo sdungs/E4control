@@ -172,10 +172,10 @@ for i in xrange(args.v_steps):
         getVoltage = Sdv.getVoltage(S_channel)
         print "Get voltage: %.2f V" % (getVoltage)
         Lvalues = Ldv.getValues()
-        capacity = Lvalues[1]
+        capacity = Lvalues[0]
         print "Get capacity: %.2f pF" % (capacity)
         current = Sdv.getCurrent(S_channel)
-        resis = Lvalues[0]
+        resis = Lvalues[1]
         Cs.append(capacity)
         voltages[0]=getVoltage
         currents[0]=current
