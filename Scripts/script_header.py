@@ -131,7 +131,7 @@ def check_limits(device, channel, V_lim = None, I_lim= None, P_lim = None):
         if (P_hard <= P_lim): sys.exit("Hardware Limit is lower than Software Limit!")
 
 def new_txt_file(output):
-    fw = open("%s.txt"%output, "w", buffering=1)
+    fw = open("%s.txt"%output, "w")
     return(fw)
 
 def close_txt_file(outputfile):
@@ -141,7 +141,7 @@ def write_line(txtfile, values):
     for i in values:
         txtfile.write(str(i) + "\t")
     txtfile.write("\n")
-    #txtfile.flush()
+    txtfile.flush()
     pass
 
 def create_plot(filename,kind,x,y, xerr = None, yerr = None, save = True, show = True):
