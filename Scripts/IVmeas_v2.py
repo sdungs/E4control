@@ -110,7 +110,7 @@ for i in xrange(args.v_steps):
             break
         Is.append(current)
         timestamp = time.time()
-        
+
         values = []
         values = [timestamp,i,getVoltage,current]
         n = 0
@@ -147,7 +147,7 @@ d.rampVoltage(0,ch)
 d.enableOutput(False)
 
 #short data version
-fwshort = new_txt_file("%s_short"%args.output)
+fwshort = sh.new_txt_file("%s_short"%args.output)
 header = ["U[V]","Imean[uA]","Irms[uA]"]
 sh.write_line(fwshort,header)
 for i in range(len(Us)):
