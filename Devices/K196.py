@@ -69,7 +69,7 @@ class K196:
         V = self.getValue()
         return ((V-b)/a)/(1.0546-0.00216*fTemp);
 
-    def setRange(slef,sRange):
+    def setRange(self,sRange):
         if (sRange == "R0") : self.dv.write("R0X")
         elif (sRange == "R1") : self.dv.write("R1X")
         elif (sRange == "R2") : self.dv.write("R2X")

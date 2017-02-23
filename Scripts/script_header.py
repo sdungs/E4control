@@ -89,27 +89,27 @@ def device_connection(values):
     ch = []
     for k in values:
         if k[0] == "HMP4040":
-            d.append = HMP4040(k[1],k[2],int(k[3]))
+            d.append(HMP4040(k[1],k[2],int(k[3])))
         elif k[0] == "HP4284A":
-            d.append = HP4284A(k[1],k[2],int(k[3]))
+            d.append(HP4284A(k[1],k[2],int(k[3])))
         elif k[0] == "ISEG":
-            d.append = ISEG(k[1],k[2],int(k[3]))
+            d.append(ISEG(k[1],k[2],int(k[3])))
         elif k[0] == "JULABO":
-            d.append = JULABO(k[1],k[2],int(k[3]))
+            d.append(JULABO(k[1],k[2],int(k[3])))
         elif k[0] == "K487":
-            d.append = K487(k[1],k[2],int(k[3]))
+            d.append(K487(k[1],k[2],int(k[3])))
         elif k[0] == "K196":
-            d.append = K196(k[1],k[2],int(k[3]))
+            d.append(K196(k[1],k[2],int(k[3])))
         elif k[0] == "K2000":
-            d.append = K2000(k[1],k[2],int(k[3]))
+            d.append(K2000(k[1],k[2],int(k[3])))
         elif k[0] == "K2410":
-            d.append = K2410(k[1],k[2],int(k[3]))
+            d.append(K2410(k[1],k[2],int(k[3])))
         elif k[0] == "SB22":
-            d.append = SB22(k[1],k[2],int(k[3]))
+            d.append(SB22(k[1],k[2],int(k[3])))
         elif k[0] == "TSX3510P":
-            d.append = TSX3510P(k[1],k[2],int(k[3]))
+            d.append(TSX3510P(k[1],k[2],int(k[3])))
         else: sys.exit("Unknown Device: %s"%k[0])
-        ch.append = int(k[4])
+        ch.append(int(k[4]))
         pass
     return(d,ch)
 
