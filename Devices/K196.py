@@ -54,14 +54,14 @@ class K196:
         b = -5.802E-7
         R0 = 100.00
         R = self.getValue()
-        return (-a/(2*b)-sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+        return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
     def getTempPT1000(self,channel=-1):
         a = 3.90802E-3
         b = -5.802E-7
         R0 = 1000.00
         R = self.getValue()
-        return (-a/(2*b)-sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+        return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
     def getHumidity(self, fTemp,channel=-1):
         a=0.0315
