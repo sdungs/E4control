@@ -74,7 +74,6 @@ Hs = []
 for h in humidity:
     Hs.append([])
 softLimit = False
-measurepoint = 0
 
 #live plot
 plt.ion()
@@ -111,8 +110,9 @@ for i in xrange(args.v_steps):
             break
         Is.append(current)
         timestamp = time.time()
+        
         values = []
-        values = [timestamp,measurepoint,getVoltage,current]
+        values = [timestamp,i,getVoltage,current]
         n = 0
         for t in temperature:
             values.append(t.getTempPT1000(n))
