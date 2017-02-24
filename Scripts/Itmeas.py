@@ -45,15 +45,18 @@ fw = open("%s.txt" %args.output,"w")
 fw.write("t[s] \t U[V] \t I[uA] \t T[C] \n")
 fw.flush()
 
+n = 0
 while cont:
+	print(n)
     for j in xrange(args.ndaqs):
         timestamp = time.time()
         voltage = s.getVoltage(-1)
-        current = s.getCurrent(-1) * E6
+        current = s.getCurrent(-1) * 1E6
         temperature = t.getTempPT1000(-1)
         print("%f \t %f \t %f \t %f \n"%(timestamp, voltage, current, temperature))
         fw.write("%f \t %f \t %f \t %f \n"%(timestamp, voltage, current, temperature))
         fw.flush()
+    n += 1
     time.sleep(args.delay)
 
 #ramp down bias voltage
