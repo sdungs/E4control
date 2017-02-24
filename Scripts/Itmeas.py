@@ -4,6 +4,7 @@
 import time
 import signal
 import argparse
+import sys
 
 sys.path.append("./../Devices/")
 from DEVICE import DEVICE
@@ -48,7 +49,7 @@ while cont:
     for j in xrange(args.ndaqs):
         timestamp = time.time()
         voltage = s.getVoltage(-1)
-        current = s.getCurrent(-1)
+        current = s.getCurrent(-1) * E6
         temperature = t.getTempPT1000(-1)
         print("%f \t %f \t %f \t %f \n"%(timestamp, voltage, current, temperature))
         fw.write("%f \t %f \t %f \t %f \n"%(timestamp, voltage, current, temperature))
