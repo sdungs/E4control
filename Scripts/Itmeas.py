@@ -50,6 +50,7 @@ while cont:
         voltage = s.getVoltage(-1)
         current = s.getCurrent(-1)
         temperature = t.getTempPT1000(-1)
+        print("%f \t %f \t %f \t %f \n"%(timestamp, voltage, current, temperature))
         fw.write("%f \t %f \t %f \t %f \n"%(timestamp, voltage, current, temperature))
         fw.flush()
     time.sleep(args.delay)
