@@ -63,3 +63,4 @@ s.enableOutput(False)
 fw.close
 s.close()
 t.close()
+print("DONE")
