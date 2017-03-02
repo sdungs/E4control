@@ -23,6 +23,10 @@ class K196:
             self.setKind("OHM")
             self.setRange("R2")
             pass
+        elif (sMode == "V"):
+            self.setKind("DCV")
+            self.setRange("R1")
+            pass
         else:
              print("Initializing not possible: Unknown mode!")
         pass
@@ -68,6 +72,10 @@ class K196:
         b=0.826
         V = self.getValue()
         return ((V-b)/a)/(1.0546-0.00216*fTemp);
+
+    def getVoltage(self, channel=-1):
+        V = self.getValue()
+        return(V)
 
     def setRange(self,sRange):
         if (sRange == "R0") : self.dv.write("R0X")
