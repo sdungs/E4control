@@ -25,7 +25,7 @@ class K196:
             pass
         elif (sMode == "V"):
             self.setKind("DCV")
-            self.setRange("R1")
+            self.setRange("R0")
             pass
         else:
              print("Initializing not possible: Unknown mode!")
