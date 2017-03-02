@@ -19,7 +19,7 @@ from SB22 import SB22
 from TSX3510P import TSX3510P
 
 def read_config(configfile):
-    devices = {"S":[] , "T":[] , "H":[] , "P":[] , "L":[] , "C":[]}
+    devices = {"S":[] , "T":[] , "H":[] , "P":[] , "L":[] , "C":[], "V":[] }
     for line in open(configfile):
         m = line.replace("\n","")
         n = m.split(" ")
@@ -41,6 +41,8 @@ def read_config(configfile):
             devices["L"].append([device,kind,adress,port,channel])
         elif (x == "C"):
             devices["C"].append([device,kind,adress,port,channel])
+        elif (x == "V"):
+            devices["V"].append([device,kind,adress,port,channel])
         else: sys.exit("Unknown parameter while reading configfile!")
     return(devices)
 
@@ -66,6 +68,10 @@ def settings_query(device_list, v_min = None, v_max = None, v_steps = None, I_li
     if device_list["C"]:
         print("Cooling System:")
         for i in device_list["C"]: print i
+    if device_list["V"]:
+        print("Volt meter:")
+        for i in device_list["V"]: print i
+
     print("------------------------------------------------")
     if v_min:
         print("v_min: %.2f V" %v_min)

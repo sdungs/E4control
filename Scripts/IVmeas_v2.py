@@ -31,10 +31,16 @@ temperature = []
 temperature_channel = []
 humidity = []
 humidity_channel = []
+Vmeter = []
+Vmeter_channel = []
 if devices["T"]:
     temperature, temperature_channel = sh.device_connection(devices["T"])
 if devices["H"]:
     humidity, humidity_channel = sh.device_connection(devices["H"])
+if devices["H"]:
+    humidity, humidity_channel = sh.device_connection(devices["V"])
+if devices["V"]:
+    Vmeter, Vmeter_channel = sh.device_connection(devices["V"])
 
 #set active source
 d = source[0]
@@ -48,6 +54,8 @@ for t in temperature:
     t.initialize("T")
 for h in humidity:
     h.initialize("H")
+for v in Vmeter:
+    v.initialize("V")
 
 #Check Current limit
 sh.check_limits(d,ch, I_lim = args.I_lim)
@@ -59,6 +67,8 @@ for t in temperature:
     header.append("T[C]")
 for h in humidity:
     header.append("H[V]")
+for v in Vmeter:
+    header.append("V[V]")
 sh.write_line(fw,header)
 
 #create value arrays
@@ -73,6 +83,9 @@ for t in temperature:
 Hs = []
 for h in humidity:
     Hs.append([])
+Vs = []
+for v in Vmeter:
+    Vs.append([])
 softLimit = False
 
 #live plot
@@ -115,11 +128,15 @@ for i in xrange(args.v_steps):
         values = [timestamp,i,getVoltage,current]
         n = 0
         for t in temperature:
-            values.append(t.getTempPT1000(n))
+            values.append(t.getTempPT1000(temperature_channel[n]))
             n += 1
         n = 0
         for h in humidity:
-            values.append(h.getVoltage(n))
+            values.append(h.getVoltage(humidity_channel[n]))
+            n += 1
+        n = 0
+        for v in Vmeter:
+            values.append(v.getVoltage(Vmeter_channel[n]))
             n += 1
         sh.write_line(fw, values)
 
@@ -171,6 +188,8 @@ for t in temperature:
     t.close()
 for h in humidity:
     h.close()
+for v in Vmeter:
+    v.close()
 sh.close_txt_file(fw)
 sh.close_txt_file(fwshort)
 
