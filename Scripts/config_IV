@@ -1,4 +1,3 @@
 S K2410 serial flexnut01 1002 -1
-L HP4284A gpib gpib04 17 -1
 T K2000 gpib04 12 1
 H K196 gpib04 9 -1
