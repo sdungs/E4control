@@ -24,7 +24,7 @@ args=parser.parse_args()
 devices = sh.read_config(args.config)
 
 #create setting query
-sh.settings_query(devices, v_min = args.v_min, v_max = args.v_max, v_steps = args.v_steps, I_lim = args.I_lim, ndaqs = args.ndaqs)
+sh.settings_query(devices, v_min = args.v_min, v_max = args.v_max, v_steps = args.v_steps, ndaqs = args.ndaqs)
 
 #connection
 source, source_channel = sh.device_connection(devices["S"])
@@ -86,11 +86,11 @@ plt.ion()
 fig = plt.figure(figsize=(8,8))
 ax1 = plt.subplot2grid((3,2),(0,0), colspan=2, rowspan=2)
 ax2 = plt.subplot2grid((3,2), (2, 0), colspan=2)
-ax1.errorbar(Us, Imeans, yerr=Irms, fmt="o")
+ax1.errorbar(Us, Cmeans, yerr=Crms, fmt="o")
 ax1.set_xlabel(r"$U $ $ [\mathrm{V}]$")
 ax1.set_ylabel(r"$C_{mean} $ $ [\mathrm{pF}]$")
 ax1.set_title(r"CV curve")
-ax2.plot(Ns,Is,"o")
+ax2.plot(Ns,Cs,"o")
 ax2.set_xlabel(r"$No.$")
 ax2.set_ylabel(r"$C $ $ [\mathrm{pF}]$")
 ax2.set_title(r"Voltage steps")
@@ -127,9 +127,6 @@ for i in xrange(args.v_steps):
             values.append(h.getVoltage(humidity_channel[n]))
             n += 1
         n = 0
-        for v in Vmeter:
-            values.append(v.getVoltage(Vmeter_channel[n]))
-            n += 1
         sh.write_line(fw, values)
 
         Ns.append(j+1)
@@ -142,9 +139,9 @@ for i in xrange(args.v_steps):
         plt.tight_layout()
         pass
     Us.append(voltage)
-    Imeans.append(np.mean(Is))
-    Irms.append(sem(Is))
-    ax1.errorbar(Us, Imeans, yerr=Irms, fmt="g--o")
+    Cmeans.append(np.mean(Cs))
+    Crms.append(sem(Cs))
+    ax1.errorbar(Us, Cmeans, yerr=Crms, fmt="g--o")
     plt.draw()
     plt.tight_layout()
     pass
