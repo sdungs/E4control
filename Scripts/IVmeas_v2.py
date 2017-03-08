@@ -38,8 +38,6 @@ if devices["T"]:
     temperature, temperature_channel = sh.device_connection(devices["T"])
 if devices["H"]:
     humidity, humidity_channel = sh.device_connection(devices["H"])
-if devices["H"]:
-    humidity, humidity_channel = sh.device_connection(devices["V"])
 if devices["V"]:
     Vmeter, Vmeter_channel = sh.device_connection(devices["V"])
 
