@@ -156,7 +156,7 @@ fwshort = sh.new_txt_file("%s_short"%outputname)
 header = ["U[V]","Cmean[pF]","Crms[pF]"]
 sh.write_line(fwshort,header)
 for i in range(len(Us)):
-    sh.write_line(fwshort,[Us[i],Imeans[i],Irms[i]])
+    sh.write_line(fwshort,[Us[i],Cmeans[i],Crms[i]])
 
 #show and save curve
 plt.close("all")
