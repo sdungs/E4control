@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import script_header as sh
 import argparse
 import time
@@ -60,8 +61,13 @@ for v in Vmeter:
 #Check Current limit
 sh.check_limits(d,ch, I_lim = args.I_lim)
 
+#create directory
+outputname = args.output.split("/")[-1]
+if not os.path.isdir(args.output): os.mkdir(args.output)
+os.chdir(args.output)
+
 #create outputfile
-fw = sh.new_txt_file(args.output)
+fw = sh.new_txt_file(outputname)
 header = ["time","no.","U[V]","I[uA]"]
 for t in temperature:
     header.append("T[C]")
@@ -164,7 +170,7 @@ d.rampVoltage(0,ch)
 d.enableOutput(False)
 
 #short data version
-fwshort = sh.new_txt_file("%s_short"%args.output)
+fwshort = sh.new_txt_file("%s_short"%outputname)
 header = ["U[V]","Imean[uA]","Irms[uA]"]
 sh.write_line(fwshort,header)
 for i in range(len(Us)):
@@ -174,12 +180,12 @@ for i in range(len(Us)):
 plt.close("all")
 plt.errorbar(Us, Imeans, yerr=Irms, fmt="o")
 plt.grid()
-plt.title(r"IV curve: %s"%(args.output.split("/")[-1]))
+plt.title(r"IV curve: %s"%outputname)
 plt.xlabel(r"$U $ $ [\mathrm{V}]$")
 plt.ylabel(r"$I_{mean} $ $ [\mathrm{uA}]$")
 plt.xlim(min(Us)-5,max(Us)+5)
 plt.tight_layout()
-plt.savefig("%s.pdf"%args.output)
+plt.savefig("%s.pdf"%outputname)
 
 #close files
 for s in source:
