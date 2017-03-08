@@ -165,7 +165,7 @@ for i in xrange(args.v_steps):
     voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
     print "Set voltage: %.2f V" % voltage
     Sdv.rampVoltage(voltage,S_channel)
-    time.sleep(1)
+    time.sleep(10)
     Cs = []
     Ns = []
     for j in xrange(args.ndaqs):
@@ -218,7 +218,7 @@ ncs = np.array(Cmeans)
 ncm = 1/ncs**2
 plt.close("all")
 
-plt.errorbar(Us, ncm, yerr=Crms, fmt="o")
+plt.plot(Us, ncm, "o")
 plt.grid()
 plt.title(r"CV curve: %s"%outputname)
 plt.xlabel(r"$U $ $ [\mathrm{V}]$")
