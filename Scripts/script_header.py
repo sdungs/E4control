@@ -172,7 +172,8 @@ def check_outputname(output):
             newoutput = output + "_X"
             name = check_outputname(newoutput)
             return(name)
-
+    return(output)
+    
 #class live_plot:
 #    title = None
 #    x_label = None
