@@ -68,8 +68,15 @@ os.chdir(argsoutput)
 outputname = argsoutput.split("/")[-1]
 fw = sh.new_txt_file(outputname)
 header = ["time","no.","U[V]","I[uA]"]
-for t in temperature:
-    header.append("T[C]")
+ffor n in range(len(temperature)):
+    if temperature_channel[n] == 50:
+        header.append("T[C]")
+        header.append("T[C]")
+        header.append("T[C]")
+        header.append("T[C]")
+        header.append("T[C]")
+    else:
+        header.append("T[C]")
 for h in humidity:
     header.append("H[V]")
 for v in Vmeter:
@@ -83,14 +90,9 @@ Irms = []
 Is = []
 Ns = []
 Ts = []
-for t in temperature:
-    Ts.append([])
 Hs = []
-for h in humidity:
-    Hs.append([])
 Vs = []
-for v in Vmeter:
-    Vs.append([])
+
 softLimit = False
 
 #live plot
@@ -117,6 +119,26 @@ for i in xrange(args.v_steps):
     time.sleep(1)
     Is = []
     Ns = []
+    Ts = []
+    Hs = []
+    Vs = []
+    for n in range(len(temperature)):
+        if temperature_channel[n] == 50:
+            ts = t.getTempPT1000all()
+            Ts.append(ts[0])
+            Ts.append(ts[1])
+            Ts.append(ts[2])
+            Ts.append(ts[3])
+            Ts.append(ts[4])
+        else:
+            Ts.append(t.getTempPT1000(temperature_channel[n]))
+
+    for n in range(len(humidity)):
+        Hs.append(h.getVoltage(humidity_channel[n]))
+
+    for n in range(len(Vmeter)):
+        Vs.append(v.getVoltage(Vmeter_channel[n]))
+
     for j in xrange(args.ndaqs):
         getVoltage = d.getVoltage(ch)
         print "Get voltage: %.2f V" % (getVoltage)
@@ -131,18 +153,12 @@ for i in xrange(args.v_steps):
 
         values = []
         values = [timestamp,i,getVoltage,current]
-        n = 0
-        for t in temperature:
-            values.append(t.getTempPT1000(temperature_channel[n]))
-            n += 1
-        n = 0
-        for h in humidity:
-            values.append(h.getVoltage(humidity_channel[n]))
-            n += 1
-        n = 0
+        for t in Ts:
+            values.append(t)
+        for h in Hs:
+            values.append(h)
         for v in Vmeter:
-            values.append(v.getVoltage(Vmeter_channel[n]))
-            n += 1
+            values.append(v)
         sh.write_line(fw, values)
 
         Ns.append(j+1)
