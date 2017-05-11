@@ -93,8 +93,7 @@ class HP4284A:
         pass
 
     def getVoltage(self):
-        v = self.dv.ask(":VOLT?")
-        return v
+        return(self.dv.ask(":VOLT?"))
 
     def setIntegrationTimeAndAveragingRate(self, sType, iAR):
         if (sType == "SHOR"): self.dv.write(":APER SHOR,%i"%iAR)
@@ -102,6 +101,9 @@ class HP4284A:
         elif (sType == "LONG"): self.dv.write(":APER LONG,%i"%iAR)
         else: print("Setting ITVR failed!")
         pass
+
+    def getIntegrationTimeAndAveragingRate(self):
+        return(self.dv.ask(":APER?"))
 
     def reset(self):
         self.dv.write("*RST")
