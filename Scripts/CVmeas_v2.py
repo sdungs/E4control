@@ -67,7 +67,7 @@ lcr_freq = l.getFrequency()
 lcr_volt = l.getVoltage()
 lcr_aper = l.getIntegrationTimeAndAveragingRate()
 lcr_details = ["freq="+str(lcr_freq),"volt="+str(lcr_volt),"aper="+str(lcr_aper)]
-sh_write_line(fw,lcr_details)
+sh.write_line(fw,lcr_details)
 
 header = ["time","no.","U[V]","C[pF]","Rlcr"]
 for n in range(len(temperature)):

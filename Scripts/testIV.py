@@ -5,6 +5,7 @@ import os
 import script_header as sh
 import argparse
 import time
+import signal
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -77,7 +78,7 @@ os.chdir(argsoutput)
 outputname = argsoutput.split("/")[-1]
 fw = sh.new_txt_file(outputname)
 header = ["time","no.","U[V]","I[uA]"]
-ffor n in range(len(temperature)):
+for n in range(len(temperature)):
     if temperature_channel[n] == 50:
         header.append("T[C]")
         header.append("T[C]")
@@ -160,6 +161,7 @@ while i <= args.v_steps and cont:
     Imeans.append(np.mean(Is))
     Irms.append(sem(Is))
     pass
+    i+=1
 
 
 #ramp down voltage
