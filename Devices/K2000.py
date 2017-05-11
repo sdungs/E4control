@@ -95,6 +95,7 @@ class K2000:
         b = -5.802E-7
         R0 = 1000.00
         R = self.getResistance(channel)
+        if R > 10000000: return(9999)
         return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
     def getTempPT1000all(self):
@@ -105,7 +106,8 @@ class K2000:
         i = 1
         while i <= 5:
             R = self.getResistance(i)
-            Ts.append(-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+            if R > 10000000: Ts.append(9999)
+            else: Ts.append(-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 	    i +=1
         return(Ts)
 
