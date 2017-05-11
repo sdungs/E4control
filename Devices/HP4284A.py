@@ -92,6 +92,10 @@ class HP4284A:
         self.dv.write(":VOLT %f V"%sVolt)
         pass
 
+    def getVoltage(self):
+        v = self.dv.ask(":VOLT?")
+        return v
+
     def setIntegrationTimeAndAveragingRate(self, sType, iAR):
         if (sType == "SHOR"): self.dv.write(":APER SHOR,%i"%iAR)
         elif (sType == "MED"): self.dv.write(":APER MED,%i"%iAR)
