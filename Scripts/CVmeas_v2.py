@@ -55,11 +55,12 @@ for h in humidity:
     h.initialize("H")
 
 #create directory
-outputname = args.output.split("/")[-1]
-if not os.path.isdir(args.output): os.mkdir(args.output)
-os.chdir(args.output)
+argsoutput = sh.check_outputname(args.output)
+if not os.path.isdir(argsoutput): os.mkdir(argsoutput)
+os.chdir(argsoutput)
 
 #create outputfile
+outputname = argsoutput.split("/")[-1]
 fw = sh.new_txt_file(outputname)
 header = ["time","no.","U[V]","C[pF]","Rlcr"]
 for t in temperature:

@@ -160,6 +160,18 @@ def create_plot(filename,kind,x,y, xerr = None, yerr = None, save = True, show =
     else:
        pass
 
+def check_outputname(output):
+    outputname = output.split("/")[-1]
+    checktxtfile = (output + "/" + outputname + ".txt")
+    if os.path.isfile(checktxtfile):
+        print(outputname)
+        n = raw_input("File already exists! Do you want to overwrite it? (y/n)")
+        if n == "yes": return(output)
+        elif n == "y": return(output)
+        else:
+            newoutput = output + "_X"
+            name = check_outputname(newoutput)
+            return(name)
 
 #class live_plot:
 #    title = None

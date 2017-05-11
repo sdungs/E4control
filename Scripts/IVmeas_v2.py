@@ -60,11 +60,12 @@ for v in Vmeter:
 sh.check_limits(d,ch, I_lim = args.I_lim)
 
 #create directory
-outputname = args.output.split("/")[-1]
-if not os.path.isdir(args.output): os.mkdir(args.output)
-os.chdir(args.output)
+argsoutput = sh.check_outputname(args.output)
+if not os.path.isdir(argsoutput): os.mkdir(argsoutput)
+os.chdir(argsoutput)
 
 #create outputfile
+outputname = argsoutput.split("/")[-1]
 fw = sh.new_txt_file(outputname)
 header = ["time","no.","U[V]","I[uA]"]
 for t in temperature:
