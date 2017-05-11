@@ -68,7 +68,7 @@ os.chdir(argsoutput)
 outputname = argsoutput.split("/")[-1]
 fw = sh.new_txt_file(outputname)
 header = ["time","no.","U[V]","I[uA]"]
-ffor n in range(len(temperature)):
+for n in range(len(temperature)):
     if temperature_channel[n] == 50:
         header.append("T[C]")
         header.append("T[C]")
@@ -124,20 +124,20 @@ for i in xrange(args.v_steps):
     Vs = []
     for n in range(len(temperature)):
         if temperature_channel[n] == 50:
-            ts = t.getTempPT1000all()
+            ts = temperature[n].getTempPT1000all()
             Ts.append(ts[0])
             Ts.append(ts[1])
             Ts.append(ts[2])
             Ts.append(ts[3])
             Ts.append(ts[4])
         else:
-            Ts.append(t.getTempPT1000(temperature_channel[n]))
+            Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
 
     for n in range(len(humidity)):
-        Hs.append(h.getVoltage(humidity_channel[n]))
+        Hs.append(humidity[n].getVoltage(humidity_channel[n]))
 
     for n in range(len(Vmeter)):
-        Vs.append(v.getVoltage(Vmeter_channel[n]))
+        Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
 
     for j in xrange(args.ndaqs):
         getVoltage = d.getVoltage(ch)
