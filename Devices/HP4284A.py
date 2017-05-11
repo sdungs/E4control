@@ -33,7 +33,7 @@ class HP4284A:
         self.setVoltage(0.050)
         self.setMeasurementMode("CPD")
         self.setTriggerMode("BUS")
-        self.setIntegrationTimeAndAveragingRate("SHOR",1)
+        self.setIntegrationTimeAndAveragingRate("LONG",1)
         pass
 
     def getValues(self):
