@@ -165,7 +165,7 @@ def check_outputname(output):
     checktxtfile = (output + "/" + outputname + ".txt")
     if os.path.isfile(checktxtfile):
         print(outputname)
-        n = raw_input("File already exists! Do you want to overwrite it? (y/n)")
+        n = raw_input("File already exists! Overwrite? (y/n)")
         if n == "yes": return(output)
         elif n == "y": return(output)
         else:
@@ -173,7 +173,7 @@ def check_outputname(output):
             name = check_outputname(newoutput)
             return(name)
     return(output)
-    
+
 #class live_plot:
 #    title = None
 #    x_label = None

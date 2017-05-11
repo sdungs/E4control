@@ -182,12 +182,13 @@ for i in range(len(Us)):
 
 #show and save curve
 plt.close("all")
-c1 = 1/Cmeans**2
+nCmeans = np.array(Cmeans)
+c1 = 1/nCmeans**2
 plt.plot(Us, c1,"o")
 plt.grid()
 plt.title(r"CV curve: %s"%outputname)
 plt.xlabel(r"$U $ $ [\mathrm{V}]$")
-plt.ylabel(r"$1/C_{mean}^2 $ $ [\mathrm{pF}]$")
+plt.ylabel(r"$1/C_{mean}^2 $ $ [$\mathrm{1/pF}^2$]$")
 plt.xlim(min(Us)-5,max(Us)+5)
 plt.tight_layout()
 plt.savefig("%s.pdf"%outputname)
@@ -201,8 +202,6 @@ for t in temperature:
     t.close()
 for h in humidity:
     h.close()
-for v in Vmeter:
-    v.close()
 sh.close_txt_file(fw)
 sh.close_txt_file(fwshort)
 
