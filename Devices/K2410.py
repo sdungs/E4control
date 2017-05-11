@@ -18,6 +18,8 @@ class K2410:
         return self.dv.ask(cmd)
 
     def initialize(self,channel=-1):
+        self.setCurrentAutoRange(True)
+        self.setVoltageRange("MAX")
         pass
 
     def setCurrentAutoRange(self,bsetCurrentAutoRange):
@@ -27,6 +29,16 @@ class K2410:
     def setVoltageAutoRange(self,bsetVoltageAutoRange):
         if bsetVoltageAutoRange: self.dv.write(":SOUR:VOLT:RANG:AUTO ON")
         else: self.dv.write(":SOUR:VOLT:RANG:AUTO OFF")
+
+    def setVoltageRange(self, value):
+        if value == "MAX":
+            self.dv.write(":SOUR:VOLT:RANG MAX")
+        elif value == "MIN":
+            self.dv.write(":SOUR:VOLT:RANG MIN")
+        elif value == "AUTO":
+            self.dv.write(":SOUR:VOLT:RANG:AUTO ON")
+        else: print("Unknown Range")
+
 
     def setCurrentLimit(self,fIlim,channel=-1):
         self.dv.write(":SENSE:CURR:PROT %f"%fIlim)
