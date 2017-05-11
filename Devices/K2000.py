@@ -97,6 +97,17 @@ class K2000:
         R = self.getResistance(channel)
         return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
+    def getTempPT1000all(self):
+        a = 3.90802E-3
+        b = -5.802E-7
+        R0 = 1000.00
+        Ts = []
+        i = 1
+        while i <= 5:
+            R = self.getResistance(i)
+            Ts.append(-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+        return(Ts)
+
     def getHumidity(self, fTemp, channel):
         a=0.0315
         b=0.826
