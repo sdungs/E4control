@@ -106,6 +106,7 @@ class K2000:
         while i <= 5:
             R = self.getResistance(i)
             Ts.append(-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+	    i +=1
         return(Ts)
 
     def getHumidity(self, fTemp, channel):
