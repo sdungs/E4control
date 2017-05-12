@@ -46,7 +46,7 @@ def read_config(configfile):
         else: sys.exit("Unknown parameter while reading configfile!")
     return(devices)
 
-def settings_query(device_list, v_min = None, v_max = None, v_steps = None, I_lim = None, ndaqs = None):
+def settings_query(device_list, v_min = None, v_max = None, v_steps = None, I_lim = None, ndaqs = None, delay = None):
     print("------------------------------------------------")
     print("Measurement settings:")
     print("------------------------------------------------")
@@ -83,6 +83,8 @@ def settings_query(device_list, v_min = None, v_max = None, v_steps = None, I_li
         print("I_lim: %.2f uA" %I_lim)
     if ndaqs:
         print("ndaqs: %i" %ndaqs)
+    if delay:
+        print("delay: %i" %delay)
     print("------------------------------------------------")
     q = raw_input("Settings correct? (y/n)")
     if q == "yes": pass
