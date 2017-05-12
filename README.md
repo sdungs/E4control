@@ -13,6 +13,6 @@ E4control is a python based software for device controlling and data taking.
 * TTi TSX3510P (Power Supply)
 * Weiss SB22 (Climate Chamber)
 
-##### This packages are used for the communication and have to be installed separately:
+##### These packages are used for the communication and have to be installed separately:
 * PyLink
 * python-vxi11
