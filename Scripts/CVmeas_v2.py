@@ -106,7 +106,7 @@ ax2.set_xlabel(r"$No.$")
 ax2.set_ylabel(r"$C $ $ [\mathrm{pF}]$")
 ax2.set_title(r"Voltage steps")
 plt.tight_layout()
-fig.canvas.draw()
+plt.pause(0.0001)
 
 #start measurement
 for i in xrange(args.v_steps):
@@ -157,15 +157,13 @@ for i in xrange(args.v_steps):
         ax2.set_xlabel(r"$No.$")
         ax2.set_ylabel(r"$C $ $ [\mathrm{pF}]$")
         ax2.plot(Ns,Cs,"r--o")
-        plt.draw()
-        plt.tight_layout()
+        plt.pause(0.0001)
         pass
     Us.append(voltage)
     Cmeans.append(np.mean(Cs))
     Crms.append(sem(Cs))
     ax1.errorbar(Us, Cmeans, yerr=Crms, fmt="g--o")
-    plt.draw()
-    plt.tight_layout()
+    plt.pause(0.0001)
     pass
 
 

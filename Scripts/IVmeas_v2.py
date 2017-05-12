@@ -109,7 +109,7 @@ ax2.set_xlabel(r"$No.$")
 ax2.set_ylabel(r"$I $ $ [\mathrm{uA}]$")
 ax2.set_title(r"Voltage steps")
 plt.tight_layout()
-fig.canvas.draw()
+plt.pause(0.0001)
 
 #start measurement
 for i in xrange(args.v_steps):
@@ -167,16 +167,14 @@ for i in xrange(args.v_steps):
         ax2.set_xlabel(r"$No.$")
         ax2.set_ylabel(r"$I $ $ [\mathrm{uA}]$")
         ax2.plot(Ns,Is,"r--o")
-        plt.draw()
-        plt.tight_layout()
+        plt.pause(0.0001)
         pass
     if softLimit: break
     Us.append(voltage)
     Imeans.append(np.mean(Is))
     Irms.append(sem(Is))
     ax1.errorbar(Us, Imeans, yerr=Irms, fmt="g--o")
-    plt.draw()
-    plt.tight_layout()
+    plt.pause(0.0001)
     pass
 
 
