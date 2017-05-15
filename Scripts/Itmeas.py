@@ -18,6 +18,7 @@ parser.add_argument("config",help="config file")
 parser.add_argument("-v","--voltage",type=float,nargs='+', default=[-30])
 parser.add_argument("-d","--delay",type=int,default=60)
 parser.add_argument("-n","--ndaqs",type=int,default=5)
+parser.add_argument("-p","--plot",type=int, default=1)
 args=parser.parse_args()
 
 #signal handler
@@ -110,11 +111,11 @@ for d in range(len(source)):
     else:
         source[d].rampVoltage(args.voltage[iS],source_channel[d])
         iS += 1
-
-plt.ion()
-plt.title(r"It curve")
-plt.ylabel(r"$leakage$ $current$ [$\vert\mathrm{\mu A}\vert$]")
-plt.xlabel(r"$time$  [$\mathrm{s}$]")
+if args.plot == 1:
+    plt.ion()
+    plt.title(r"It curve")
+    plt.ylabel(r"$leakage$ $current$ [$\vert\mathrm{\mu A}\vert$]")
+    plt.xlabel(r"$time$  [$\mathrm{s}$]")
 
 t0 = time.time()
 k = 1
@@ -142,18 +143,21 @@ while cont:
                 values.append(source[d].getVoltage(source_channel[1]))
                 I = source[d].getCurrent(source_channel[1]) * 1E6
                 values.append(I)
-                plt.plot(timestamp-t0, abs(I), "C%ix"%iS, label= r"%i"%iS)
+                if args.plot == 1:
+                    plt.plot(timestamp-t0, abs(I), "C%ix"%iS, label= r"%i"%iS)
                 iS+=1
                 values.append(source[d].getVoltage(source_channel[2]))
                 I = source[d].getCurrent(source_channel[2]) * 1E6
                 values.append(I)
-                plt.plot(timestampt0, abs(I), "C%ix"%iS, label= r"%i"%iS)
+                if args.plot == 1:
+                    plt.plot(timestampt0, abs(I), "C%ix"%iS, label= r"%i"%iS)
                 iS+=1
             else:
                 values.append(source[d].getVoltage(source_channel[d]))
                 I = source[d].getCurrent(source_channel[d])
                 values.append(I* 1E6)
-                plt.plot(timestamp-t0, abs(I* 1E6), "C%ix"%iS, label= r"%i"%iS)
+                if args.plot == 1:
+                    plt.plot(timestamp-t0, abs(I* 1E6), "C%ix"%iS, label= r"%i"%iS)
                 iS+=1
         for t in Ts:
             values.append(t)
@@ -172,7 +176,8 @@ for d in range(len(source)):
     source[d].enableOutput(False)
 
 #save data
-plt.savefig("%s.pdf"%outputname)
+if args.plot:
+    plt.savefig("%s.pdf"%outputname)
 
 #close files
 for s in source:
