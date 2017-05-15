@@ -80,6 +80,9 @@ class HP4284A:
         else: print("Setting measurement mode failed!")
         pass
 
+    def getMeasurementMode(self):
+        return(self.dv.ask(":FUNC:IMP"))
+
     def setTriggerMode(self, sMode):
         if (sMode == "INT"): self.dv.write(":TRIG:SOUR INT")
         elif (sMode == "EXT"): self.dv.write(":TRIG:SOUR EXT")
