@@ -166,7 +166,7 @@ def check_outputname(output):
     outputname = output.split("/")[-1]
     checktxtfile = (output + "/" + outputname + ".txt")
     if os.path.isfile(checktxtfile):
-        print(outputname)
+        print("Outputname: " + outputname)
         n = raw_input("File already exists! Overwrite? (y/n)")
         if n == "yes": return(output)
         elif n == "y": return(output)
@@ -174,6 +174,7 @@ def check_outputname(output):
             newoutput = output + "_X"
             name = check_outputname(newoutput)
             return(name)
+    print("Outputname: " + outputname)
     return(output)
 
 #class live_plot:
