@@ -18,13 +18,18 @@ parser.add_argument("config",help="config file")
 parser.add_argument("-s","--v_steps",help="number of volt steps",type=int,default=1)
 parser.add_argument("-n","--ndaqs",type=int,default=5)
 parser.add_argument("-d","--delay",type=int,default=10)
+parser.add_argument("-f","--frequenz",type=float)
+parser.add_argument("-l","--lvolt",type=float)
+parser.add_argument("-m","--mode",type=str)
+parser.add_argument("-i","--integration",type=str)
 args=parser.parse_args()
+
 
 #read configfile
 devices = sh.read_config(args.config)
 
 #create setting query
-sh.settings_query(devices, v_min = args.v_min, v_max = args.v_max, v_steps = args.v_steps, ndaqs = args.ndaqs)
+sh.settings_query(devices, v_min = args.v_min, v_max = args.v_max, v_steps = args.v_steps, ndaqs = args.ndaqs, lcr_freq = args.frequenz, lcr_volt = args.lvolt, lcr_aper = args.integration, lcr_mode = args.mode)
 
 #connection
 source, source_channel = sh.device_connection(devices["S"])
@@ -49,6 +54,14 @@ d.initialize(ch)
 d.setVoltage(0,ch)
 d.enableOutput(True,ch)
 l.initialize()
+if args.frequenz:
+    l.setFrequency(args.frequenz)
+if args.mode:
+    l.setMeasurementMode(args.mode)
+if args.integration:
+    l.setIntegrationTimeAndAveragingRate(args.integration,1)
+if args.lvolt:
+    l.setVoltage(args.lvolt)
 for t in temperature:
     t.initialize("T")
 for h in humidity:
@@ -66,7 +79,8 @@ fw = sh.new_txt_file(outputname)
 lcr_freq = l.getFrequency()
 lcr_volt = l.getVoltage()
 lcr_aper = l.getIntegrationTimeAndAveragingRate()
-lcr_details = ["freq="+str(lcr_freq),"volt="+str(lcr_volt),"aper="+str(lcr_aper)]
+lcr_mode = l.getMeasurementMode()
+lcr_details = ["freq="+str(lcr_freq),"volt="+str(lcr_volt),"aper="+str(lcr_aper),"mode="+str(lcr_mode)]
 sh.write_line(fw,lcr_details)
 
 header = ["time","no.","U[V]","C[pF]","Rlcr"]
