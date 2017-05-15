@@ -81,7 +81,7 @@ class HP4284A:
         pass
 
     def getMeasurementMode(self):
-        return(self.dv.ask(":FUNC:IMP"))
+        return(self.dv.ask(":FUNC:IMP?"))
 
     def setTriggerMode(self, sMode):
         if (sMode == "INT"): self.dv.write(":TRIG:SOUR INT")
