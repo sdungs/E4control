@@ -14,17 +14,22 @@ devices = sh.read_config(args.config)
 #connection
 source, source_channel = sh.device_connection(devices["S"])
 
-#set active source
-d = source[0]
-ch = source_channel[0]
-
-#initialize
-d.initialize(ch)
-d.enableOutput(True,ch)
-
-#ramp down voltage
-d.rampVoltage(0,ch)
-d.enableOutput(False)
+#ramp down voltage(s)
+for d in range(len(source)):
+    if source_channel[d] == 12:
+        source[d].initialize(source_channel[1])
+        source[d].enableOutput(True,source_channel[1])
+        source[d].rampVoltage(0,source_channel[1])
+        source[d].enableOutput(False,source_channel[1])
+        source[d].initialize(source_channel[2])
+        source[d].enableOutput(True,source_channel[2])
+        source[d].rampVoltage(0,source_channel[2])
+        source[d].enableOutput(False,source_channel[2])
+    else:
+        source[d].initialize(source_channel[d])
+        source[d].enableOutput(True,source_channel[d])
+        source[d].rampVoltage(0,source_channel[d])
+        source[d].enableOutput(False,source_channel[d])
 
 #close files
 for s in source:
