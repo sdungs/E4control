@@ -16,7 +16,7 @@ parser.add_argument("v_max",help="max voltage (V)",type=float)
 parser.add_argument("output",help="output file")
 parser.add_argument("config",help="config file")
 parser.add_argument("-I","--I_lim",help="current limit (uA)",type=float,default=3)
-parser.add_argument("-s","--v_steps",help="number of volt steps",type=int,default=1)
+parser.add_argument("-s","--v_steps",help="number of volt steps",type=int,default=2)
 parser.add_argument("-n","--ndaqs",type=int,default=10)
 args=parser.parse_args()
 
