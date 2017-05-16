@@ -83,7 +83,7 @@ lcr_mode = l.getMeasurementMode()
 lcr_details = ["freq="+str(lcr_freq),"volt="+str(lcr_volt),"aper="+str(lcr_aper),"mode="+str(lcr_mode)]
 sh.write_line(fw,lcr_details)
 
-header = ["time","no.","U[V]","C[pF]","Rlcr"]
+header = ["time","no.","U[V]","I[uA]","C[pF]","Rlcr"]
 for n in range(len(temperature)):
     if temperature_channel[n] == 50:
         header.append("T[C]")
@@ -149,6 +149,8 @@ for i in xrange(args.v_steps):
     for j in xrange(args.ndaqs):
         getVoltage = d.getVoltage(ch)
         print "Get voltage: %.2f V" % (getVoltage)
+        getCurrent = d.getCurrent(ch)*1E6
+        print "Get current: %.2f uA" % (getCurrent)
 
         Lvalues = l.getValues()
         capacity = Lvalues[0] * 1E12
@@ -158,7 +160,7 @@ for i in xrange(args.v_steps):
         timestamp = time.time()
 
         values = []
-        values = [timestamp,i,getVoltage,capacity,resis]
+        values = [timestamp,i,getVoltage,getCurrent,capacity,resis]
         for t in Ts:
             values.append(t)
         for h in Hs:
