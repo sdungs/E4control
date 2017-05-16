@@ -185,6 +185,13 @@ for i in xrange(args.v_steps):
 
 #ramp down voltage
 d.rampVoltage(0,ch)
+remaining = d.getCurrent(ch) *1E6
+k = 0
+while k <= 10 and remaining > 0.01:
+    print("Please wait! Current still: %0.6f uA"%remaining)
+    time.sleep(5)
+    remaining = d.getCurrent(ch) *1E6
+    k+=1
 d.enableOutput(False)
 
 #short data version
