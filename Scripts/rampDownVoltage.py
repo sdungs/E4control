@@ -20,15 +20,36 @@ for d in range(len(source)):
         source[d].initialize(source_channel[1])
         source[d].enableOutput(True,source_channel[1])
         source[d].rampVoltage(0,source_channel[1])
+        remaining = source[d].getCurrent(source_channel[1]) *1E6
+        k = 0
+        while k <= 10 and remaining > 0.01:
+            print("Please wait! Current still: %0.6f uA"%remaining)
+            time.sleep(5)
+            remaining = source[d].getCurrent(source_channel[1]) *1E6
+            k+=1
         source[d].enableOutput(False,source_channel[1])
         source[d].initialize(source_channel[2])
         source[d].enableOutput(True,source_channel[2])
         source[d].rampVoltage(0,source_channel[2])
+        remaining = source[d].getCurrent(source_channel[2]) *1E6
+        k = 0
+        while k <= 10 and remaining > 0.01:
+            print("Please wait! Current still: %0.6f uA"%remaining)
+            time.sleep(5)
+            remaining = source[d].getCurrent(source_channel[2]) *1E6
+            k+=1
         source[d].enableOutput(False,source_channel[2])
     else:
         source[d].initialize(source_channel[d])
         source[d].enableOutput(True,source_channel[d])
         source[d].rampVoltage(0,source_channel[d])
+        remaining = source[d].getCurrent(source_channel[d]) *1E6
+        k = 0
+        while k <= 10 and remaining > 0.01:
+            print("Please wait! Current still: %0.6f uA"%remaining)
+            time.sleep(5)
+            remaining = source[d].getCurrent(source_channel[d]) *1E6
+            k+=1
         source[d].enableOutput(False,source_channel[d])
 
 #close files
