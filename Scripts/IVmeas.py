@@ -68,17 +68,26 @@ os.chdir(argsoutput)
 outputname = argsoutput.split("/")[-1]
 fw = sh.new_txt_file(outputname)
 header = ["time","no.","U[V]","I[uA]"]
+tvalue = 0
 for n in range(len(temperature)):
     if temperature_channel[n] == 50:
-        header.append("T[C]")
-        header.append("T[C]")
-        header.append("T[C]")
-        header.append("T[C]")
-        header.append("T[C]")
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
     else:
-        header.append("T[C]")
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
+hvalue = 0
 for h in humidity:
-    header.append("H[V]")
+    header.append("H%i[V]"%hvalue)
+    hvalue += 1
 for v in Vmeter:
     header.append("V[V]")
 sh.write_line(fw,header)

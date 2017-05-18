@@ -84,17 +84,26 @@ lcr_details = ["freq="+str(lcr_freq),"volt="+str(lcr_volt),"aper="+str(lcr_aper)
 sh.write_line(fw,lcr_details)
 
 header = ["time","no.","U[V]","I[uA]","C[pF]","Rlcr"]
+tvalue = 0
 for n in range(len(temperature)):
     if temperature_channel[n] == 50:
-        header.append("T[C]")
-        header.append("T[C]")
-        header.append("T[C]")
-        header.append("T[C]")
-        header.append("T[C]")
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
     else:
-        header.append("T[C]")
+        header.append("T%i[C]"%tvalue)
+        tvalue +=1
+hvalue = 0
 for h in humidity:
-    header.append("H[V]")
+    header.append("H%i[V]"%hvalue)
+    hvalue += 1
 sh.write_line(fw,header)
 
 #create value arrays
