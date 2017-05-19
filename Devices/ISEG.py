@@ -18,7 +18,7 @@ class ISEG:
     	print "userCmd: %s" % cmd
     	return self.dv.ask(cmd)
 
-    def initialize(self,channel):
+    def initialize(self,channel=-1):
         pass
 
     def enableOutput(self,bEnable,channel=-1):
