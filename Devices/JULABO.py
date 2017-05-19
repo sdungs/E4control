@@ -17,7 +17,7 @@ class JULABO:
     	print "userCmd: %s" % cmd
     	return self.dv.ask(cmd)
 
-    def initialize(self,channel):
+    def initialize(self,channel=-1):
         self.getAndSetParameter()
         pass
 
