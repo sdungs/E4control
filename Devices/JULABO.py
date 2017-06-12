@@ -24,16 +24,17 @@ class JULABO:
     def enablePower(self,bEnable):
         if bEnable:
             self.dv.write("out_mode_05 1")
-            self.Power=1
+            self.Power="1"
         else:
             self.dv.write("out_mode_05 0")
-            self.Power=0
+            self.Power="0"
         pass
 
     def getPowerStatus(self):
-        s = self.dv.ask("in_mode_05")
-        if (s == "1"): return "ON"
-        else: return "OFF"
+        #s = self.dv.ask("in_mode_05")
+        #if (s == "1"): return "ON"
+        #else: return "OFF"
+        return self.dv.ask("in_mode_05")
 
     def getStatus(self):
         return self.dv.ask("status")
@@ -58,11 +59,15 @@ class JULABO:
         return float(self.dv.ask("in_pv_02"))
 
     def getHeaterPower(self):
-        return(self.ask("in_pv_01"))
+        return float(self.dv.ask("in_pv_01"))
 
     def setOperationMode(self,sMode):
-        if (sMode == "int"): self.dv.write("out_mode_04 0")
-        elif (sMode == "ext"): self.dv.write("out_mode_04 1")
+        if (sMode == "int"):
+            self.dv.write("out_mode_04 0")
+            self.Mode = "int"
+        elif (sMode == "ext"):
+            self.dv.write("out_mode_04 1")
+            self.Mode = "ext"
         else: print("Unknown mode: %s"%sMode)
         pass
 
@@ -74,3 +79,50 @@ class JULABO:
     def close(self):
         self.dv.close()
         pass
+
+
+
+    def output(self,  show = True):
+        sMode = self.Mode
+        bPower = self.Power
+        if show:
+            print("Julabo:")
+            print("Mode: " + sMode)
+            if bPower == "1":
+                print("Power: \033[32m ON \033[0m")
+            else:
+                print("Power: \033[31m OFF \033[0m")
+        fTset = self.getSetTemperature()
+        fTin = self.getInTemperature()
+        try:
+            fTex = self.getExTemperature()
+        except ValueError:
+            fTex = 9999
+        fHeat = self.getHeaterPower()
+        if show:
+            print("T_set = %.1f°C"%fTset + "\t" + "Heater Power = %.1f "%fHeat)
+            print("T_in = %.1f°C"%fTin + "\t" + "T_ex = %.1f°C"%fTex)
+
+        return([["Mode","Power","Tset[C]","Tin[C]","Tex[C]","Pheat[]"],[str(sMode),str(bPower),str(fTset),str(fTin),str(fTex),str(fHeat)]])
+
+    def interaction(self):
+        print("1: enable Power")
+        print("2: change Mode")
+        print("3: set new Temperature")
+        x = raw_input("Number? \n")
+        while x != "1" and x != "2" and x != "3" :
+             x = raw_input("Possible Inputs: 1,2 or 3! \n")
+        if x == "1":
+            bO = raw_input("Please enter ON or OFF! \n")
+            if bO == "ON" or bO == "on":
+                self.enablePower(1)
+            elif bO == "OFF" or bO == "off":
+                self.enablePower(0)
+            else:
+                pass
+        elif x == "2":
+            sM = raw_input("choose: int or ext \n")
+            self.setOperationMode(sM)
+        elif x == "3":
+            fT = raw_input("Please enter new Temperature in °C \n")
+            self.setTemperature(float(fT))

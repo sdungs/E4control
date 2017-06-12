@@ -32,7 +32,7 @@ class SB22:
     	print "userCmd: %s" % cmd
     	return self.dv.ask(cmd)
 
-    def initialize(self,channel):
+    def initialize(self,channel=-1):
         self.getAndSetParameter()
         pass
 
@@ -94,13 +94,14 @@ class SB22:
     def getSetTemperature(self):
         return float(self.T_set)
 
-    def getTemperature(self):
+    def getTemperature(self, channel = -1):
         s = self.getStatus()
         if (s.find("#") >= 0):
             p = s.split("#")[0]
         else:
             p = s.split("$")[0]
         v = p[p.find("T")+1:p.find("F")]
+        v = v.replace("&",".")
         return float(v)
 
     def setHumidity(self,fvalue):
@@ -108,7 +109,7 @@ class SB22:
         self.updateChanges()
         pass
 
-    def getSetHumidity(self):
+    def getSetHumidity(self,channel = -1):
         return int(self.H_set)
 
     def getHumidity(self):
@@ -132,10 +133,11 @@ class SB22:
         if (sMode == "climate"): self.D2 = "0"
         elif (sMode == "normal"): self.D2 = "1"
         else: print("Unknown mode: %s"%sMode)
+        self.updateChanges()
         pass
 
     def getOperationMode(self):
-        if (self.D2 == "1"): mode = "climate"
+        if (self.D2 == "0"): mode = "climate"
         else: mode = "normal"
         return mode
 
@@ -167,3 +169,57 @@ class SB22:
     def close(self):
         self.dv.close()
         pass
+
+
+    def output(self,  show = True):
+        sMode = self.getOperationMode()
+        bPower = self.Power
+        if show:
+            print("Climate Chamber:")
+            print("Mode: " + sMode)
+            if bPower == "1":
+                print("Power: \033[32m ON \033[0m")
+            else:
+                print("Power: \033[31m OFF \033[0m")
+        if (self.D2 == "0"):
+            fHset = self.getSetHumidity()
+            fHac = self.getHumidity()
+            if show:
+                print("Humidity:" + "\t" + "set: %.1f"%fHset + "\t" + "actual: %.1f"%fHac )
+        else:
+            fHset = -1
+            fHac = -1
+        fTset = self.getSetTemperature()
+        fTac = self.getTemperature()
+        if show:
+            print("Temperature:" + "\t" + "set: %.1f °C"%fTset + "\t" + "actual: %.1f °C"%fTac )
+        return([["Mode","Power","Hset","Hac","Tset[C]","Tac[C]"],[str(sMode),str(bPower),str(fHset),str(fHac),str(fTset),str(fTac)]])
+
+    def interaction(self):
+        print("1: enable Power")
+        print("2: change Mode")
+        print("3: set new Temperature")
+        print("4: set new Humidity")
+        x = raw_input("Number? \n")
+        while x != "1" and x != "2" and x != "3" and x != "4":
+             x = raw_input("Possible Inputs: 1,2,3 or 4! \n")
+        if x == "1":
+            bO = raw_input("Please enter ON or OFF! \n")
+            if bO == "ON" or bO == "on":
+                self.enablePower(1)
+            elif bO == "OFF" or bO == "off":
+                self.enablePower(0)
+            else:
+                pass
+        elif x == "2":
+            sM = raw_input("choose: climate or normal \n")
+            self.setOperationMode(sM)
+        elif x == "3":
+            fT = raw_input("Please enter new Temperature in °C \n")
+            self.setTemperature(float(fT))
+        elif x == "4":
+            if (self.D2 == "0"):
+                fH = raw_input("Please enter new Humidity \n")
+                self.setHumidity(float(fT))
+            else:
+                print("Please change mode to climate before!")

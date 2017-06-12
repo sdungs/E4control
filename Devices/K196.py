@@ -6,6 +6,7 @@ import math
 
 class K196:
     dv = None
+    mode = None
 
     def __init__(self,kind,adress,port):
         self.dv = DEVICE(kind=kind, adress=adress, port=port)
@@ -18,14 +19,17 @@ class K196:
         if (sMode == "H"):
             self.setKind("DCV")
             self.setRange("RO")
+            self.mode = "H"
             pass
         elif (sMode == "T"):
             self.setKind("OHM")
             self.setRange("R2")
+            self.mode = "T"
             pass
         elif (sMode == "V"):
             self.setKind("DCV")
             self.setRange("R0")
+            self.mode = "V"
             pass
         else:
              print("Initializing not possible: Unknown mode!")
@@ -58,6 +62,7 @@ class K196:
         b = -5.802E-7
         R0 = 100.00
         R = self.getValue()
+        if R > 10000000: return(9999)
         return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
     def getTempPT1000(self,channel=-1):
@@ -65,6 +70,7 @@ class K196:
         b = -5.802E-7
         R0 = 1000.00
         R = self.getValue()
+        if R > 10000000: return(9999)
         return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
 
     def getHumidity(self, fTemp,channel=-1):
@@ -101,3 +107,37 @@ class K196:
     def close(self):
         self.dv.close()
         pass
+
+
+    def output(self, sMode=mode,  show = True):
+        if show:
+            print("K196:")
+        values = []
+        header = []
+        if (sMode == "H"):
+            fHumidity = self.getVoltage()
+            if show:
+                print("Humidity = %0.4f V"%fHumidity)
+            values.append(str(fHumidity))
+            header.append("H[V]")
+        elif (sMode == "T"):
+            fResistance = self.getResistance()
+            fTemperature = self.getTempPT1000()
+            values.append(str(fResistance))
+            header.append("R%i[Ohm]"%i)
+            values.append(str(fTemperature))
+            header.append("T%i[C]"%i)
+            if show:
+                print("values:"+"\t"+"%.2f Ohm"%fResistance + "\t" + "%.1f °C"%fTemperature)
+        elif (sMode == "V"):
+            fVoltage = self.getVoltage()
+            values.append(str(fVoltage))
+            header.append("U[V]")
+            if show:
+                print("Voltage = %0.4f V"%fVoltage)
+        else:
+            print("Error!")
+        return([header,values])
+
+    def interaction(self):
+        print("Nothing to do...")

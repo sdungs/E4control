@@ -58,6 +58,9 @@ class K2410:
         elif bEnable == False:
             self.dv.write(":OUTPUT OFF")
 
+    def getEnableOutput(self,channel=-1):
+        return self.dv.ask(":OUTPUT?")
+
     def getVoltage(self,channel=-1):
         v = self.dv.ask(":READ?")
         if not "," in v: return -999.
@@ -120,3 +123,44 @@ class K2410:
 
     def close(self):
         self.dv.close()
+
+    def output(self,  show = True):
+        bPower = self.getEnableOutput()
+        fLimit = self.getCurrentLimit() * 1E6
+        if show:
+            print("K2410:")
+            if bPower == "1":
+                print("Output \033[32m ON \033[0m")
+            else:
+                print("Output \033[31m OFF \033[0m")
+            print("Current Limit: %0.1f uA"%fLimit)
+        if bPower == "1":
+            fVoltage = self.getVoltage()
+            fCurrent = self.getCurrent() * 1E6
+            if show:
+                print("Voltage = %0.1f V"%fVoltage)
+                print("Current = %0.3f uA"%fCurrent)
+        else:
+            if show:
+                print("Voltage = ---- V")
+                print("Current = ---- uA")
+            fVoltage = 0
+            fCurrent = 0
+        return([["Output","Ilim[uA]","U[V]","I[uA]"],[str(bPower),str(fLimit),str(fVoltage),str(fCurrent)]])
+
+    def interaction(self):
+        print("1: enable Output")
+        print("2: set Voltage")
+        x = raw_input("Number? \n")
+        while x != "1" and x != "2":
+             x = raw_input("Possible Inputs: 1 or 2! \n")
+        if x == "1":
+            bO = raw_input("Please enter ON or OFF! \n")
+            if bO == "ON" or bO == "on":
+                self.enableOutput(True)
+            else:
+                self.rampVoltage(0)
+                self.enableOutput(False)
+        elif x == "2":
+            fV = raw_input("Please enter new Voltage in V \n")
+            self.rampVoltage(float(fV))

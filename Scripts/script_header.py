@@ -154,9 +154,11 @@ def close_txt_file(outputfile):
     outputfile.close()
 
 def write_line(txtfile, values):
-    for i in values:
-        txtfile.write(str(i) + "\t")
-    txtfile.write("\n")
+    for i in range(len(values)):
+        if i == max(range(len(values))):
+            txtfile.write(str(values[i]) + "\n")
+        else:
+            txtfile.write(str(values[i]) + "\t")
     txtfile.flush()
     pass
 
@@ -185,19 +187,68 @@ def check_outputname(output):
     print("Outputname: " + outputname)
     return(output)
 
-#class live_plot:
-#    title = None
-#    x_label = None
-#    y_label = None
-#    x_lim = None
-#    y_lim = None
-#    grid = False
-#    def __init__():
-#        pass
-#    def open():
-#        pass
-#    def update():
-#        pass
-#    def close():
-#        pass
-#    pass
+
+def read_testbeamDCS_config(configfile):
+    devices = []
+    for line in open(configfile):
+        m = line.replace("\n","")
+        n = m.split(" ")
+        x = n[0]
+        device = n[1]
+        kind = n[2]
+        adress = n[3]
+        port = n[4]
+        devices.append([x,device,kind,adress,port])
+    return(devices)
+
+def show_testbeamDCS_device_list(devices):
+    for i in devices: print i
+    q = raw_input("Correct devices? (y/n)")
+    if q == "yes" or q == "y": pass
+    else: sys.exit("Aborted!")
+
+def connect_testbeamDCS_devices(devices):
+    d = []
+    for k in devices:
+        if k[1] == "HMP4040":
+            x = HMP4040(k[2],k[3],int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "HP4284A":
+            x = HP4284A(k[2],k[3],int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "ISEG":
+            x = ISEG(k[2],k[3],int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "JULABO":
+            x = JULABO(k[2],k[3],int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "K487":
+            x = K487(k[2],k[3],int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "K196":
+            x = K196(k[2],k[3],int(k[4]))
+            x.initialize(k[0])
+            d.append(x)
+        elif k[1] == "K2000":
+            x = K2000(k[2],k[3],int(k[4]))
+            x.initialize(k[0])
+            d.append(x)
+        elif k[1] == "K2410":
+            x = K2410(k[2],k[3],int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "SB22":
+            x = SB22(k[2],k[3],int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "TSX3510P":
+            x = TSX3510P(k[2],k[3],int(k[4]))
+            x.initialize()
+            d.append(x)
+        else: sys.exit("Unknown Device: %s"%k[1])
+    return(d)

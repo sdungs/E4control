@@ -114,3 +114,11 @@ class HP4284A:
 
     def close(self):
         self.dv.close()
+
+
+    def output(self, show = True):
+        print("no output")
+        return([[],[]])
+
+    def interaction(self):
+        print("Nothing to do...")

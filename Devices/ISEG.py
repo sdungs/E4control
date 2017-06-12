@@ -97,7 +97,7 @@ class ISEG:
 
     def rampVoltage(self,fVnew,channel):
         fVnew = abs(fVnew)
-	V = self.getVoltage(channel)
+        V = self.getVoltage(channel)
         V = round(V,4)
         if abs(fVnew-abs(V))<=self.rampSpeed_step:
             self.setVoltage(fVnew,channel)
@@ -124,3 +124,33 @@ class ISEG:
     def close(self):
         self.dv.close()
         pass
+
+
+    def output(self,  show = True):
+        f1Limit = self.getCurrentLimit(1) 
+        f2Limit = self.getCurrentLimit(2)
+        f1Voltage = self.getVoltage(1)
+        f2Voltage = self.getVoltage(2)
+        f1Current =  self.getCurrent(1)
+        f2Current =  self.getCurrent(2)
+
+        if show:
+            print("ISEG:")
+            print("CH 1:" + "\t" + "I_lim = %.2fuA"%f1Limit)
+            print("Voltage = %.1fV"%f1Voltage + "\t" + "Current = %.3fuA"%f1Current)
+            print("CH 2:" + "\t" + "I_lim = %.2fuA"%f2Limit)
+            print("Voltage = %.1fV"%f2Voltage + "\t" + "Current = %.3fuA"%f2Current)
+        return([["Ilim1[uA]","U1[V]","I1[uA]","Ilim2[uA]","U2[V]","I2[uA]"],[str(f1Limit),str(f1Voltage),str(f1Current),str(f2Limit),str(f2Voltage),str(f2Current)]])
+
+    def interaction(self):
+        ch = raw_input("Choose channel! \n")
+        while ch != "1" and ch != "2":
+             ch = raw_input("Possible Channels: 1 or 2! \n")
+        channel = int(ch)
+        print("1: set Voltage")
+        x = raw_input("Number? \n")
+        while x != "1":
+             x = raw_input("Possible Inputs: 1! \n")
+        if x == "1":
+            fV = raw_input("Please enter new Voltage in V for CH %i\n"%channel)
+            self.rampVoltage(float(fV),channel)

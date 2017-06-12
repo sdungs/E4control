@@ -6,11 +6,11 @@ import math
 
 class K2000:
     dv = None
-    #mode = None
+    mode = None
 
     def __init__(self,kind,adress,port):
         self.dv = DEVICE(kind=kind, adress=adress, port=port)
-        self.initialize("T")
+        #self.initialize("T")
 
     def userCmd(self,cmd):
     	print "userCmd: %s" % cmd
@@ -22,17 +22,17 @@ class K2000:
         if (sMode == "H"):
             self.setKind("DCV")
             self.setRange("RO")
-            #self.mode = "H"
+            self.mode = "H"
             pass
         elif (sMode == "T2W"):
             self.setKind("OHM")
             self.setRange("R2")
-            #self.mode = "T2W"
+            self.mode = "T2W"
             pass
         elif (sMode == "T"):
             self.setKind("OHM4")
             self.setRange("R2")
-            #self.mode = "T4W"
+            self.mode = "T"
             pass
         else:
             print("Initializing not possible: Unknown mode!")
@@ -65,12 +65,13 @@ class K2000:
 
     def getKind(self):
         self.dv.ask("U0X")
-	s = self.dv.read()
-        return s[0:4]
+        s = self.dv.read()
+        #return s[0:4]
+        return(s)
 
     def getValue(self):
         self.dv.ask("U0X")
-	v = self.dv.read()
+        v = self.dv.read()
         return float(v[4:])
 
     def getResistance(self, channel):
@@ -108,7 +109,7 @@ class K2000:
             R = self.getResistance(i)
             if R > 10000000: Ts.append(9999)
             else: Ts.append(-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
-	    i +=1
+            i +=1
         return(Ts)
 
     def getHumidity(self, fTemp, channel):
@@ -124,3 +125,45 @@ class K2000:
     def close(self):
         self.dv.close()
         pass
+
+    def output(self, sMode = mode,  show = True):
+        if show:
+            print("K2000:")
+        values = []
+        header = []
+        if (sMode == "H"):
+            fHumidity = self.getVoltage(1)
+            if show:
+                print("Humidity = %0.4f V"%fHumidity)
+            values.append(str(fHumidity))
+            header.append("H[V]")
+        elif (sMode == "T2W"):
+            i = 1
+            while i <= 10:
+                fResistance = self.getResistance(i)
+                fTemperature = self.getTempPT1000(i)
+                values.append(str(fResistance))
+                header.append("R%i[Ohm]"%i)
+                values.append(str(fTemperature))
+                header.append("T%i[C]"%i)
+                if show:
+                    print("Ch %i:"%i+"\t"+"%.2f Ohm"%fResistance + "\t" + "%.1f C"%fTemperature)
+                i +=1
+        elif (sMode == "T"):
+            i = 1
+            while i <= 5:
+                fResistance = self.getResistance(i)
+                fTemperature = self.getTempPT1000(i)
+                values.append(str(fResistance))
+                header.append("R%i[Ohm]"%i)
+                values.append(str(fTemperature))
+                header.append("T%i[C]"%i)
+                if show:
+                    print("Ch %i:"%i+"\t"+"%.2f Ohm"%fResistance + "\t" + "%.1f °C"%fTemperature)
+                i +=1
+        else:
+            print("Error!")
+        return([header,values])
+
+    def interaction(self):
+        print("Nothing to do...")
