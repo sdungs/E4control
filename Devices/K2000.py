@@ -126,18 +126,18 @@ class K2000:
         self.dv.close()
         pass
 
-    def output(self, sMode = mode,  show = True):
+    def output(self, show = True):
         if show:
             print("K2000:")
         values = []
         header = []
-        if (sMode == "H"):
+        if (self.mode == "H"):
             fHumidity = self.getVoltage(1)
             if show:
                 print("Humidity = %0.4f V"%fHumidity)
             values.append(str(fHumidity))
             header.append("H[V]")
-        elif (sMode == "T2W"):
+        elif (self.mode == "T2W"):
             i = 1
             while i <= 10:
                 fResistance = self.getResistance(i)
@@ -149,7 +149,7 @@ class K2000:
                 if show:
                     print("Ch %i:"%i+"\t"+"%.2f Ohm"%fResistance + "\t" + "%.1f C"%fTemperature)
                 i +=1
-        elif (sMode == "T"):
+        elif (self.mode == "T"):
             i = 1
             while i <= 5:
                 fResistance = self.getResistance(i)
