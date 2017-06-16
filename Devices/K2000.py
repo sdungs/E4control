@@ -34,6 +34,11 @@ class K2000:
             self.setRange("R2")
             self.mode = "T"
             pass
+        elif (sMode == "V"):
+            self.setKind("DCV")
+            self.setRange("R0")
+            self.mode = "V"
+            pass
         else:
             print("Initializing not possible: Unknown mode!")
         pass
@@ -161,6 +166,12 @@ class K2000:
                 if show:
                     print("Ch %i:"%i+"\t"+"%.2f Ohm"%fResistance + "\t" + "%.1f °C"%fTemperature)
                 i +=1
+        elif (self.mode == "V"):
+            fVoltage = self.getVoltage(1)
+            if show:
+                print("Voltage = %0.4f V"%fVoltage)
+            values.append(str(fVoltage))
+            header.append("U[V]")
         else:
             print("Error!")
         return([header,values])
