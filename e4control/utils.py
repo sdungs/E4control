@@ -5,18 +5,19 @@ import os
 import time
 import sys
 
-sys.path.append("./../Devices/")
-from DEVICE import DEVICE
-from HMP4040 import HMP4040
-from HP4284A import HP4284A
-from ISEG import ISEG
-from JULABO import JULABO
-from K487 import K487
-from K196 import K196
-from K2000 import K2000
-from K2410 import K2410
-from SB22 import SB22
-from TSX3510P import TSX3510P
+
+from .devices import (
+    HMP4040,
+    HP4284A,
+    ISEG,
+    JULABO,
+    K487,
+    K196,
+    K2000,
+    K2410,
+    SB22,
+    TSX3510P,
+)
 
 def read_config(configfile):
     devices = {"S":[] , "T":[] , "H":[] , "P":[] , "L":[] , "C":[], "V":[] }
