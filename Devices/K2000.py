@@ -36,7 +36,7 @@ class K2000:
             pass
         elif (sMode == "V"):
             self.setKind("DCV")
-            self.setRange("R0")
+            self.setRange("R4")
             self.mode = "V"
             pass
         else:
