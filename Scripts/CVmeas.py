@@ -17,7 +17,7 @@ parser.add_argument("output",help="output file")
 parser.add_argument("config",help="config file")
 parser.add_argument("-s","--v_steps",help="number of volt steps",type=int,default=2)
 parser.add_argument("-n","--ndaqs",type=int,default=5)
-parser.add_argument("-d","--delay",type=int,default=10)
+parser.add_argument("-d","--delay",type=int,default=1)
 parser.add_argument("-f","--frequenz",type=float)
 parser.add_argument("-l","--lvolt",type=float)
 parser.add_argument("-m","--mode",type=str)
@@ -38,10 +38,14 @@ temperature = []
 temperature_channel = []
 humidity = []
 humidity_channel = []
+Vmeter = []
+Vmeter_channel = []
 if devices["T"]:
     temperature, temperature_channel = sh.device_connection(devices["T"])
 if devices["H"]:
     humidity, humidity_channel = sh.device_connection(devices["H"])
+if devices["V"]:
+    Vmeter, Vmeter_channel = sh.device_connection(devices["V"])
 
 #set active source
 d = source[0]
@@ -66,6 +70,8 @@ for t in temperature:
     t.initialize("T")
 for h in humidity:
     h.initialize("H")
+for v in Vmeter:
+    v.initialize("V")
 
 #create directory
 argsoutput = sh.check_outputname(args.output)
@@ -104,6 +110,10 @@ hvalue = 0
 for h in humidity:
     header.append("H%i[V]"%hvalue)
     hvalue += 1
+vnumber = 0
+for v in Vmeter:
+    header.append("V%i[V]"%vnumber)
+    vnumber += 1
 sh.write_line(fw,header)
 
 #create value arrays
@@ -114,6 +124,7 @@ Cs = []
 Ns = []
 Ts = []
 Hs = []
+Vs = []
 
 #live plot
 plt.ion()
@@ -141,6 +152,7 @@ for i in xrange(args.v_steps):
     Ns = []
     Ts = []
     Hs = []
+    Vs = []
     for n in range(len(temperature)):
         if temperature_channel[n] == 50:
             ts = temperature[n].getTempPT1000all()
@@ -155,11 +167,21 @@ for i in xrange(args.v_steps):
     for n in range(len(humidity)):
         Hs.append(humidity[n].getVoltage(humidity_channel[n]))
 
+    for n in range(len(Vmeter)):
+        Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
+
     for j in xrange(args.ndaqs):
         getVoltage = d.getVoltage(ch)
         print "Get voltage: %.2f V" % (getVoltage)
         getCurrent = d.getCurrent(ch)*1E6
         print "Get current: %.2f uA" % (getCurrent)
+
+        l.getValues()
+        time.sleep(0.1)
+        l.getValues()
+        time.sleep(0.1)
+        l.getValues()
+        time.sleep(0.1)
 
         Lvalues = l.getValues()
         capacity = Lvalues[0] * 1E12
@@ -174,6 +196,8 @@ for i in xrange(args.v_steps):
             values.append(t)
         for h in Hs:
             values.append(h)
+        for v in Vmeter:
+            values.append(v)
         sh.write_line(fw, values)
 
         Ns.append(j+1)
@@ -232,6 +256,8 @@ for t in temperature:
     t.close()
 for h in humidity:
     h.close()
+for v in Vmeter:
+    v.close()
 sh.close_txt_file(fw)
 sh.close_txt_file(fwshort)
 
