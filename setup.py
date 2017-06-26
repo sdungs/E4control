@@ -14,5 +14,13 @@ setup(
     install_requires=[
         'pylink',
         'python-vxi11',
-    ]
+        'numpy',
+        'matplotlib',
+        'scipy',
+    ],
+    entry_points={
+        'console_scripts': [
+            'e4control_measure_IV = e4control.scripts.IVmeas:main'
+        ]
+    }
 )
