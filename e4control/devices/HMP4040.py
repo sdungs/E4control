@@ -29,11 +29,11 @@ class HMP4040(Device):
 
     def getVoltage(self, iOutput):
         self.write('INST OUT%i' % iOutput)
-        return float(self.dv.ask('MEAS:VOLT?'))
+        return float(self.ask('MEAS:VOLT?'))
 
     def getCurrent(self, iOutput):
         self.write('INST OUT%i' % iOutput)
-        return float(self.dv.ask('MEAS:CURR?'))
+        return float(self.ask('MEAS:CURR?'))
 
     def enableOutput(self, iOutput, bValue):
         if bValue:
@@ -45,7 +45,7 @@ class HMP4040(Device):
 
     def getEnableOutput(self, iOutput):
         self.write('INST OUT%i' % iOutput)
-        return self.dv.ask('OUTP?')
+        return self.ask('OUTP?')
 
     def output(self, show=True):
         bPower = []

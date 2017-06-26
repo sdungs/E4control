@@ -1,156 +1,141 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from DEVICE import DEVICE
 from time import sleep
 
-class ISEG:
-    dv = None
+from .device import Device
+
+
+class ISEG(Device):
     rampSpeed_step = 5
-    rampSpeed_delay = 1 #s
+    rampSpeed_delay = 1  # s
 
-    def __init__(self,kind,adress,port):
-        self.dv = DEVICE(kind=kind, adress=adress, port=port)
-        self.setHardwareRampSpeed(255,1)
-        self.setHardwareRampSpeed(255,2)
+    def __init__(self, connection_type, host, port):
+        super.__init__(connection_type=connection_type, host=host, port=port)
+        self.setHardwareRampSpeed(255,  1)
+        self.setHardwareRampSpeed(255, 2)
 
-    def userCmd(self,cmd):
-    	print "userCmd: %s" % cmd
-    	return self.dv.ask(cmd)
+    def userCmd(self, cmd):
+        print('user cmd: %s' % cmd)
+        return self.ask(cmd)
 
-    def initialize(self,channel=-1):
+    def initialize(self, iChannel=-1):
         pass
 
-    def enableOutput(self,bEnable,channel=-1):
+    def enableOutput(self, bEnable, iChannel=-1):
         pass
 
-    def getVoltage(self,channel):
-        v = self.dv.ask("U%i"%channel)
-        v = v.replace("U%i"%channel,"")
-        fv=float(v[:-3])*10**float(v[-3:])
-        return fv
+    def getVoltage(self, iChannel):
+        sV = self.ask('U%i' % iChannel)
+        sV = sV.replace('U%i' % iChannel, '')
+        fV = float(sV[:-3])*10**float(sV[-3:])
+        return fV
 
-    def getCurrent(self,channel):
-        v = self.dv.ask("I%i"%channel)
-        v = v.replace("I%i"%channel,"")
-        fv = float(v[:-3])*10**float(v[-3:])
-        return fv
+    def getCurrent(self, iChannel):
+        sI = self.ask('I%i' % iChannel)
+        sI = sI.replace('I%i' % iChannel, '')
+        fI = float(sI[:-3])*10**float(sI[-3:])
+        return fI
 
-    def setCurrentLimit(self,channel):
-        #just manual setting possible
+    def setCurrentLimit(self, iChannel):
+        # just manual setting possible
         pass
 
-    def setVoltageLimit(self,channel):
-        #just manual setting possible
+    def setVoltageLimit(self, iChannel):
+        # just manual setting possible
         pass
 
-    def getVoltageLimit(self,channel):
-        voltLim = self.dv.ask("M%i"%channel)
-        voltLim = voltLim.replace("M%i"%channel,"")
-        return float(voltLim)
+    def getVoltageLimit(self, iChannel):
+        sVoltLim = self.ask('M%i' % iChannel)
+        sVoltLim = sVoltLim.replace('M%i' % iChannel, '')
+        return float(sVoltLim)
 
-    def getCurrentLimit(self,channel):
-        currentLim = self.dv.ask("N%i"%channel)
-        currentLim = currentLim.replace("N%i"%channel,"")
-        return float(currentLim)
+    def getCurrentLimit(self, iChannel):
+        sCurrentLim = self.ask('N%i' % iChannel)
+        sCurrentLim = sCurrentLim.replace('N%i' % iChannel, '')
+        return float(sCurrentLim)
 
-    def getSetVoltage(self,channel):
-        sV = self.dv.ask("D%i"%channel)
-        sV = sV.replace("D%i"%channel,"")
-        fsV = float(sV[:-3])*10**float(sV[-3:])
-        return fsV
+    def getSetVoltage(self, iChannel):
+        sV = self.ask('D%i' % iChannel)
+        sV = sV.replace('D%i' % iChannel, '')
+        fV = float(sV[:-3])*10**float(sV[-3:])
+        return fV
 
-    def getHardwareRampSpeed(self,channel):
-        rS = self.dv.ask("V%i"%channel)
-        rS = rS.replace("V%i"%channel,"")
-        return int(rS)
+    def getHardwareRampSpeed(self, iChannel):
+        sRamp = self.ask('V%i' % iChannel)
+        sRamp = sRamp.replace('V%i' % iChannel, '')
+        return int(sRamp)
 
-    def setVoltage(self,fvalVolts,channel):
-        self.dv.ask("D%i=%.1f"%(channel,abs(fvalVolts)))
-      	self.startRampU(channel)
-	pass
+    def setVoltage(self, fValue, iChannel):
+        self.ask('D%i=%.1f' % (iChannel, abs(fValue)))
+        self.startRampU(iChannel)
 
-    def setHardwareRampSpeed(self,iRampSpeed,channel):
-        if iRampSpeed < 2 or iRampSpeed > 255:
-            print("Set RampSpeed is out off range!")
-            pass
-        else:
-            self.dv.ask("V%i=%i"%(channel,iRampSpeed))
-            pass
-
-    def setRampSpeed(self,iRampSpeed,iDelay):
+    def setHardwareRampSpeed(self, iRampSpeed, iChannel):
         if iRampSpeed < 1 or iRampSpeed > 255:
-            print("Set RampSpeed size is out off range!")
-            pass
+            print('Set RampSpeed is out of range!')
+        else:
+            self.ask('V%i=%i' % (iChannel, iRampSpeed))
+
+    def setRampSpeed(self, iRampSpeed, iDelay):
+        if iRampSpeed < 1 or iRampSpeed > 255:
+            print('Set RampSpeed size is out of range!')
         else:
             self.rampSpeed_step = iRampSpeed
-            pass
         if iDelay < 0:
-            print("No negativ Delay is possible!")
-            pass
+            print('No negativ Delay is possible!')
         else:
             self.rampSpeed_delay = iDelay
-            pass
 
     def getRampSpeed(self):
-        return([int(self.rampSpeed_step),int(self.rampSpeed_delay)])
+        return([int(self.rampSpeed_step), int(self.rampSpeed_delay)])
 
-    def rampVoltage(self,fVnew,channel):
+    def rampVoltage(self, fVnew, iChannel):
         fVnew = abs(fVnew)
-        V = self.getVoltage(channel)
-        V = round(V,4)
-        if abs(fVnew-abs(V))<=self.rampSpeed_step:
-            self.setVoltage(fVnew,channel)
-            print "Voltage reached: %.2f V"%(fVnew)
-            return
+        V = self.getVoltage(iChannel)
+        V = round(V, 4)
+        if abs(fVnew-abs(V)) <= self.rampSpeed_step:
+            self.setVoltage(fVnew, iChannel)
+            print 'Voltage reached: %.2f V' % fVnew
         else:
-            self.setVoltage(abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V)),channel)
-            print "Ramp Voltage: %.2f V"%(abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V)))
+            self.setVoltage(abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V)), iChannel)
+            print 'Ramp Voltage: %.2f V' % (abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V)))
             sleep(self.rampSpeed_delay)
-            self.rampVoltage(fVnew,channel)
-            pass
+            self.rampVoltage(fVnew, iChannel)
 
-    def getStatus(self,channel):
-        s = self.dv.ask("S%i"%channel)
-        s = s.replace("S%i="%channel,"")
+    def getStatus(self, iChannel):
+        s = self.ask('S%i' % iChannel)
+        s = s.replace('S%i=' % iChannel, '')
         return s
 
-    def startRampU(self,channel):
-        s = self.dv.ask("G%i"%channel)
-        s = s.replace("G%i"%channel,"")
-        print(s)
-        pass
+    def startRampU(self, iChannel):
+        sRamp = self.ask('G%i' % iChannel)
+        sRamp = sRamp.replace('G%i' % iChannel, '')
+        print(sRamp)
 
-    def close(self):
-        self.dv.close()
-        pass
-
-
-    def output(self,  show = True):
-        f1Limit = self.getCurrentLimit(1) 
+    def output(self,  show=True):
+        f1Limit = self.getCurrentLimit(1)
         f2Limit = self.getCurrentLimit(2)
         f1Voltage = self.getVoltage(1)
         f2Voltage = self.getVoltage(2)
-        f1Current =  self.getCurrent(1)
-        f2Current =  self.getCurrent(2)
+        f1Current = self.getCurrent(1)
+        f2Current = self.getCurrent(2)
 
         if show:
-            print("ISEG:")
-            print("CH 1:" + "\t" + "I_lim = %.2fuA"%f1Limit)
-            print("Voltage = %.1fV"%f1Voltage + "\t" + "Current = %.3fuA"%f1Current)
-            print("CH 2:" + "\t" + "I_lim = %.2fuA"%f2Limit)
-            print("Voltage = %.1fV"%f2Voltage + "\t" + "Current = %.3fuA"%f2Current)
-        return([["Ilim1[uA]","U1[V]","I1[uA]","Ilim2[uA]","U2[V]","I2[uA]"],[str(f1Limit),str(f1Voltage),str(f1Current),str(f2Limit),str(f2Voltage),str(f2Current)]])
+            print('ISEG:')
+            print('CH 1:' + '\t' + 'I_lim = %.2fuA' % f1Limit)
+            print('Voltage = %.1fV' % f1Voltage + '\t' + 'Current = %.3fuA' % f1Current)
+            print('CH 2:' + '\t' + 'I_lim = %.2fuA' % f2Limit)
+            print('Voltage = %.1fV' % f2Voltage + '\t' + 'Current = %.3fuA' % f2Current)
+        return([['Ilim1[uA]', 'U1[V]', 'I1[uA]', 'Ilim2[uA]', 'U2[V]', 'I2[uA]'], [str(f1Limit), str(f1Voltage), str(f1Current), str(f2Limit), str(f2Voltage), str(f2Current)]])
 
     def interaction(self):
-        ch = raw_input("Choose channel! \n")
-        while ch != "1" and ch != "2":
-             ch = raw_input("Possible Channels: 1 or 2! \n")
-        channel = int(ch)
-        print("1: set Voltage")
-        x = raw_input("Number? \n")
-        while x != "1":
-             x = raw_input("Possible Inputs: 1! \n")
-        if x == "1":
-            fV = raw_input("Please enter new Voltage in V for CH %i\n"%channel)
-            self.rampVoltage(float(fV),channel)
+        sChannel = raw_input('Choose channel! \n')
+        while sChannel != '1' and sChannel != '2':
+            sChannel = raw_input('Possible Channels: 1 or 2! \n')
+        iChannel = int(sChannel)
+        print('1: set Voltage')
+        x = raw_input('Number? \n')
+        while x != '1':
+            x = raw_input('Possible Inputs: 1! \n')
+        if x == '1':
+            fV = raw_input('Please enter new Voltage in V for CH %i\n' % iChannel)
+            self.rampVoltage(float(fV), iChannel)
