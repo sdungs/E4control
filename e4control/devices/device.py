@@ -6,7 +6,7 @@ from pylink import TCPLink
 
 class Device:
     com = None
-    trm = "\r\n"
+    trm = '\r\n'
     connection_type = None
     host = None
     port = None
@@ -16,12 +16,12 @@ class Device:
         self.host = host
         self.port = port
 
-        if (connection_type == "serial"):
+        if (connection_type == 'serial'):
             self.com = TCPLink(host, port)
-        elif (connection_type == "lan"):
+        elif (connection_type == 'lan'):
             self.com = TCPLink(host, port)
-        elif (connection_type == "gpib"):
-            sPort = "gpib0,%i" % port
+        elif (connection_type == 'gpib'):
+            sPort = 'gpib0,%i' % port
             self.com = vxi11.Instrument(host, sPort)
 
     def __enter__(self):
@@ -42,14 +42,14 @@ class Device:
         self.open()
 
     def read(self):
-        s = ""
+        s = ''
         try:
             s = self.com.read()
-            s = s.replace("\r", "")
-            s = s.replace("\n", "")
+            s = s.replace('\r', '')
+            s = s.replace('\n', '')
             return s
         except:
-            print("Timeout while reading!")
+            print('Timeout while reading!')
         return s
 
     def write(self, cmd):
@@ -61,7 +61,7 @@ class Device:
             try:
                 self.com.write(cmd)
             except:
-                print("Timeout while writing")
+                print('Timeout while writing')
 
     def ask(self, cmd):
         self.write(cmd)
