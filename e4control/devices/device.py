@@ -8,22 +8,22 @@ from pylink import TCPLink
 class Device:
     com = None
     trm = "\r\n"
-    kind = None
-    adress = None
+    connection_type = None
+    host = None
     port = None
 
-    def __init__(self, kind, adress, port):
-        self.kind = kind
-        self.adress = adress
+    def __init__(self, connection_type, host, port):
+        self.connection_type = connection_type
+        self.host = host
         self.port = port
 
-        if (kind == "serial"):
-            self.com = TCPLink(adress, port)
-        elif (kind == "lan"):
-            self.com = TCPLink(adress, port)
-        elif (kind == "gpib"):
+        if (connection_type == "serial"):
+            self.com = TCPLink(host, port)
+        elif (connection_type == "lan"):
+            self.com = TCPLink(host, port)
+        elif (connection_type == "gpib"):
             sPort = "gpib0,%i" % port
-            self.com = vxi11.Instrument(adress, sPort)
+            self.com = vxi11.Instrument(host, sPort)
 
     def __enter__(self):
         self.open()
@@ -62,7 +62,7 @@ class Device:
             try:
                 self.com.write(cmd)
             except:
-                print("Timeout while writeing")
+                print("Timeout while writing")
 
     def ask(self, cmd):
         self.write(cmd)
