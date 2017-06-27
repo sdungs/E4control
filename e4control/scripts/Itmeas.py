@@ -19,6 +19,7 @@ parser.add_argument('-d', '--delay', type=int, default=60)
 parser.add_argument('-n', '--ndaqs', type=int, default=5)
 parser.add_argument('-p', '--plot', type=int, default=1)
 
+
 def main():
     args = parser.parse_args()
 
