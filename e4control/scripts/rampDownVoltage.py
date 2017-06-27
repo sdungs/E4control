@@ -7,14 +7,14 @@ import time
 from .. import utils as sh
 
 parser = argparse.ArgumentParser()
-parser.add_argument("config", help="config file")
+parser.add_argument('config', help='config file')
 args = parser.parse_args()
 
 # read configfile
 devices = sh.read_config(args.config)
 
 # connection
-source, source_channel = sh.device_connection(devices["S"])
+source, source_channel = sh.device_connection(devices['S'])
 
 # ramp down voltage(s)
 for d in range(len(source)):
@@ -25,7 +25,7 @@ for d in range(len(source)):
         remaining = source[d].getCurrent(source_channel[1]) * 1E6
         k = 0
         while k <= 10 and remaining > 0.01:
-            print("Please wait! Current still: %0.6f uA" % remaining)
+            print('Please wait! Current still: %0.6f uA' % remaining)
             time.sleep(5)
             remaining = source[d].getCurrent(source_channel[1]) * 1E6
             k += 1
@@ -36,7 +36,7 @@ for d in range(len(source)):
         remaining = source[d].getCurrent(source_channel[2]) * 1E6
         k = 0
         while k <= 10 and remaining > 0.01:
-            print("Please wait! Current still: %0.6f uA" % remaining)
+            print('Please wait! Current still: %0.6f uA' % remaining)
             time.sleep(5)
             remaining = source[d].getCurrent(source_channel[2]) * 1E6
             k += 1
@@ -48,7 +48,7 @@ for d in range(len(source)):
         remaining = source[d].getCurrent(source_channel[d]) * 1E6
         k = 0
         while k <= 10 and remaining > 0.01:
-            print("Please wait! Current still: %0.6f uA" % remaining)
+            print('Please wait! Current still: %0.6f uA' % remaining)
             time.sleep(5)
             remaining = source[d].getCurrent(source_channel[d]) * 1E6
             k += 1
