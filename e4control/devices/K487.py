@@ -10,7 +10,7 @@ class K487(Device):
     rampSpeed_delay = 1  # s
 
     def __init__(self, connection_type, host, port):
-        super.__init__(connection_type=connection_type, host=host, port=port)
+        super(K487, self).__init__(connection_type=connection_type, host=host, port=port)
 
     def userCmd(self, cmd):
         print('user cmd: %s' % cmd)

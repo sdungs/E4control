@@ -4,7 +4,7 @@ import vxi11
 from pylink import TCPLink
 
 
-class Device:
+class Device(object):
     com = None
     trm = '\r\n'
     connection_type = None

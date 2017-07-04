@@ -6,7 +6,7 @@ from .device import Device
 class HMP4040(Device):
 
     def __init__(self, connection_type, host, port):
-        super.__init__(connection_type=connection_type, host=host, port=port)
+        super(HMP4040, self).__init__(connection_type=connection_type, host=host, port=port)
 
     def userCmd(self, cmd):
         print('user cmd: %s' % cmd)

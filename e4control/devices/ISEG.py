@@ -10,7 +10,7 @@ class ISEG(Device):
     rampSpeed_delay = 1  # s
 
     def __init__(self, connection_type, host, port):
-        super.__init__(connection_type=connection_type, host=host, port=port)
+        super(ISEG, self).__init__(connection_type=connection_type, host=host, port=port)
         self.setHardwareRampSpeed(255,  1)
         self.setHardwareRampSpeed(255, 2)
 

@@ -9,7 +9,7 @@ class JULABO(Device):
     Mode = None
 
     def __init__(self, connection_type, host, port):
-        super.__init__(connection_type=connection_type, host=host, port=port)
+        super(JULABO, self).__init__(connection_type=connection_type, host=host, port=port)
         self.getAndSetParameter()
 
     def userCmd(self, cmd):
