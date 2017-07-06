@@ -117,7 +117,7 @@ def main():
         header.append('H%i[V]' % hvalue)
         hvalue += 1
     vnumber = 0
-    for v in Vmeter:
+    for v in Vs:
         header.append('V%i[V]' % vnumber)
         vnumber += 1
     sh.write_line(fw, header)

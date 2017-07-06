@@ -173,7 +173,7 @@ def main():
                 values.append(t)
             for h in Hs:
                 values.append(h)
-            for v in Vmeter:
+            for v in Vs:
                 values.append(v)
             sh.write_line(fw, values)
 
