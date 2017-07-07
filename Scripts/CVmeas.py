@@ -167,10 +167,8 @@ for i in xrange(args.v_steps):
     for n in range(len(humidity)):
         Hs.append(humidity[n].getVoltage(humidity_channel[n]))
 
-    for n in range(len(Vmeter)):
-        Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
-
     for j in xrange(args.ndaqs):
+        Vs = []
         getVoltage = d.getVoltage(ch)
         print "Get voltage: %.2f V" % (getVoltage)
         getCurrent = d.getCurrent(ch)*1E6
@@ -189,6 +187,9 @@ for i in xrange(args.v_steps):
         resis = Lvalues[1]
         Cs.append(capacity)
         timestamp = time.time()
+
+        for n in range(len(Vmeter)):
+            Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
 
         values = []
         values = [timestamp,i,getVoltage,getCurrent,capacity,resis]
