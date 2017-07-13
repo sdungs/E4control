@@ -52,25 +52,25 @@ def settings_query(device_list, v_min = None, v_max = None, v_steps = None, I_li
     print("------------------------------------------------")
     if device_list["S"]:
         print("Source device(s):")
-        for i in device_list["S"]: print i
+        for i in device_list["S"]: print(i)
     if device_list["T"]:
         print("Temperature device(s):")
-        for i in device_list["T"]: print i
+        for i in device_list["T"]: print(i)
     if device_list["H"]:
         print("Humidity device(s):")
-        for i in device_list["H"]: print i
+        for i in device_list["H"]: print(i)
     if device_list["P"]:
         print("Power device(s):")
-        for i in device_list["P"]: print i
+        for i in device_list["P"]: print(i)
     if device_list["L"]:
         print("LCR device(s):")
-        for i in device_list["L"]: print i
+        for i in device_list["L"]: print(i)
     if device_list["C"]:
         print("Cooling System:")
-        for i in device_list["C"]: print i
+        for i in device_list["C"]: print(i)
     if device_list["V"]:
         print("Volt meter:")
-        for i in device_list["V"]: print i
+        for i in device_list["V"]: print(i)
 
     print("------------------------------------------------")
     if v_min:
