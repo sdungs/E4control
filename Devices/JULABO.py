@@ -3,6 +3,8 @@
 
 from DEVICE import DEVICE
 
+import time
+
 class JULABO:
     dv = None
     T_set = None
@@ -46,7 +48,7 @@ class JULABO:
         pass
 
     def setTemperature(self,fvalue):
-        self.dv.write("out_sp_00 %.2f")%fvalue
+        self.dv.write("out_sp_00 %.1f"%fvalue)
         pass
 
     def getSetTemperature(self):
@@ -126,3 +128,4 @@ class JULABO:
         elif x == "3":
             fT = raw_input("Please enter new Temperature in °C \n")
             self.setTemperature(float(fT))
+            time.sleep(0.5)
