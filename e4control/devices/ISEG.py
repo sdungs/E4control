@@ -52,7 +52,7 @@ class ISEG(Device):
     def getCurrentLimit(self, iChannel):
         sCurrentLim = self.ask('N%i' % iChannel)
         sCurrentLim = sCurrentLim.replace('N%i' % iChannel, '')
-        return float(sCurrentLim)
+        return (float(sCurrentLim)*6 * 1E3 / 100)
 
     def getSetVoltage(self, iChannel):
         sV = self.ask('D%i' % iChannel)
@@ -112,12 +112,12 @@ class ISEG(Device):
         print(sRamp)
 
     def output(self,  show=True):
-        f1Limit = self.getCurrentLimit(1)
-        f2Limit = self.getCurrentLimit(2)
+        f1Limit = self.getCurrentLimit(1) * 1E6
+        f2Limit = self.getCurrentLimit(2) * 1E6
         f1Voltage = self.getVoltage(1)
         f2Voltage = self.getVoltage(2)
-        f1Current = self.getCurrent(1)
-        f2Current = self.getCurrent(2)
+        f1Current = self.getCurrent(1) * 1E6
+        f2Current = self.getCurrent(2) * 1E6
 
         if show:
             print('ISEG:')

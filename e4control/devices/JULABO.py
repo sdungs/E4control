@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import time
+
 from .device import Device
 
 
@@ -40,7 +42,7 @@ class JULABO(Device):
         pass
 
     def setTemperature(self, fValue):
-        self.write('out_sp_00 %.2f') % fValue
+        self.write('out_sp_00 %.1f') % fValue
         pass
 
     def getSetTemperature(self):
@@ -115,3 +117,4 @@ class JULABO(Device):
         elif x == '3':
             fT = raw_input('Please enter new Temperature in °C \n')
             self.setTemperature(float(fT))
+            time.sleep(0.5)
