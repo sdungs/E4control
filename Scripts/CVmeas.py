@@ -167,19 +167,19 @@ for i in xrange(args.v_steps):
     for n in range(len(humidity)):
         Hs.append(humidity[n].getVoltage(humidity_channel[n]))
 
+    l.getValues()
+    time.sleep(0.1)
+    l.getValues()
+    time.sleep(0.1)
+    l.getValues()
+    time.sleep(0.1)
+
     for j in xrange(args.ndaqs):
         Vs = []
         getVoltage = d.getVoltage(ch)
         print "Get voltage: %.2f V" % (getVoltage)
         getCurrent = d.getCurrent(ch)*1E6
         print "Get current: %.2f uA" % (getCurrent)
-
-        l.getValues()
-        time.sleep(0.1)
-        l.getValues()
-        time.sleep(0.1)
-        l.getValues()
-        time.sleep(0.1)
 
         Lvalues = l.getValues()
         capacity = Lvalues[0] * 1E12
