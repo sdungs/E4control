@@ -22,6 +22,7 @@ parser.add_argument('config', help='config file')
 parser.add_argument('-I', '--I_lim', help='current limit (uA)', type=float, default=3)
 parser.add_argument('-s', '--v_steps', help='number of volt steps', type=int, default=2)
 parser.add_argument('-n', '--ndaqs', type=int, default=10)
+parser.add_argument('-d', '--delay', type=int, default=1)
 
 
 def main():
@@ -132,7 +133,7 @@ def main():
         voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
         print 'Set voltage: %.2f V' % voltage
         d.rampVoltage(voltage, ch)
-        time.sleep(1)
+        time.sleep(args.delay)
         Is = []
         Ns = []
         Ts = []
