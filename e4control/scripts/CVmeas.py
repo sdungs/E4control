@@ -176,18 +176,18 @@ def main():
         for n in range(len(Vmeter)):
             Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
 
+        l.getValues()
+        time.sleep(0.1)
+        l.getValues()
+        time.sleep(0.1)
+        l.getValues()
+        time.sleep(0.1)
+
         for j in xrange(args.ndaqs):
             getVoltage = d.getVoltage(ch)
             print 'Get voltage: %.2f V' % (getVoltage)
             getCurrent = d.getCurrent(ch)*1E6
             print 'Get current: %.2f uA' % (getCurrent)
-
-            l.getValues()
-            time.sleep(0.1)
-            l.getValues()
-            time.sleep(0.1)
-            l.getValues()
-            time.sleep(0.1)
 
             Lvalues = l.getValues()
             capacity = Lvalues[0] * 1E12
