@@ -27,6 +27,7 @@ parser.add_argument('-l', '--lvolt', type=float)
 parser.add_argument('-m', '--mode', type=str)
 parser.add_argument('-i', '--integration', type=str)
 
+
 def main():
     args = parser.parse_args()
 
@@ -117,7 +118,7 @@ def main():
         header.append('H%i[V]' % hvalue)
         hvalue += 1
     vnumber = 0
-    for v in Vs:
+    for v in Vmeter:
         header.append('V%i[V]' % vnumber)
         vnumber += 1
     sh.write_line(fw, header)
