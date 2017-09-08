@@ -30,11 +30,11 @@ Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is no
 3. to install enter: `pip install .`
 
 ## How to run scripts?
-##### config file
+#### config file
 A config file with all used devices is needed for every script. For an example see [exampleConfig](https://github.com/sdungs/E4control/blob/master/exampleConfig).
 In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. *For the testbeamDCS config file the port coulumn must be empty.* The coulums are seperated by a single space.
 
-##### e4control_measure_IV
+#### e4control_measure_IV
 enter:  
 `e4control_measure_IV V_min V_max output config -I I_lim -s V_steps -n ndaqs -d delay `
 
@@ -50,7 +50,7 @@ enter:
 example:  
 `e4control_measure_IV 0 100 meas_1 config_IV -I 3 -s 11 -n 5 -d 2 `
 
-##### e4control_measure_CV
+#### e4control_measure_CV
 enter:  
 `e4control_measure_CV V_min V_max output config -s V_steps -n ndaqs -d delay -f lcr_frequenz`
 
@@ -66,7 +66,7 @@ enter:
 example:  
 `e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`
 
-##### e4control_measure_It
+#### e4control_measure_It
 enter:  
 `e4control_measure_It output config -v voltage -n ndaqs -d delay -p plot `
 
@@ -82,7 +82,7 @@ enter:
 example:  
 `e4control_measure_It meas_3 config_It -v 50 -n 5 -d 30 -p 1`
 
-##### e4control_testbeamDCS
+#### e4control_testbeamDCS
 enter:  
 `e4control_testbeamDCS config -l logfile `
 
