@@ -28,6 +28,7 @@ Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is no
 1. download or clone this repository
 2. open a terminal and change directory to E4control
 3. to install enter: `pip install .`
+4. *(add PATH to .bashrc)*
 
 ## How to run scripts?
 #### config file
