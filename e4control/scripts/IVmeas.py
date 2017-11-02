@@ -103,7 +103,7 @@ def main():
     # create value arrays
     Us = []
     Imeans = []
-    Irms = []
+    Isem = []
     Is = []
     Ns = []
     Ts = []
@@ -117,7 +117,7 @@ def main():
     fig = plt.figure(figsize=(8, 8))
     ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
     ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
-    ax1.errorbar(Us, Imeans, yerr=Irms, fmt='o')
+    ax1.errorbar(Us, Imeans, yerr=Isem, fmt='o')
     ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
     ax1.set_ylabel(r'$I_{mean} $ $ [\mathrm{uA}]$')
     ax1.set_title(r'IV curve')
@@ -189,8 +189,8 @@ def main():
             break
         Us.append(voltage)
         Imeans.append(np.mean(Is))
-        Irms.append(sem(Is))
-        ax1.errorbar(Us, Imeans, yerr=Irms, fmt='g--o')
+        Isem.append(sem(Is))
+        ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
         plt.pause(0.0001)
 
     # ramp down voltage
@@ -199,14 +199,14 @@ def main():
 
     # short data version
     fwshort = sh.new_txt_file('%s_short' % outputname)
-    header = ['U[V]', 'Imean[uA]', 'Irms[uA]']
+    header = ['U[V]', 'Imean[uA]', 'Isem[uA]']
     sh.write_line(fwshort, header)
     for i in range(len(Us)):
-        sh.write_line(fwshort, [Us[i], Imeans[i], Irms[i]])
+        sh.write_line(fwshort, [Us[i], Imeans[i], Isem[i]])
 
     # show and save curve
     plt.close('all')
-    plt.errorbar(Us, Imeans, yerr=Irms, fmt='o')
+    plt.errorbar(Us, Imeans, yerr=Isem, fmt='o')
     plt.grid()
     plt.title(r'IV curve: %s' % outputname)
     plt.xlabel(r'$U $ $ [\mathrm{V}]$')

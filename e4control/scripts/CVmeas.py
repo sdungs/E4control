@@ -126,7 +126,7 @@ def main():
     # create value arrays
     Us = []
     Cmeans = []
-    Crms = []
+    Csem = []
     Cs = []
     Ns = []
     Ts = []
@@ -138,7 +138,7 @@ def main():
     fig = plt.figure(figsize=(8, 8))
     ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
     ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
-    ax1.errorbar(Us, Cmeans, yerr=Crms, fmt='o')
+    ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='o')
     ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
     ax1.set_ylabel(r'$C_{mean} $ $ [\mathrm{pF}]$')
     ax1.set_title(r'CV curve')
@@ -216,8 +216,8 @@ def main():
             plt.pause(0.0001)
         Us.append(voltage)
         Cmeans.append(np.mean(Cs))
-        Crms.append(sem(Cs))
-        ax1.errorbar(Us, Cmeans, yerr=Crms, fmt='g--o')
+        Csem.append(sem(Cs))
+        ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
         plt.pause(0.0001)
 
     # ramp down voltage
@@ -233,10 +233,10 @@ def main():
 
     # short data version
     fwshort = sh.new_txt_file('%s_short' % outputname)
-    header = ['U[V]', 'Cmean[pF]', 'Crms[pF]']
+    header = ['U[V]', 'Cmean[pF]', 'Csem[pF]']
     sh.write_line(fwshort, header)
     for i in range(len(Us)):
-        sh.write_line(fwshort, [Us[i], Cmeans[i], Crms[i]])
+        sh.write_line(fwshort, [Us[i], Cmeans[i], Csem[i]])
 
     # show and save curve
     plt.close('all')
