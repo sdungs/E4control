@@ -4,15 +4,15 @@ from .device import Device
 
 
 class SB22(Device):
-    T_set = None
-    H_set = None
-    Power = None
-    D2 = None
-    D3 = None
-    D4 = None
-    D5 = None
-    D6 = None
-    D7 = None
+    T_set = '0'
+    H_set = '0'
+    Power = '0'
+    D2 = '0'
+    D3 = '0'
+    D4 = '0'
+    D5 = '0'
+    D6 = '0'
+    D7 = '0'
     D8 = '0'
     D9 = '0'
     D10 = '0'
