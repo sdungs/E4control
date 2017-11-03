@@ -56,9 +56,9 @@ class SB22(Device):
         return result
 
     def updateChanges(self):
-        line = chr(02)+'1T%sF%sR%s%s%s%s%s%s%s000000000' % (self.T_set, self.H_set, self.Power, self.D2, self.D3, self.D4, self.D5, self.D6, self.D7)
+        line = chr(2)+'1T%sF%sR%s%s%s%s%s%s%s000000000' % (self.T_set, self.H_set, self.Power, self.D2, self.D3, self.D4, self.D5, self.D6, self.D7)
         pn = self.generateChecksum(line)
-        cmd = '%s%s' % (line, pn)+chr(03)
+        cmd = '%s%s' % (line, pn)+chr(3)
         self.write(cmd)
 
     def enablePower(self, bEnable):
@@ -69,7 +69,7 @@ class SB22(Device):
         self.updateChanges()
 
     def getStatus(self):
-        return self.ask(chr(02)+'1?8E\3'+chr(03))
+        return self.ask(chr(2)+'1?8E\3'+chr(3))
 
     def getAndSetParameter(self):
         s = self.getStatus()
