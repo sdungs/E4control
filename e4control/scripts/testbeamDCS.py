@@ -23,7 +23,7 @@ def getKey(threadname):
     cont = 1
     cont2 = 1
     while True:
-        x = raw_input()
+        x = input()
         if x == 'q':
             cont = 0
             print('Quit')
@@ -98,7 +98,7 @@ def main():
             print('List of active Devices:')
             for i in range(len(config_devices)):
                 print('%i: %s' % (i+1, config_devices[i][1]))
-            x = raw_input('Choose the number of a Device:')
+            x = input('Choose the number of a Device:')
             try:
                 x = int(x)
             except:
