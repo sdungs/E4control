@@ -94,10 +94,10 @@ class ISEG(Device):
         V = round(V, 4)
         if abs(fVnew-abs(V)) <= self.rampSpeed_step:
             self.setVoltage(fVnew, iChannel)
-            print 'Voltage reached: %.2f V' % fVnew
+            print('Voltage reached: %.2f V' % fVnew)
         else:
             self.setVoltage(abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V)), iChannel)
-            print 'Ramp Voltage: %.2f V' % (abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V)))
+            print('Ramp Voltage: %.2f V' % (abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V))))
             sleep(self.rampSpeed_delay)
             self.rampVoltage(fVnew, iChannel)
 

@@ -152,7 +152,7 @@ def main():
     # start measurement
     for i in xrange(args.v_steps):
         voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
-        print 'Set voltage: %.2f V' % voltage
+        print('Set voltage: %.2f V' % voltage)
         d.rampVoltage(voltage, ch)
         time.sleep(args.delay)
         Cs = []
@@ -183,13 +183,13 @@ def main():
 
         for j in xrange(args.ndaqs):
             getVoltage = d.getVoltage(ch)
-            print 'Get voltage: %.2f V' % (getVoltage)
+            print('Get voltage: %.2f V' % (getVoltage))
             getCurrent = d.getCurrent(ch)*1E6
-            print 'Get current: %.2f uA' % (getCurrent)
+            print('Get current: %.2f uA' % (getCurrent))
 
             Lvalues = l.getValues()
             capacity = Lvalues[0] * 1E12
-            print 'Get capacity: %.2f pF' % (capacity)
+            print('Get capacity: %.2f pF' % (capacity))
             resis = Lvalues[1]
             Cs.append(capacity)
             timestamp = time.time()

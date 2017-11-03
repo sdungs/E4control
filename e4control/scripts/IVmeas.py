@@ -131,7 +131,7 @@ def main():
     # start measurement
     for i in xrange(args.v_steps):
         voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
-        print 'Set voltage: %.2f V' % voltage
+        print('Set voltage: %.2f V' % voltage)
         d.rampVoltage(voltage, ch)
         time.sleep(args.delay)
         Is = []
@@ -158,9 +158,9 @@ def main():
 
         for j in xrange(args.ndaqs):
             getVoltage = d.getVoltage(ch)
-            print 'Get voltage: %.2f V' % (getVoltage)
+            print('Get voltage: %.2f V' % (getVoltage))
             current = d.getCurrent(ch)*1E6
-            print 'Get current: %.2f uA' % (current)
+            print('Get current: %.2f uA' % (current))
             if (abs(current) > args.I_lim):
                 print('Software Limit reached!')
                 softLimit = True
