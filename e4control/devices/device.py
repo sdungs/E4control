@@ -43,32 +43,32 @@ class Device(object):
         self.close()
         self.open()
 
-#    def read(self):
-#        s = ''
-#        try:
-#            if self.connection_type == 'usb':
-#                s = self.com.readline()
-#                s = s.replace('\r', '')
-#                s = s.replace('\n', '')
-#            else:
-#                s = self.com.read()
-#                s = s.replace('\r', '')
-#                s = s.replace('\n', '')
-#            return s
-#        except:
-#            print('Timeout while reading!')
-#        return s
-
     def read(self):
         s = ''
         try:
-            s = self.com.read()
-            s = s.replace('\r', '')
-            s = s.replace('\n', '')
+            if self.connection_type == 'usb':
+                s = self.com.readline()
+                s = s.replace('\r', '')
+                s = s.replace('\n', '')
+            else:
+                s = self.com.read()
+                s = s.replace('\r', '')
+                s = s.replace('\n', '')
             return s
         except:
             print('Timeout while reading!')
         return s
+
+#    def read(self):
+#        s = ''
+#        try:
+#            s = self.com.read()
+#            s = s.replace('\r', '')
+#            s = s.replace('\n', '')
+#            return s
+#        except:
+#            print('Timeout while reading!')
+#        return s
 
     def write(self, cmd):
         cmd = cmd + self.trm
