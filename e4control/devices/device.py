@@ -24,7 +24,7 @@ class Device(object):
             sPort = 'gpib0,%i' % port
             self.com = vxi11.Instrument(host, sPort)
         elif (connection_type == 'usb'):
-            self.com = serial.Serial(port, 9600)
+            self.com = serial.Serial(host, 9600)
 
     def __enter__(self):
         self.open()
