@@ -17,6 +17,22 @@ parser = argparse.ArgumentParser()
 parser.add_argument('config', help='config file')
 parser.add_argument('-l', '--logfile', help='potential logfile')
 
+def getKey(threadname):
+    global cont
+    global cont2
+    cont = 1
+    cont2 = 1
+    while True:
+        x = input()
+        if x == 'q':
+            cont = 0
+            print('Quit')
+            break
+        elif x == 'c':
+            cont2 = 0
+            break
+        else:
+            print('Nooooooo')
 
 def main():
     args = parser.parse_args()
@@ -47,26 +63,10 @@ def main():
             header = header + (i.output(show=False)[0])
         sh.write_line(fw, d_names)
         sh.write_line(fw, header)
-
+    global cont
+    global cont2
     cont = 1
     cont2 = 1
-
-    def getKey(threadname):
-        global cont
-        global cont2
-        cont = 1
-        cont2 = 1
-        while True:
-            x = raw_input()
-            if x == 'q':
-                cont = 0
-                print('Quit')
-                break
-            elif x == 'c':
-                cont2 = 0
-                break
-            else:
-                print('Nooooooo')
 
     starttime = time.time()
 
@@ -98,7 +98,7 @@ def main():
             print('List of active Devices:')
             for i in range(len(config_devices)):
                 print('%i: %s' % (i+1, config_devices[i][1]))
-            x = raw_input('Choose the number of a Device:')
+            x = input('Choose the number of a Device:')
             try:
                 x = int(x)
             except:

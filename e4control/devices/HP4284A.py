@@ -34,9 +34,10 @@ class HP4284A(Device):
         self.setIntegrationTimeAndAveragingRate('LONG', 1)
 
     def getValues(self):
-        sV = self.ask('*TRG')
-        fC = float(sV[0:12])
-        fR = float(sV[13:25])
+        uV = self.ask('*TRG')
+        sV = str.split(uV.encode(),',')
+        fC = float(sV[0])
+        fR = float(sV[1])
         return [fC, fR]
 
     def getR(self):
