@@ -4,6 +4,7 @@ import vxi11
 from pylink import TCPLink
 import serial
 
+
 class Device(object):
     com = None
     trm = '\r\n'
