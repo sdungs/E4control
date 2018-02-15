@@ -69,34 +69,7 @@ class LU114(Device):
         msg = self.ask('TEMP?').split(',')
         Tset = float(msg[1])
         return Tset
-
-    # Thermal cycling between Temp1 and Temp2, with waiting period (in minutes)
-    # after reaching set Temp for defined number of cycles
-    def ThermalCycling(self, Temp1, Temp2, t_wait, cycles):
-        for i in range(0, cycles):
-            self.setTemperature(Temp1)
-            arrived = False
-            while arrived == False:
-    # print('Checked if ramping is finished')
-                if self.RampingFinished(Temp1):
-                    time.sleep(t_wait * 60)
-                    arrived = True
-                time.sleep(30)
-            self.setTemperature(Temp2)
-            arrived = False
-            while arrived == False:
-                if self.RampingFinished(Temp2):
-                    time.sleep(t_wait * 60)
-                    arrived = True
-
-    def RampingFinished(self, Temp):
-        T_is = self.getTemperature()
-        if abs(T_is - Temp) <= 0.2:
-            return True
-        else:
-            print('Remaining temperature difference: ' + str(abs(T_is - Temp)))
-            return False
-
+    
     def userCmd(self, cmd):
         print("userCmd: %s" % cmd)
         return self.ask(cmd)
