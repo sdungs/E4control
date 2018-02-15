@@ -6,7 +6,7 @@ import time
 # clima = TCPLink('lan','129.217.167.99', 57732)
 
 
-class LU114:
+class LU114(Device):
     dv = None
     T_set = None
     Power = None
@@ -17,20 +17,20 @@ class LU114:
 # Turn Device on or Off an set Temperature to 20°C
     def enablePower(self, bEnable):
         if bEnable:
-            msg = self.dv.ask('POWER, ON')
+            msg = self.ask('POWER, ON')
             print(msg)
-            msg = self.dv.ask('MODE, CONSTANT')
+            msg = self.ask('MODE, CONSTANT')
             print(msg)
             self.Power = True
             self.setTemperature(20)
         else:
-            msg = self.dv.ask('MODE, STANDBY')
+            msg = self.ask('MODE, STANDBY')
             print(msg)
             self.setTemperature(20)
             self.Power = False
 
     def getPowerStatus(self):
-        msg = self.dv.ask('MODE, DETAIL?')
+        msg = self.ask('MODE, DETAIL?')
         if msg == 'STANDY':
             return False
         else:
@@ -42,9 +42,9 @@ class LU114:
             pass
 
     def getAndSetParameter(self):
-        self.dv.write('MODE, CONSTANT')
+        self.write('MODE, CONSTANT')
         time.sleep(0.5)
-        self.dv.write('TEMP, S20')
+        self.write('TEMP, S20')
         return self.dv.read()
 
     # def getAndSetParameter(self):
@@ -54,7 +54,7 @@ class LU114:
 
     def setTemperature(self, Temp):
         if self.Power:
-            msg = self.dv.ask('TEMP, S%s' % Temp)
+            msg = self.ask('TEMP, S%s' % Temp)
             self.T_set = Temp
             print(msg)
         else:
@@ -62,11 +62,11 @@ class LU114:
             self.setTemperature(Temp)
 
     def getTemperature(self):
-        msg = self.dv.ask('TEMP?').split(',')
+        msg = self.ask('TEMP?').split(',')
         return float(msg[0])
 
     def getSetTemperature(self):
-        msg = self.dv.ask('TEMP?').split(',')
+        msg = self.ask('TEMP?').split(',')
         Tset = float(msg[1])
         return Tset
 
@@ -99,8 +99,8 @@ class LU114:
 
     def userCmd(self, cmd):
         print("userCmd: %s" % cmd)
-        return self.dv.ask(cmd)
+        return self.ask(cmd)
 
     def close(self):
-        self.dv.close()
+        self.close()
         pass

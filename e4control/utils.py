@@ -15,6 +15,7 @@ from .devices import (
     K2410,
     SB22,
     TSX3510P,
+    LU114,
 )
 
 
