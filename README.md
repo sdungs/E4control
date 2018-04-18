@@ -15,6 +15,7 @@ Following devices are currently supported:
 - Keithley 2410 (Source Meter)
 - TTi TSX3510P (Power Supply)
 - Weiss SB22 (Climate Chamber)
+- Espec LU-114 (Climate Chamber)
 
 ## Scripts
 - *e4control_measure_IV* , to perform a current vs voltage measurement
