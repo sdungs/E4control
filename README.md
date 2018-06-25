@@ -16,11 +16,13 @@ Following devices are currently supported:
 - TTi TSX3510P (Power Supply)
 - Weiss SB22 (Climate Chamber)
 - Espec LU-114 (Climate Chamber)
+- SHT75 (Temperature & Humidity Sensor, connected to a RasPi)
 
 ## Scripts
 - *e4control_measure_IV* , to perform a current vs voltage measurement
 - *e4control_measure_CV* , to perform a capacity vs voltage measurement
 - *e4control_measure_It* , to perform a current vs time measurement
+- *e4controL_measure_Cint*, to perform a capcity vs. voltage measurement with hold for 'hold_t' at 'hold_v' for 'times' times
 - *e4control_testbeamDCS* , for manual real time device controlling
 
 
@@ -64,6 +66,27 @@ enter:
 - ndaqs   -> number of data acquistion at every set voltage | int
 - delay   -> delay after setting new voltage | int | in s
 - lcr_frequenz -> LCR meter frequenz | float | in Hz   
+
+example:  
+`e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`
+
+#### e4control_measure_Cint
+enter:  
+`e4control_measure_Cint V_min V_max output config -I_lim -I I_Lim -s V_steps -n ndaqs -d delay -f lcr_frequenz -times times
+-hold_V hold_v -hold_t hold_t`
+
+- V_min   -> starting voltage | float | in V
+- V_max   -> end voltage | float | in V
+- output  -> output directory name | string
+- config  -> config file name | string
+- V_steps -> number of voltage steps | int
+- ndaqs   -> number of data acquistion at every set voltage | int
+- delay   -> delay after setting new voltage | int | in s
+- lcr_frequenz -> LCR meter frequenz | float | in Hz
+- times -> number of times the routine is repeated | int
+- hold_V -> voltage applied during the 'hold' phase | float | in V
+- hold_t -> duration of the 'hold' phase | int | in s
+
 
 example:  
 `e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`

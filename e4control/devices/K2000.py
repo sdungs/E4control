@@ -33,6 +33,10 @@ class K2000(Device):
             self.setKind('DCV')
             self.setRange('R4')
             self.mode = 'V'
+        elif (sMode == 'I'):
+            self.setKind('DCI')
+            self.setRange('R0')
+            self.mode = 'I'
         else:
             print('Initializing not possible: Unknown mode!')
 
@@ -93,9 +97,10 @@ class K2000(Device):
         return float(sValue[4:])
 
     def getResistance(self, iChannel):
-        self.write('N%iX' % iChannel)
-        fR = self.getValue()
-        return fR
+        fR = self.ask('N%iX' % iChannel)
+        # self.write('N%iX' % iChannel)
+        # fR = self.getValue()
+        return float(fR[4:])
 
     def getVoltage(self, iChannel):
         self.write('N%iX' % iChannel)

@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'e4control_measure_IV = e4control.scripts.IVmeas:main',
             'e4control_measure_CV = e4control.scripts.CVmeas:main',
+            'e4control_measure_Cint = e4control_measure_Cint:main'
             'e4control_measure_It = e4control.scripts.Itmeas:main',
             'e4control_testbeamDCS = e4control.scripts.testbeamDCS:main',
         ]

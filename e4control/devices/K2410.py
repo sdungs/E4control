@@ -6,11 +6,12 @@ from .device import Device
 
 
 class K2410(Device):
-    rampSpeed_step = 5
+    rampSpeed_step = 10
     rampSpeed_delay = 1  # s
 
     def __init__(self, connection_type, host, port):
-        super(K2410, self).__init__(connection_type=connection_type, host=host, port=port)
+        super(K2410, self).__init__(
+            connection_type=connection_type, host=host, port=port)
 
     def userCmd(self, cmd):
         print('user cmd: %s' % cmd)
@@ -98,12 +99,14 @@ class K2410(Device):
     def rampVoltage(self, fVnew, iChannel=-1):
         V = self.getVoltage(iChannel)
         V = round(V, 4)
-        if abs(fVnew-V) <= self.rampSpeed_step:
+        if abs(fVnew - V) <= self.rampSpeed_step:
             self.setVoltage(fVnew, iChannel)
             print('Voltage reached: %.2f V' % fVnew)
         else:
-            self.setVoltage(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V))
-            print('Ramp Voltage: %.2f V' % (V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V)))
+            self.setVoltage(V + self.rampSpeed_step *
+                            (fVnew - V) / abs(fVnew - V))
+            print('Ramp Voltage: %.2f V' %
+                  (V + self.rampSpeed_step * (fVnew - V) / abs(fVnew - V)))
             sleep(self.rampSpeed_delay)
             self.rampVoltage(fVnew, iChannel)
             pass
@@ -120,7 +123,7 @@ class K2410(Device):
     def reset(self):
         self.write('*RST')
 
-    def output(self,  show=True):
+    def output(self, show=True):
         bPower = self.getEnableOutput()
         fLimit = self.getCurrentLimit() * 1E6
         if show:

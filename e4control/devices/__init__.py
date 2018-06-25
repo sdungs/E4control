@@ -9,6 +9,7 @@ from .K2410 import K2410
 from .SB22 import SB22
 from .TSX3510P import TSX3510P
 from .LU114 import LU114
+from .SHT75 import SHT75
 
 __all__ = [
     'HMP4040',
@@ -21,5 +22,6 @@ __all__ = [
     'K2410',
     'SB22',
     'TSX3510P',
-    'LU114'
+    'LU114',
+    'SHT75'
 ]

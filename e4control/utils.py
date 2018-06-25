@@ -16,6 +16,7 @@ from .devices import (
     SB22,
     TSX3510P,
     LU114,
+    SHT75,
 )
 
 
@@ -138,6 +139,10 @@ def device_connection(values):
             d.append(SB22(k[1], k[2], int(k[3])))
         elif k[0] == "TSX3510P":
             d.append(TSX3510P(k[1], k[2], int(k[3])))
+        elif k[0] == 'LU114':
+            d.append(LU114(k[1], k[2], int(k[3])))
+        elif k[0] == 'SHT75':
+            d.append(SHT75(k[1], k[2], int(k[3])))
         else:
             sys.exit("Unknown Device: %s" % k[0])
         ch.append(int(k[4]))
@@ -278,6 +283,14 @@ def connect_testbeamDCS_devices(devices):
             d.append(x)
         elif k[1] == "TSX3510P":
             x = TSX3510P(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "LU114":
+            x = LU114(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "SHT75":
+            x = SHT75(k[2], k[3], int(k[4]))
             x.initialize()
             d.append(x)
         else:

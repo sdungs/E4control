@@ -147,6 +147,10 @@ def main():
                 Ts.append(ts[2])
                 Ts.append(ts[3])
                 Ts.append(ts[4])
+            elif temperature_channel[n] == 2:
+                ts = temperature[n].getTemperature()
+                Ts.append(ts[0])
+                Ts.append(ts[1])
             else:
                 Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
 

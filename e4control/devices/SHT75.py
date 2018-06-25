@@ -1,52 +1,67 @@
-import time
-import socket
+# -*- coding: utf-8 -*-
+
+from socket import socket
+from .device import Device
+from subprocess import call
 
 
-class SHT75:
+class SHT75(Device):
     dv = None
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(2)
-    server_address = None
 
-    def __init__(self, adress):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # raspberry on top of the climate chamber in the new clean room
-        self.server_address = ('129.217.167.' + str(adress), 50000)
-        self.sock.connect(self.server_address)
+    def __init__(self, connection_type, host, port):
+        userAtHost = str("labuser@%s") % (self.host)
+        call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/SHT_Server.py"]) # this requires to run bash on the host, not dash (RasPi default!)
+        super(SHT75, self).__init__(connection_type=connection_type, host=host, port=port)
+        self.trm = ''
+
+    def initialize(self):
         pass
 
-    def close(self):
-        self.sock.close()
-
     def userCmd(self, cmd):
-        # send command
-        self.sock.send(cmd.encode())
-        # receive data
-        data = self.sock.recv(1024)
+        data = cmd.encode('utf-8')
+        data = self.ask(cmd)
         data = data.decode('utf-8')
         return data
 
-    def getValues(self):
-        data = self.userCmd('READ')
+    def getValues(self, channels=1): # one channels equals one sensor, thus touple of (Temperature, Humidity)
+        if channels == 1:
+            data = self.ask('READ')
+        elif channels == 2:
+            data = self.ask('READ2')
         data = data.split(',')
         buffer = []
-        for x in range(4):
-            buffer.append(float(data[x]))
+        buffer.append(float(data[0]))
+        buffer.append(float(data[1]))
+        if channels == 2:
+            buffer.append(float(data[2]))
+            buffer.append(float(data[3]))
         return buffer
 
-    def getTemperature(self, channels=2):
-        data = self.userCmd('READ')
-        #data = data.decode('utf-8')
+    def getTemperature(self, channels=1):
+        if channels == 1:
+            data = self.ask('READ')
+        elif channels == 2:
+            data = self.ask('READ2')
         data = data.split(',')
         temp = []
         temp.append(float(data[0]))
-        temp.append(float(data[1]))
+        if channels == 2:
+            temp.append(float(data[2]))
         return temp
 
-    def getHumidity(self):
-        data = self.userCmd('READ')
+    def getHumidity(self, channels=1):
+        if channels == 1:
+            data = self.ask('READ')
+        elif channels == 2:
+            data = self.ask('READ2')
         data = data.split(',')
         hum = []
-        hum.append(float(data[2]))
-        hum.append(float(data[3]))
+        hum.append(float(data[1]))
+        if channels == 2:
+            hum.append(float(data[3]))
         return hum
+
+
+# How to create a rsa-keypair to log on without password:
+# ssh-keygen
+# ssh-copy-id user@host
