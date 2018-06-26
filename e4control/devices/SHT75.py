@@ -9,9 +9,12 @@ class SHT75(Device):
     dv = None
 
     def __init__(self, connection_type, host, port):
-        userAtHost = str("labuser@%s") % (self.host)
-        call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/SHT_Server.py"]) # this requires to run bash on the host, not dash (RasPi default!)
+        # this requires to run bash on the host, not dash (RasPi default!)
+        # and screen has to be installed on the server-side / RasPi
+        #remember to make the StartServer.sh executable!
         super(SHT75, self).__init__(connection_type=connection_type, host=host, port=port)
+        userAtHost = str("labuser@%s") % (self.host)
+        call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/StartServer.sh"])
         self.trm = ''
 
     def initialize(self):

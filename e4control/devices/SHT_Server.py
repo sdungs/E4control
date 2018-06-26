@@ -1,7 +1,8 @@
 import socket
 from sht_sensor import Sht
-#declare sensor on pins 7 and 8
+#declare sensor on pins 14 and 4
 sens1 = Sht(14,4)
+#declare sensor on pins 8 and 11
 sens2 = Sht(8,11)
 #setup server/socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -28,7 +29,7 @@ try:
             elif data == 'READ':
                     temp1 = sens1.read_t()
                     hum1 =  round(sens1._read_rh(temp1),2)
-                    answer = str('%.2f' % temp1) + ',' +  str('%.2f' % temp1)
+                    answer = str('%.2f' % temp1) + ',' +  str('%.2f' % hum1)
                     komm.send(answer.encode())
                     print(answer)
             else:
