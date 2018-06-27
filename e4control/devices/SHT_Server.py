@@ -9,12 +9,11 @@ sens2 = Sht(8,11)
 #setup server/socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-def handler(signum, frame):
-    raise IOError('SHT not answering.')
+#def handler(signum, frame):
+#    raise IOError('SHT not answering.')
 
 try:
     s.bind(("",50000))
-    #s.bind("129.217.167.177", 50000))
     s.listen(1)
 
     while True:
@@ -26,17 +25,17 @@ try:
             data = data.decode('utf-8')
             if data == 'READ2':
                     signal.signal(signal.SIGALRM, handler)
-                    signal.alarm(3)
+                    #signal.alarm(1)
                     temp1 = sens1.read_t()
                     hum1 =  round(sens1._read_rh(temp1),2)
-                    temp2 = sens2.read_t()
-                    signal.alarm(0)
-                    except IOError:
-                        hum2 = hum1
+                    try:
+                        temp2 = sens2.read_t()
+                        hum2 =  round(sens2._read_rh(temp2),2)
+                        #signal.alarm(0)
+                    except:
                         temp2 = temp1
-                    else: 
-                    hum2 =  round(sens2._read_rh(temp2),2)
-                    answer = str('%.2f' % temp1) + ',' +  ',' + str('%.2f' % hum1) + ',' + str('%.2f' % temp2)  + str('%.2f' % hum2)
+                        hum2 = hum1
+                    answer = str('%.2f' % temp1) + ',' +  str('%.2f' % hum1) + ',' + str('%.2f' % temp2)  + ',' +  str('%.2f' % hum2)
                     komm.send(answer.encode())
                     print(answer)
             elif data == 'READ':
@@ -49,7 +48,6 @@ try:
                 answer = 'command unknown'
                 komm.send(answer.encode())
         break
-
 finally:
         print('\n Socket closed')
         s.close()
