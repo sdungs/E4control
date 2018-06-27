@@ -17,6 +17,7 @@ setup(
         'numpy',
         'matplotlib',
         'scipy',
+        'sht-sensor'
     ],
     entry_points={
         'console_scripts': [
