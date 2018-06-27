@@ -27,10 +27,10 @@ Following devices are currently supported:
 
 
 ## Installation
-Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet.
+Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the sht-sensor requires python 3 to run.
 1. download or clone this repository
 2. open a terminal and change directory to E4control
-3. to install enter: `pip install .`
+3. to install enter: `pip install .` (Again: pip3 needed.)
 4. *(add PATH to .bashrc)*
 
 ## How to run scripts?
