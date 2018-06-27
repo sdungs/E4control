@@ -10,7 +10,7 @@ sens2 = Sht(8,11)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 #def handler(signum, frame):
-#    raise IOError('SHT not answering.')
+#   raise IOError('SHT not answering.')
 
 try:
     s.bind(("",50000))
@@ -24,7 +24,7 @@ try:
             print(data)
             data = data.decode('utf-8')
             if data == 'READ2':
-                    signal.signal(signal.SIGALRM, handler)
+                   # signal.signal(signal.SIGALRM, handler)
                     #signal.alarm(1)
                     temp1 = sens1.read_t()
                     hum1 =  round(sens1._read_rh(temp1),2)
