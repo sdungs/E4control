@@ -30,10 +30,14 @@ try:
                     temp1 = sens1.read_t()
                     hum1 =  round(sens1._read_rh(temp1),2)
                     temp2 = sens2.read_t()
+                    signal.alarm(0)
+                    except IOError:
+                        hum2 = hum1
+                        temp2 = temp1
+                    else: 
                     hum2 =  round(sens2._read_rh(temp2),2)
                     answer = str('%.2f' % temp1) + ',' +  ',' + str('%.2f' % hum1) + ',' + str('%.2f' % temp2)  + str('%.2f' % hum2)
                     komm.send(answer.encode())
-                    signal.alarm(0)
                     print(answer)
             elif data == 'READ':
                     temp1 = sens1.read_t()
