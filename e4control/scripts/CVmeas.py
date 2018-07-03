@@ -46,12 +46,16 @@ def main():
     humidity_channel = []
     Vmeter = []
     Vmeter_channel = []
+    Ameter = []
+    Ameter_channel = []
     if devices['T']:
         temperature, temperature_channel = sh.device_connection(devices['T'])
     if devices['H']:
         humidity, humidity_channel = sh.device_connection(devices['H'])
     if devices['V']:
         Vmeter, Vmeter_channel = sh.device_connection(devices['V'])
+    if devices['I']:
+        Ameter, Ameter_channel = sh.device_connection(devices['I'])
 
     # set active source
     d = source[0]
@@ -78,6 +82,8 @@ def main():
         h.initialize('H')
     for v in Vmeter:
         v.initialize('V')
+    for a in Ameter:
+        a.initialize('I')
 
     # create directory
     argsoutput = sh.check_outputname(args.output)
@@ -121,6 +127,8 @@ def main():
     for v in Vmeter:
         header.append('V%i[V]' % vnumber)
         vnumber += 1
+    for a in Ameter:
+        header.append('A [uA]')
     sh.write_line(fw, header)
 
     # create value arrays
@@ -132,6 +140,7 @@ def main():
     Ts = []
     Hs = []
     Vs = []
+    As = []
 
     # live plot
     plt.ion()
@@ -160,6 +169,7 @@ def main():
         Ts = []
         Hs = []
         Vs = []
+        As = []
         for n in range(len(temperature)):
             if temperature_channel[n] == 50:
                 ts = temperature[n].getTempPT1000all()
@@ -173,6 +183,8 @@ def main():
 
         for n in range(len(humidity)):
             Hs.append(humidity[n].getVoltage(humidity_channel[n]))
+        for n in range(len(Ameter)):
+            As.append(Ameter[n].getCurrent(Ameter_channel[n]) * 1E6)
 
         l.getValues()
         time.sleep(0.1)
@@ -205,6 +217,8 @@ def main():
                 values.append(h)
             for v in Vmeter:
                 values.append(v)
+            for a in Amter:
+                values.append(a)
             sh.write_line(fw, values)
 
             Ns.append(j+1)

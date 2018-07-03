@@ -41,12 +41,16 @@ def main():
     humidity_channel = []
     Vmeter = []
     Vmeter_channel = []
+    Ameter = []
+    Ameter_channel = []
     if devices['T']:
         temperature, temperature_channel = sh.device_connection(devices['T'])
     if devices['H']:
         humidity, humidity_channel = sh.device_connection(devices['H'])
     if devices['V']:
         Vmeter, Vmeter_channel = sh.device_connection(devices['V'])
+    if devices['I']:
+        Ameter, Ameter_channel = sh.device_connection(devices['I'])
 
     # set active source
     d = source[0]
@@ -62,6 +66,8 @@ def main():
         h.initialize('H')
     for v in Vmeter:
         v.initialize('V')
+    for a in Ameter:
+        a.initialize('I')
 
     # Check Current limit
     sh.check_limits(d, ch, I_lim=args.I_lim)
@@ -98,6 +104,8 @@ def main():
         hvalue += 1
     for v in Vmeter:
         header.append('V[V]')
+    for a in Ameter:
+        header.append('A [uA]')
     sh.write_line(fw, header)
 
     # create value arrays
@@ -109,27 +117,28 @@ def main():
     Ts = []
     Hs = []
     Vs = []
+    As = []
 
     softLimit = False
 
     # live plot
-    plt.ion()
-    fig = plt.figure(figsize=(8, 8))
-    ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
-    ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
-    ax1.errorbar(Us, Imeans, yerr=Isem, fmt='o')
-    ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
-    ax1.set_ylabel(r'$I_{mean} $ $ [\mathrm{uA}]$')
-    ax1.set_title(r'IV curve')
-    ax2.plot(Ns, Is, 'o')
-    ax2.set_xlabel(r'$No.$')
-    ax2.set_ylabel(r'$I $ $ [\mathrm{uA}]$')
-    ax2.set_title(r'Voltage steps')
-    plt.tight_layout()
-    plt.pause(0.0001)
+    # plt.ion()
+    # fig = plt.figure(figsize=(8, 8))
+    # ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
+    # ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
+    # ax1.errorbar(Us, Imeans, yerr=Isem, fmt='o')
+    # ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
+    # ax1.set_ylabel(r'$I_{mean} $ $ [\mathrm{uA}]$')
+    # ax1.set_title(r'IV curve')
+    # ax2.plot(Ns, Is, 'o')
+    # ax2.set_xlabel(r'$No.$')
+    # ax2.set_ylabel(r'$I $ $ [\mathrm{uA}]$')
+    # ax2.set_title(r'Voltage steps')
+    # plt.tight_layout()
+    # plt.pause(0.0001)
 
     # start measurement
-    for i in xrange(args.v_steps):
+    for i in range(args.v_steps):
         voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
         print('Set voltage: %.2f V' % voltage)
         d.rampVoltage(voltage, ch)
@@ -139,6 +148,7 @@ def main():
         Ts = []
         Hs = []
         Vs = []
+        As = []
         for n in range(len(temperature)):
             if temperature_channel[n] == 50:
                 ts = temperature[n].getTempPT1000all()
@@ -160,7 +170,10 @@ def main():
         for n in range(len(Vmeter)):
             Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
 
-        for j in xrange(args.ndaqs):
+        for n in range(len(Ameter)):
+            As.append(Ameter[n].getCurrent(Ameter_channel[n]) * 1E6)
+
+        for j in range(args.ndaqs):
             getVoltage = d.getVoltage(ch)
             print('Get voltage: %.2f V' % (getVoltage))
             current = d.getCurrent(ch)*1E6
@@ -180,22 +193,24 @@ def main():
                 values.append(h)
             for v in Vs:
                 values.append(v)
+            for a in As:
+                values.append(a)
             sh.write_line(fw, values)
 
             Ns.append(j+1)
-            ax2.clear()
-            ax2.set_title(r'Voltage step : %0.2f V' % voltage)
-            ax2.set_xlabel(r'$No.$')
-            ax2.set_ylabel(r'$I $ $ [\mathrm{uA}]$')
-            ax2.plot(Ns, Is, 'r--o')
-            plt.pause(0.0001)
+            # ax2.clear()
+            # ax2.set_title(r'Voltage step : %0.2f V' % voltage)
+            # ax2.set_xlabel(r'$No.$')
+            # ax2.set_ylabel(r'$I $ $ [\mathrm{uA}]$')
+            # ax2.plot(Ns, Is, 'r--o')
+            # plt.pause(0.0001)
         if softLimit:
             break
         Us.append(voltage)
         Imeans.append(np.mean(Is))
         Isem.append(sem(Is))
-        ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
-        plt.pause(0.0001)
+       # ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
+       # plt.pause(0.0001)
 
     # ramp down voltage
     d.rampVoltage(0, ch)

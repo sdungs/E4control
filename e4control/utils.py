@@ -21,7 +21,7 @@ from .devices import (
 
 
 def read_config(configfile):
-    devices = {"S": [], "T": [], "H": [], "P": [], "L": [], "C": [], "V": []}
+    devices = {"S": [], "T": [], "H": [], "P": [], "L": [], "C": [], "V": [], "I": []}
     for line in open(configfile):
         m = line.replace("\n", "")
         n = m.split(" ")
@@ -45,6 +45,9 @@ def read_config(configfile):
             devices["C"].append([model, connection_type, host, port, channel])
         elif (x == "V"):
             devices["V"].append([model, connection_type, host, port, channel])
+        elif (x == "I"):
+            devices["I"].append([model, connection_type, host, port, channel])
+
         else:
             sys.exit("Unknown parameter while reading configfile!")
     return(devices)
@@ -81,6 +84,10 @@ def settings_query(device_list, v_min=None, v_max=None, v_steps=None, I_lim=None
     if device_list["V"]:
         print("Volt meter:")
         for i in device_list["V"]:
+            print(i)
+    if device_list["I"]:
+        print("Ampere meter:")
+        for i in device_list["I"]:
             print(i)
 
     print("------------------------------------------------")
