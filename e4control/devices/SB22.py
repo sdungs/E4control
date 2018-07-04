@@ -78,13 +78,13 @@ class SB22(Device):
         else:
             p = s.split('$')[1]
         line = p[p.find('R') + 1:p.find('R') + 8]
-        self.Power = line[0]
-        self.D2 = line[1]
-        self.D3 = line[2]
-        self.D4 = line[3]
-        self.D5 = line[4]
-        self.D6 = line[5]
-        self.D7 = line[6]
+        self.Power = int(line[0])
+        self.D2 = int(line[1])
+        self.D3 = int(line[2])
+        self.D4 = int(line[3])
+        self.D5 = int(line[4])
+        self.D6 = int(line[5])
+        self.D7 = int(line[6])
         self.T_set = p[p.find('T') + 1:p.find('F')]
         self.H_set = p[p.find('F') + 1:p.find('R')]
 
