@@ -41,24 +41,24 @@ class SB22(Device):
             B = B - J
             if (B < -255):
                 B = B + 256
-        B = 256 + B
-        J = B/16
+        B = int(256 + B)
+        J = int(B / 16)
         if (J < 10):
-            J = J + 48
+            J = int(J + 48)
         else:
-            J = J + 55
-        K = B % 16
+            J = int(J + 55)
+        K = int(B % 16)
         if (K < 10):
-            K = K + 48
+            K = int(K + 48)
         else:
-            K = K + 55
+            K = int(K + 55)
         result = chr(J) + chr(K)
         return result
 
     def updateChanges(self):
-        line = chr(2)+'1T%sF%sR%s%s%s%s%s%s%s000000000' % (self.T_set, self.H_set, self.Power, self.D2, self.D3, self.D4, self.D5, self.D6, self.D7)
+        line = chr(2) + '1T%sF%sR%s%s%s%s%s%s%s000000000' % (self.T_set, self.H_set, self.Power, self.D2, self.D3, self.D4, self.D5, self.D6, self.D7)
         pn = self.generateChecksum(line)
-        cmd = '%s%s' % (line, pn)+chr(3)
+        cmd = '%s%s' % (line, pn) + chr(3)
         self.write(cmd)
 
     def enablePower(self, bEnable):
@@ -69,7 +69,7 @@ class SB22(Device):
         self.updateChanges()
 
     def getStatus(self):
-        return self.ask(chr(2)+'1?8E\3'+chr(3))
+        return self.ask(chr(2) + '1?8E\3' + chr(3))
 
     def getAndSetParameter(self):
         s = self.getStatus()
@@ -77,7 +77,7 @@ class SB22(Device):
             p = s.split('#')[1]
         else:
             p = s.split('$')[1]
-        line = p[p.find('R')+1:p.find('R')+8]
+        line = p[p.find('R') + 1:p.find('R') + 8]
         self.Power = line[0]
         self.D2 = line[1]
         self.D3 = line[2]
@@ -85,8 +85,8 @@ class SB22(Device):
         self.D5 = line[4]
         self.D6 = line[5]
         self.D7 = line[6]
-        self.T_set = p[p.find('T')+1:p.find('F')]
-        self.H_set = p[p.find('F')+1:p.find('R')]
+        self.T_set = p[p.find('T') + 1:p.find('F')]
+        self.H_set = p[p.find('F') + 1:p.find('R')]
 
     def setTemperature(self, fValue):
         self.T_set = '%.1f' % fValue
@@ -101,7 +101,7 @@ class SB22(Device):
             p = s.split('#')[0]
         else:
             p = s.split('$')[0]
-        v = p[p.find('T')+1:p.find('F')]
+        v = p[p.find('T') + 1:p.find('F')]
         v = v.replace('&', '.')
         return float(v)
 
@@ -118,15 +118,15 @@ class SB22(Device):
             p = s.split('#')[0]
         else:
             p = s.split('$')[0]
-        v = p[p.find('F')+1:p.find('P')]
+        v = p[p.find('F') + 1:p.find('P')]
         return int(v)
 
     def getError(self):
         sStatus = self.getStatus()
         if (sStatus.find('#') >= 0):
-            sError = sStatus[sStatus.find('#')+1:sStatus.find('T')]
+            sError = sStatus[sStatus.find('#') + 1:sStatus.find('T')]
         else:
-            sError = sStatus[sStatus.find('$')+1:sStatus.find('T')]
+            sError = sStatus[sStatus.find('$') + 1:sStatus.find('T')]
         return sError
 
     def setOperationMode(self, sMode):
@@ -175,7 +175,7 @@ class SB22(Device):
         else:
             self.D7 = '0'
 
-    def output(self,  show=True):
+    def output(self, show=True):
         sMode = self.getOperationMode()
         bPower = self.Power
         if show:
