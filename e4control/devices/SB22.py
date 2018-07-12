@@ -204,11 +204,11 @@ class SB22(Device):
         print('2: change Mode')
         print('3: set new Temperature')
         print('4: set new Humidity')
-        x = raw_input('Number? \n')
+        x = input('Number? \n')
         while x != '1' and x != '2' and x != '3' and x != '4':
-            x = raw_input('Possible Inputs: 1,2,3 or 4! \n')
+            x = input('Possible Inputs: 1,2,3 or 4! \n')
         if x == '1':
-            bO = raw_input('Please enter ON or OFF! \n')
+            bO = input('Please enter ON or OFF! \n')
             if bO == 'ON' or bO == 'on':
                 self.enablePower(1)
             elif bO == 'OFF' or bO == 'off':
@@ -216,14 +216,14 @@ class SB22(Device):
             else:
                 pass
         elif x == '2':
-            sM = raw_input('choose: climate or normal \n')
+            sM = input('choose: climate or normal \n')
             self.setOperationMode(sM)
         elif x == '3':
-            fT = raw_input('Please enter new Temperature in °C \n')
+            fT = input('Please enter new Temperature in °C \n')
             self.setTemperature(float(fT))
         elif x == '4':
             if (self.D2 == '0'):
-                fH = raw_input('Please enter new Humidity \n')
+                fH = input('Please enter new Humidity \n')
                 self.setHumidity(float(fH))
             else:
                 print('Please change mode to climate before!')

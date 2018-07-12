@@ -100,11 +100,11 @@ class JULABO(Device):
         print('1: enable Power')
         print('2: change Mode')
         print('3: set new Temperature')
-        x = raw_input('Number? \n')
+        x = input('Number? \n')
         while x != '1' and x != '2' and x != '3':
-            x = raw_input('Possible Inputs: 1,2 or 3! \n')
+            x = input('Possible Inputs: 1,2 or 3! \n')
         if x == '1':
-            bO = raw_input('Please enter ON or OFF! \n')
+            bO = input('Please enter ON or OFF! \n')
             if bO == 'ON' or bO == 'on':
                 self.enablePower(1)
             elif bO == 'OFF' or bO == 'off':
@@ -112,9 +112,9 @@ class JULABO(Device):
             else:
                 pass
         elif x == '2':
-            sM = raw_input('choose: int or ext \n')
+            sM = input('choose: int or ext \n')
             self.setOperationMode(sM)
         elif x == '3':
-            fT = raw_input('Please enter new Temperature in °C \n')
+            fT = input('Please enter new Temperature in °C \n')
             self.setTemperature(float(fT))
             time.sleep(0.5)

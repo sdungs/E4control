@@ -136,16 +136,16 @@ class K487(Device):
     def interaction(self):
         print('1: enable Output')
         print('2: set Voltage')
-        x = raw_input('Number? \n')
+        x = input('Number? \n')
         while x != '1' and x != '2':
-            x = raw_input('Possible Inputs: 1 or 2! \n')
+            x = input('Possible Inputs: 1 or 2! \n')
         if x == '1':
-            bO = raw_input('Please enter ON or OFF! \n')
+            bO = input('Please enter ON or OFF! \n')
             if bO == 'ON' or bO == 'on':
                 self.enableOutput(True)
             else:
                 self.rampVoltage(0)
                 self.enableOutput(False)
         elif x == '2':
-            fV = raw_input('Please enter new Voltage in V \n')
+            fV = input('Please enter new Voltage in V \n')
             self.rampVoltage(float(fV))
