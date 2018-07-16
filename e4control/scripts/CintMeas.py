@@ -29,7 +29,7 @@ parser.add_argument('-l', '--lvolt', type=float)
 parser.add_argument('-m', '--mode', type=str)
 parser.add_argument('-i', '--integration', type=str)
 parser.add_argument('-times', '--times of ramps', type=int, default=1)
-parser.add_argument('-hold_V', '--voltage during hold', type=float, default=args.v_max)
+parser.add_argument('-hold_V', '--voltage during hold', type=float)
 parser.add_argument('-hold_t', '--time of the hold in seconds', type=int, default=3600)
 
 
