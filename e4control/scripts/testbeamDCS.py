@@ -83,9 +83,16 @@ def main():
             print(' \033[35m CONTROL CENTER \t ' + 'runtime: %.0f min %.0f s \033[0m' % (h, s*60))
             print('-----------------------------------------------------')
             for d in devices:
-                h, v = d.output()
-                values += v
-                print('-----------------------------------------------------')
+                try:
+                    h, v = d.output()
+                    values += v
+                    print('-----------------------------------------------------')
+                except:
+                    h = []
+                    v = []
+                    h, v = d.output()
+                    values += v
+                    print('-----------------------------------------------------')
             print('press c (=CHANGE PARAMETER) or q (=QUIT) and ENTER')
             print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
             print('')

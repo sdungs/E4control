@@ -40,10 +40,10 @@ class LU114(Device):
         pass
 
     def getAndSetParameter(self):
-        self.write('MODE, CONSTANT')
-        time.sleep(0.5)
+        #self.write('MODE, CONSTANT')
+        #time.sleep(0.5)
         self.write('TEMP, S20')
-        self.Power = True
+        #self.Power = True
         return self.read()
 
     # def getAndSetParameter(self):
