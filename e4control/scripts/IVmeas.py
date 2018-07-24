@@ -23,6 +23,7 @@ parser.add_argument('-I', '--I_lim', help='current limit (uA)', type=float, defa
 parser.add_argument('-s', '--v_steps', help='number of volt steps', type=int, default=2)
 parser.add_argument('-n', '--ndaqs', type=int, default=10)
 parser.add_argument('-d', '--delay', type=int, default=1)
+parser.add_argument('-p', '--livePlot', type=bool, default = True)
 
 
 def main():
@@ -122,20 +123,21 @@ def main():
     softLimit = False
 
     # live plot
-    # plt.ion()
-    # fig = plt.figure(figsize=(8, 8))
-    # ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
-    # ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
-    # ax1.errorbar(Us, Imeans, yerr=Isem, fmt='o')
-    # ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
-    # ax1.set_ylabel(r'$I_{mean} $ $ [\mathrm{uA}]$')
-    # ax1.set_title(r'IV curve')
-    # ax2.plot(Ns, Is, 'o')
-    # ax2.set_xlabel(r'$No.$')
-    # ax2.set_ylabel(r'$I $ $ [\mathrm{uA}]$')
-    # ax2.set_title(r'Voltage steps')
-    # plt.tight_layout()
-    # plt.pause(0.0001)
+    if args.livePlot:
+        plt.ion()
+        fig = plt.figure(figsize=(8, 8))
+        ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
+        ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
+        ax1.errorbar(Us, Imeans, yerr=Isem, fmt='o')
+        ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
+        ax1.set_ylabel(r'$I_{mean} $ $ [\mathrm{uA}]$')
+        ax1.set_title(r'IV curve')
+        ax2.plot(Ns, Is, 'o')
+        ax2.set_xlabel(r'$No.$')
+        ax2.set_ylabel(r'$I $ $ [\mathrm{uA}]$')
+        ax2.set_title(r'Voltage steps')
+        plt.tight_layout()
+        plt.pause(0.0001)
 
     # start measurement
     for i in range(args.v_steps):
@@ -198,19 +200,21 @@ def main():
             sh.write_line(fw, values)
 
             Ns.append(j+1)
-            # ax2.clear()
-            # ax2.set_title(r'Voltage step : %0.2f V' % voltage)
-            # ax2.set_xlabel(r'$No.$')
-            # ax2.set_ylabel(r'$I $ $ [\mathrm{uA}]$')
-            # ax2.plot(Ns, Is, 'r--o')
-            # plt.pause(0.0001)
+            if args.livePlot:
+                ax2.clear()
+                ax2.set_title(r'Voltage step : %0.2f V' % voltage)
+                ax2.set_xlabel(r'$No.$')
+                ax2.set_ylabel(r'$I $ $ [\mathrm{uA}]$')
+                ax2.plot(Ns, Is, 'r--o')
+                plt.pause(0.0001)
         if softLimit:
             break
         Us.append(voltage)
         Imeans.append(np.mean(Is))
         Isem.append(sem(Is))
-       # ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
-       # plt.pause(0.0001)
+        if args.livePlot:
+           ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
+           plt.pause(0.0001)
 
     # ramp down voltage
     d.rampVoltage(0, ch)

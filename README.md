@@ -40,7 +40,7 @@ In the first column the purpose of the respective device is written (S = source 
 
 #### e4control_measure_IV
 enter:  
-`e4control_measure_IV V_min V_max output config -I I_lim -s V_steps -n ndaqs -d delay `
+`e4control_measure_IV V_min V_max output config -I I_lim -s V_steps -n ndaqs -d delay -p livePlot`
 
 - V_min   -> starting voltage | float | in V
 - V_max   -> end voltage | float | in V
@@ -50,13 +50,14 @@ enter:
 - V_steps -> number of voltage steps | int
 - ndaqs   -> number of data acquistion at every set voltage | int
 - delay   -> delay after setting new voltage | int | in s
+- livePlot-> show live plot | bool
 
 example:  
 `e4control_measure_IV 0 100 meas_1 config_IV -I 3 -s 11 -n 5 -d 2 `
 
 #### e4control_measure_CV
 enter:  
-`e4control_measure_CV V_min V_max output config -s V_steps -n ndaqs -d delay -f lcr_frequenz`
+`e4control_measure_CV V_min V_max output config -s V_steps -n ndaqs -d delay -f lcr_frequenz -p livePlot`
 
 - V_min   -> starting voltage | float | in V
 - V_max   -> end voltage | float | in V
@@ -65,7 +66,8 @@ enter:
 - V_steps -> number of voltage steps | int
 - ndaqs   -> number of data acquistion at every set voltage | int
 - delay   -> delay after setting new voltage | int | in s
-- lcr_frequenz -> LCR meter frequenz | float | in Hz   
+- lcr_frequenz -> LCR meter frequenz | float | in Hz
+- livePlot-> show live plot | bool
 
 example:  
 `e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`

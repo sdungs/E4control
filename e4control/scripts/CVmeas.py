@@ -26,6 +26,7 @@ parser.add_argument('-f', '--frequenz', type=float)
 parser.add_argument('-l', '--lvolt', type=float)
 parser.add_argument('-m', '--mode', type=str)
 parser.add_argument('-i', '--integration', type=str)
+parser.add_argument('-p', '--livePlot', type=bool, default = True)
 
 
 def main():
@@ -143,20 +144,21 @@ def main():
     As = []
 
     # live plot
-    plt.ion()
-    fig = plt.figure(figsize=(8, 8))
-    ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
-    ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
-    ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='o')
-    ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
-    ax1.set_ylabel(r'$C_{mean} $ $ [\mathrm{pF}]$')
-    ax1.set_title(r'CV curve')
-    ax2.plot(Ns, Cs, 'o')
-    ax2.set_xlabel(r'$No.$')
-    ax2.set_ylabel(r'$C $ $ [\mathrm{pF}]$')
-    ax2.set_title(r'Voltage steps')
-    plt.tight_layout()
-    plt.pause(0.0001)
+    if args.livePlot:
+        plt.ion()
+        fig = plt.figure(figsize=(8, 8))
+        ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
+        ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
+        ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='o')
+        ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
+        ax1.set_ylabel(r'$C_{mean} $ $ [\mathrm{pF}]$')
+        ax1.set_title(r'CV curve')
+        ax2.plot(Ns, Cs, 'o')
+        ax2.set_xlabel(r'$No.$')
+        ax2.set_ylabel(r'$C $ $ [\mathrm{pF}]$')
+        ax2.set_title(r'Voltage steps')
+        plt.tight_layout()
+        plt.pause(0.0001)
 
     # start measurement
     for i in xrange(args.v_steps):
@@ -222,17 +224,19 @@ def main():
             sh.write_line(fw, values)
 
             Ns.append(j+1)
-            ax2.clear()
-            ax2.set_title(r'Voltage step : %0.2f V' % voltage)
-            ax2.set_xlabel(r'$No.$')
-            ax2.set_ylabel(r'$C $ $ [\mathrm{pF}]$')
-            ax2.plot(Ns, Cs, 'r--o')
-            plt.pause(0.0001)
+            if args.livePlot:
+                ax2.clear()
+                ax2.set_title(r'Voltage step : %0.2f V' % voltage)
+                ax2.set_xlabel(r'$No.$')
+                ax2.set_ylabel(r'$C $ $ [\mathrm{pF}]$')
+                ax2.plot(Ns, Cs, 'r--o')
+                plt.pause(0.0001)
         Us.append(voltage)
         Cmeans.append(np.mean(Cs))
         Csem.append(sem(Cs))
-        ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
-        plt.pause(0.0001)
+        if args.livePlot:
+            ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
+            plt.pause(0.0001)
 
     # ramp down voltage
     d.rampVoltage(0, ch)
