@@ -7,7 +7,7 @@ sens1 = Sht(14,4)
 #declare sensor on pins 8 and 11
 sens2 = Sht(8,11)
 #Possibility to add third sensor for Elenas purpose:
-sens3 =  Sht(20,26) 
+sens3 =  Sht(20,26, voltage='5V') 
 
 #setup server/socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -51,12 +51,12 @@ try:
             elif data == 'READ3':
             	    temp = []
             	    hum = []
-            	    np.append(temp, round(sens1.read_t(),2))
-            	    np.append(temp, round(sens2.read_t(),2))
-            	    np.append(temp, round(sens3.read_t(),2))
-            	    np.append(hum, round(sens1.read_rh(),2))
-            	    np.append(hum, round(sens2.read_rh(),2))
-            	    np.append(hum, round(sens3.read_rh(),2))
+            	    temp.append(round(sens1.read_t(),2))
+            	    temp.append(round(sens2.read_t(),2))
+            	    temp.append(round(sens3.read_t(),2))
+            	    hum.append(round(sens1.read_rh(),2))
+            	    hum.append(round(sens2.read_rh(),2))
+            	    hum.append(round(sens3.read_rh(),2))
             	    answer = str('%.2f' % temp[0]) + ',' +  str('%.2f' % hum[0]) + ',' + str('%.2f' % temp[1])  + ',' +  str('%.2f' % hum[1]) + ',' + str('%.2f' % temp[2])  + ',' +  str('%.2f' % hum[2])
             	    komm.send(answer.encode())
             	    print(answer)
