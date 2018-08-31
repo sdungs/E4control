@@ -46,14 +46,23 @@ class SHT75(Device):
         elif channels == 2:
             data = self.ask('READ2')
         elif channels == 3:
+<<<<<<< HEAD
             data = self.ask('READ3')
+=======
+	    data = self.ask('READ3')
+>>>>>>> 338213ab5c5394226b07545a10c80d324bc90b79
         data = data.split(',')
         temp = []
         temp.append(float(data[0]))
         if channels >= 2:
             temp.append(float(data[2]))
+<<<<<<< HEAD
         if channels == 3:
             temp.append(float(data[4]))
+=======
+	elif channels ==3:
+        temp.append(float(data[4]))
+>>>>>>> 338213ab5c5394226b07545a10c80d324bc90b79
         return temp
 
     def getHumidity(self, channels=1):
@@ -61,15 +70,26 @@ class SHT75(Device):
             data = self.ask('READ')
         elif channels == 2:
             data = self.ask('READ2')
+<<<<<<< HEAD
         elif channels == 3:
             data = self.ask('READ3')
             data = data.split(',')
+=======
+	    elif channels == 3:
+	        data = self.ask('READ3')
+    	data = data.split(',')
+>>>>>>> 338213ab5c5394226b07545a10c80d324bc90b79
         hum = []
         hum.append(float(data[1]))
         if channels >= 2:
             hum.append(float(data[3]))
+<<<<<<< HEAD
         if channels == 3:
             hum.append(float(data[5]))
+=======
+	    elif channels == 3: 
+        hum.append(float(data[5]))
+>>>>>>> 338213ab5c5394226b07545a10c80d324bc90b79
         return hum
 
 
