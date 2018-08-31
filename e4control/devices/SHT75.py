@@ -11,7 +11,7 @@ class SHT75(Device):
     def __init__(self, connection_type, host, port):
         # this requires to run bash on the host, not dash (RasPi default!)
         # and screen has to be installed on the server-side / RasPi
-        #remember to make the StartServer.sh executable!
+        # remember to make the StartServer.sh executable!
         super(SHT75, self).__init__(connection_type=connection_type, host=host, port=port)
         userAtHost = str("labuser@%s") % (self.host)
         call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/StartServer.sh"])
@@ -26,7 +26,7 @@ class SHT75(Device):
         data = data.decode('utf-8')
         return data
 
-    def getValues(self, channels=1): # one channels equals one sensor, thus touple of (Temperature, Humidity)
+    def getValues(self, channels=1):  # one channels equals one sensor, thus touple of (Temperature, Humidity)
         if channels == 1:
             data = self.ask('READ')
         elif channels == 2:
@@ -46,23 +46,15 @@ class SHT75(Device):
         elif channels == 2:
             data = self.ask('READ2')
         elif channels == 3:
-<<<<<<< HEAD
             data = self.ask('READ3')
-=======
-	    data = self.ask('READ3')
->>>>>>> 338213ab5c5394226b07545a10c80d324bc90b79
+        data = self.ask('READ3')
         data = data.split(',')
         temp = []
         temp.append(float(data[0]))
         if channels >= 2:
             temp.append(float(data[2]))
-<<<<<<< HEAD
         if channels == 3:
             temp.append(float(data[4]))
-=======
-	elif channels ==3:
-        temp.append(float(data[4]))
->>>>>>> 338213ab5c5394226b07545a10c80d324bc90b79
         return temp
 
     def getHumidity(self, channels=1):
@@ -70,26 +62,18 @@ class SHT75(Device):
             data = self.ask('READ')
         elif channels == 2:
             data = self.ask('READ2')
-<<<<<<< HEAD
         elif channels == 3:
             data = self.ask('READ3')
             data = data.split(',')
-=======
-	    elif channels == 3:
-	        data = self.ask('READ3')
-    	data = data.split(',')
->>>>>>> 338213ab5c5394226b07545a10c80d324bc90b79
+        elif channels == 3:
+            data = self.ask('READ3')
+        data = data.split(',')
         hum = []
         hum.append(float(data[1]))
         if channels >= 2:
             hum.append(float(data[3]))
-<<<<<<< HEAD
         if channels == 3:
             hum.append(float(data[5]))
-=======
-	    elif channels == 3: 
-        hum.append(float(data[5]))
->>>>>>> 338213ab5c5394226b07545a10c80d324bc90b79
         return hum
 
 
