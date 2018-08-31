@@ -47,7 +47,6 @@ class SHT75(Device):
             data = self.ask('READ2')
         elif channels == 3:
             data = self.ask('READ3')
-        data = self.ask('READ3')
         data = data.split(',')
         temp = []
         temp.append(float(data[0]))
