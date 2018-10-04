@@ -15,6 +15,12 @@ class HMP4040(Device):
     def initialize(self):
         pass
 
+    def enablePower(self, bValue):
+        self.write('OUTP:GEN %i' % bValue)
+
+    def getEnablePower(self):
+        return self.ask('OUTP:GEN?')
+
     def setVoltageLimit(self, iOutput, fValue):
         self.write('INST OUT%i' % iOutput)
         self.write('VOLT:PROT %f' % fValue)
