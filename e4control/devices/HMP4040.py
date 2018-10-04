@@ -15,43 +15,57 @@ class HMP4040(Device):
     def initialize(self):
         pass
 
+    #Global power (=OUTPUT button on PS)
     def enablePower(self, bValue):
         self.write('OUTP:GEN %i' % bValue)
 
     def getEnablePower(self):
         return self.ask('OUTP:GEN?')
 
+    #Output for individual channels
+    def enableOutput(self, iOutput, bValue):
+        self.write('INST OUT%i' % iOutput)
+        self.write('OUTP %i' % bvalue)
+
+    def getEnableOutput(self, iOutput):
+        self.write('INST OUT%i' % iOutput)
+        return self.ask('OUTP?')
+
+    #Over voltage protection
     def setVoltageLimit(self, iOutput, fValue):
         self.write('INST OUT%i' % iOutput)
         self.write('VOLT:PROT %f' % fValue)
 
+    def getVoltageLimit(self, iOutput):
+        self.write('INST OUT%i' % iOutput)
+        return float(self.ask('VOLT:PROT?'))
+
+    #Nominal voltage to apply
     def setVoltage(self, iOutput, fValue):
         self.write('INST OUT%i' % iOutput)
         self.write('VOLT %f' % fValue)
 
+    def getVoltage(self, iOutput):
+        self.write('INST OUT%i' % iOutput)
+        return float(self.ask('VOLT?'))
+
+    def measVoltage(self, iOutput):
+        self.write('INST OUT%i' % iOutput)
+        return float(self.ask('MEAS:VOLT?'))
+
+    #Current (limit)
     def setCurrent(self, iOutput, fValue):
         self.write('INST OUT%i' % iOutput)
         self.write('CURR %f' % fValue)
 
-    def getVoltage(self, iOutput):
+    def getCurrent(self, iOutput):
         self.write('INST OUT%i' % iOutput)
-        return float(self.ask('MEAS:VOLT?'))
+        return float(self.ask('CURR?'))
 
     def getCurrent(self, iOutput):
         self.write('INST OUT%i' % iOutput)
         return float(self.ask('MEAS:CURR?'))
 
-    def enableOutput(self, iOutput, bValue):
-        if bValue:
-            self.write('INST OUT%i' % iOutput)
-            self.write('OUTP ON')
-        else:
-            self.write('INST OUT%i' % iOutput)
-            self.write('OUTP OFF')
-
-    def getEnableOutput(self, iOutput):
-        self.write('INST OUT%i' % iOutput)
-        return self.ask('OUTP?')
 
     def output(self, show=True):
         bPower = []
@@ -63,8 +77,8 @@ class HMP4040(Device):
         i = 1
         while i <= 4:
             a = self.getEnableOutput(i)
-            b = self.getVoltage(i)
-            c = self.getCurrent(i)
+            b = self.measVoltage(i)
+            c = self.measCurrent(i)
             bPower.append(a)
             fVoltage.append(b)
             fCurrent.append(c)
