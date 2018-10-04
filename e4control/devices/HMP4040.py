@@ -62,7 +62,7 @@ class HMP4040(Device):
         self.write('INST OUT%i' % iOutput)
         return float(self.ask('CURR?'))
 
-    def getCurrent(self, iOutput):
+    def measCurrent(self, iOutput):
         self.write('INST OUT%i' % iOutput)
         return float(self.ask('MEAS:CURR?'))
 
