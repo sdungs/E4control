@@ -22,7 +22,7 @@ parser.add_argument('config', help='config file')
 parser.add_argument('-I', '--I_lim', help='current limit (uA)', type=float, default=3)
 parser.add_argument('-s', '--v_steps', help='number of volt steps', type=int, default=2)
 parser.add_argument('-n', '--ndaqs', type=int, default=10)
-parser.add_argument('-d', '--delay', type=int, default=1)
+parser.add_argument('-d', '--delay', type=int, default=5)
 parser.add_argument('-p', '--livePlot', type=bool, default = True)
 
 
