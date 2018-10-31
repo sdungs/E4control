@@ -139,7 +139,7 @@ def main():
                     Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
             for n in range(len(humidity)):
                 Hs.append(humidity[n].getVoltage(humidity_channel[n]))
-            for j in xrange(args.ndaqs):
+            for j in range(args.ndaqs):
                 timestamp = time.time()
                 values = [timestamp, k]
                 iS = 0

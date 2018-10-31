@@ -150,7 +150,7 @@ def main():
     plt.pause(0.0001)
 
     # start measurement
-    for i in xrange(args.v_steps):
+    for i in range(args.v_steps):
         voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
         print('Set voltage: %.2f V' % voltage)
         d.rampVoltage(voltage, ch)
@@ -181,7 +181,7 @@ def main():
         l.getValues()
         time.sleep(0.1)
 
-        for j in xrange(args.ndaqs):
+        for j in range(args.ndaqs):
             getVoltage = d.getVoltage(ch)
             print('Get voltage: %.2f V' % (getVoltage))
             getCurrent = d.getCurrent(ch)*1E6
