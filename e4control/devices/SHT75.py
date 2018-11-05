@@ -74,6 +74,9 @@ class SHT75(Device):
         if channels == 3:
             hum.append(float(data[5]))
         return hum
+    def close(self):
+        self.write('CLOSE')
+        pass
 
 
 # How to create a rsa-keypair to log on without password:

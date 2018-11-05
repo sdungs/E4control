@@ -60,6 +60,8 @@ try:
             	    answer = str('%.2f' % temp[0]) + ',' +  str('%.2f' % hum[0]) + ',' + str('%.2f' % temp[1])  + ',' +  str('%.2f' % hum[1]) + ',' + str('%.2f' % temp[2])  + ',' +  str('%.2f' % hum[2])
             	    komm.send(answer.encode())
             	    print(answer)
+            elif data == 'CLOSE':
+                break
 
             else:
                 answer = 'command unknown'
