@@ -167,7 +167,10 @@ def main():
                 Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
 
         for n in range(len(humidity)):
-            Hs.append(humidity[n].getVoltage(humidity_channel[n]))
+            if humidity[n].connection_type == 'lan':
+                Hs.append(humidity[n].getHumidity(humidity_channel[n]))
+            else:
+                Hs.append(humidity[n].getVoltage(humidity_channel[n]))
 
         for n in range(len(Vmeter)):
             Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))

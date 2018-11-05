@@ -17,7 +17,7 @@ class SHT75(Device):
         call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/StartServer.sh"])
         self.trm = ''
 
-    def initialize(self, kind):
+    def initialize(self, sMode):
         pass
 
     def userCmd(self, cmd):
