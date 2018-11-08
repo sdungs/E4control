@@ -151,6 +151,8 @@ def device_connection(values):
             d.append(LU114(k[1], k[2], int(k[3])))
         elif k[0] == 'SHT75':
             d.append(SHT75(k[1], k[2], int(k[3])))
+        elif k[0] == 'HUBER':
+            d.append(HUBER(k[1], k[2], int(k[3])))
         else:
             sys.exit("Unknown Device: %s" % k[0])
         ch.append(int(k[4]))
@@ -299,6 +301,10 @@ def connect_testbeamDCS_devices(devices):
             d.append(x)
         elif k[1] == "SHT75":
             x = SHT75(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "HUBER":
+            x = HUBER(k[2], k[3], k[4])
             x.initialize()
             d.append(x)
         else:

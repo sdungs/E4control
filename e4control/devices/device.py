@@ -24,6 +24,9 @@ class Device(object):
         elif (connection_type == 'gpib'):
             sPort = 'gpib0,%i' % port
             self.com = vxi11.Instrument(host, sPort)
+        elif (connection_type == 'gpibSerial'):
+            sPort = 'COM1,488'
+            self.com = vxi11.Instrument(host,sPort)
         elif (connection_type == 'usb'):
             self.com = serial.Serial(host, 9600)
 
