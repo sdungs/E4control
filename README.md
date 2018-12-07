@@ -35,12 +35,12 @@ Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is no
 
 ## How to run scripts?
 #### config file
-A config file with all used devices is needed for every script. For an example see [exampleConfig](https://github.com/sdungs/E4control/blob/master/exampleConfig).
-In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. *For the testbeamDCS config file the port coulumn must be empty.* The coulums are seperated by a single space.
+A config file with all used devices is needed for every script. For an example see [exampleConfig](exampleConfig).
+In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. *For the testbeamDCS config file the port column must be empty.* The colums are seperated by a single space.
 
 #### e4control_measure_IV
 enter:  
-`e4control_measure_IV V_min V_max output config -I I_lim -s V_steps -n ndaqs -d delay -p livePlot`
+`e4control_measure_IV V_min V_max output config -I I_lim -s V_steps -n ndaqs -d delay -noLivePlot`
 
 - V_min   -> starting voltage | float | in V
 - V_max   -> end voltage | float | in V
@@ -50,7 +50,7 @@ enter:
 - V_steps -> number of voltage steps | int
 - ndaqs   -> number of data acquistion at every set voltage | int
 - delay   -> delay after setting new voltage | int | in s
-- livePlot-> show live plot | bool
+- noLivePlot-> hide live plot | flag
 
 example:  
 `e4control_measure_IV 0 100 meas_1 config_IV -I 3 -s 11 -n 5 -d 2 `
