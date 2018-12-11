@@ -19,14 +19,14 @@ parser.add_argument('v_min', help='min voltage (V)', type=float)
 parser.add_argument('v_max', help='max voltage (V)', type=float)
 parser.add_argument('output', help='output file')
 parser.add_argument('config', help='config file')
-parser.add_argument('-s', '--v_steps', help='number of volt steps', type=int, default=2)
-parser.add_argument('-n', '--ndaqs', type=int, default=5)
-parser.add_argument('-d', '--delay', type=int, default=1)
-parser.add_argument('-f', '--frequenz', type=float)
+parser.add_argument('-s', '--v_steps', help='number of voltage steps', type=int, default=2)
+parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=5', type=int, default=5)
+parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=1', type=int, default=1)
+parser.add_argument('-f', '--frequency', help='measuring frequency of the LCR meter', type=float)
 parser.add_argument('-l', '--lvolt', type=float)
 parser.add_argument('-m', '--mode', type=str)
 parser.add_argument('-i', '--integration', type=str)
-parser.add_argument('-p', '--livePlot', type=bool, default = True)
+parser.add_argument('-p', '--noLivePlot', help='disables the livePlot', action='store_true')
 
 
 def main():
@@ -36,7 +36,7 @@ def main():
     devices = sh.read_config(args.config)
 
     # create setting query
-    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, ndaqs=args.ndaqs, lcr_freq=args.frequenz, lcr_volt=args.lvolt, lcr_aper=args.integration, lcr_mode=args.mode)
+    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, ndaqs=args.ndaqs, lcr_freq=args.frequency, lcr_volt=args.lvolt, lcr_aper=args.integration, lcr_mode=args.mode)
 
     # connection
     source, source_channel = sh.device_connection(devices['S'])
@@ -69,8 +69,8 @@ def main():
     d.setVoltage(0, ch)
     d.enableOutput(True, ch)
     l.initialize()
-    if args.frequenz:
-        l.setFrequency(args.frequenz)
+    if args.frequency:
+        l.setFrequency(args.frequency)
     if args.mode:
         l.setMeasurementMode(args.mode)
     if args.integration:
@@ -144,7 +144,8 @@ def main():
     As = []
 
     # live plot
-    if args.livePlot:
+    livePlot = not args.noLivePlot
+    if livePlot:
         plt.ion()
         fig = plt.figure(figsize=(8, 8))
         ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
@@ -224,7 +225,7 @@ def main():
             sh.write_line(fw, values)
 
             Ns.append(j+1)
-            if args.livePlot:
+            if livePlot:
                 ax2.clear()
                 ax2.set_title(r'Voltage step : %0.2f V' % voltage)
                 ax2.set_xlabel(r'$No.$')
@@ -234,7 +235,7 @@ def main():
         Us.append(voltage)
         Cmeans.append(np.mean(Cs))
         Csem.append(sem(Cs))
-        if args.livePlot:
+        if livePlot:
             ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
             plt.pause(0.0001)
 
