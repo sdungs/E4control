@@ -85,7 +85,7 @@ class K2410(Device):
 
     def setRampSpeed(self, iRampSpeed, iDelay):
         if iRampSpeed < 1 or iRampSpeed > 255:
-            print('Set RampSpeed size is out off range!')
+            print('Set RampSpeed size is out of range!')
         else:
             self.rampSpeed_step = iRampSpeed
         if iDelay < 0:

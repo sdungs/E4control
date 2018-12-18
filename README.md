@@ -35,12 +35,12 @@ Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is no
 
 ## How to run scripts?
 #### config file
-A config file with all used devices is needed for every script. For an example see [exampleConfig](https://github.com/sdungs/E4control/blob/master/exampleConfig).
-In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. *For the testbeamDCS config file the port coulumn must be empty.* The coulums are seperated by a single space.
+A config file with all used devices is needed for every script. For an example see [exampleConfig](exampleConfig).
+In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. *For the testbeamDCS config file the port column must be empty.* The colums are seperated by a single space.
 
 #### e4control_measure_IV
-enter:  
-`e4control_measure_IV V_min V_max output config -I I_lim -s V_steps -n ndaqs -d delay -p livePlot`
+To measure the current against voltage, enter:
+`e4control_measure_IV V_min V_max output config -I I_lim -s V_steps -n ndaqs -d delay -noLivePlot -database`
 
 - V_min   -> starting voltage | float | in V
 - V_max   -> end voltage | float | in V
@@ -50,14 +50,15 @@ enter:
 - V_steps -> number of voltage steps | int
 - ndaqs   -> number of data acquistion at every set voltage | int
 - delay   -> delay after setting new voltage | int | in s
-- livePlot-> show live plot | bool
+- noLivePlot-> hide live plot | flag
+- database-> enable pixel database output | flag
 
-example:  
+example:
 `e4control_measure_IV 0 100 meas_1 config_IV -I 3 -s 11 -n 5 -d 2 `
 
 #### e4control_measure_CV
-enter:  
-`e4control_measure_CV V_min V_max output config -s V_steps -n ndaqs -d delay -f lcr_frequenz -p livePlot`
+To measure the capacitance against voltage, enter:
+`e4control_measure_CV V_min V_max output config -s V_steps -n ndaqs -d delay -f lcr_frequency -p livePlot`
 
 - V_min   -> starting voltage | float | in V
 - V_max   -> end voltage | float | in V
@@ -66,14 +67,17 @@ enter:
 - V_steps -> number of voltage steps | int
 - ndaqs   -> number of data acquistion at every set voltage | int
 - delay   -> delay after setting new voltage | int | in s
-- lcr_frequenz -> LCR meter frequenz | float | in Hz
+- lcr_frequency -> LCR meter frequency | float | in Hz
+- lvolt   ->
+- mode    ->
+- integration->
 - livePlot-> show live plot | bool
 
-example:  
+example:
 `e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`
 
 #### e4control_measure_Cint
-enter:  
+enter:
 `e4control_measure_Cint V_min V_max output config -I_lim -I I_Lim -s V_steps -n ndaqs -d delay -f lcr_frequenz -times times
 -hold_V hold_v -hold_t hold_t`
 
@@ -89,12 +93,11 @@ enter:
 - hold_V -> voltage applied during the 'hold' phase | float | in V
 - hold_t -> duration of the 'hold' phase | int | in s
 
-
-example:  
+example:
 `e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`
 
 #### e4control_measure_It
-enter:  
+To measure the current against time at a fixed voltage, enter:
 `e4control_measure_It output config -v voltage -n ndaqs -d delay -p plot `
 
 - output  -> output directory name | string
@@ -104,18 +107,18 @@ enter:
 - delay   -> delay between two measure points | int | in s
 - plot    -> enable or disable live plotting | 0 == off, 1 == on
 
-*this measurement is running until ctrl+C has been pressed*
+*this measurement runs until ctrl+C is pressed*
 
-example:  
+example:
 `e4control_measure_It meas_3 config_It -v 50 -n 5 -d 30 -p 1`
 
 #### e4control_testbeamDCS
-enter:  
+enter:
 `e4control_testbeamDCS config -l logfile `
 
 - config  -> config file name | string
 - logfile -> logfile name | string
 
-example:  
+example:
 `e4control_testbeamDCS config_TDCS -l log_1 ` *with log*  
 `e4control_testbeamDCS config_TDCS ` *without log*

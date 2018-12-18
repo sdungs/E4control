@@ -19,14 +19,15 @@ parser.add_argument('v_min', help='min voltage (V)', type=float)
 parser.add_argument('v_max', help='max voltage (V)', type=float)
 parser.add_argument('output', help='output file')
 parser.add_argument('config', help='config file')
-parser.add_argument('-s', '--v_steps', help='number of volt steps', type=int, default=2)
-parser.add_argument('-n', '--ndaqs', type=int, default=5)
-parser.add_argument('-d', '--delay', type=int, default=1)
-parser.add_argument('-f', '--frequenz', type=float)
+parser.add_argument('-s', '--v_steps', help='number of voltage steps', type=int, default=2)
+parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=5', type=int, default=5)
+parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=1', type=int, default=1)
+parser.add_argument('-f', '--frequency', help='measuring frequency of the LCR meter', type=float)
 parser.add_argument('-l', '--lvolt', type=float)
 parser.add_argument('-m', '--mode', type=str)
 parser.add_argument('-i', '--integration', type=str)
-parser.add_argument('-p', '--livePlot', type=bool, default = True)
+parser.add_argument('-p', '--noLivePlot', help='disables the livePlot', action='store_true')
+parser.add_argument('-db', '--database', help='creates an additional logfile, matching the pixel database requirements', action='store_true')
 
 
 def main():
@@ -36,7 +37,7 @@ def main():
     devices = sh.read_config(args.config)
 
     # create setting query
-    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, ndaqs=args.ndaqs, lcr_freq=args.frequenz, lcr_volt=args.lvolt, lcr_aper=args.integration, lcr_mode=args.mode)
+    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, ndaqs=args.ndaqs, lcr_freq=args.frequency, lcr_volt=args.lvolt, lcr_aper=args.integration, lcr_mode=args.mode)
 
     # connection
     source, source_channel = sh.device_connection(devices['S'])
@@ -69,8 +70,8 @@ def main():
     d.setVoltage(0, ch)
     d.enableOutput(True, ch)
     l.initialize()
-    if args.frequenz:
-        l.setFrequency(args.frequenz)
+    if args.frequency:
+        l.setFrequency(args.frequency)
     if args.mode:
         l.setMeasurementMode(args.mode)
     if args.integration:
@@ -132,6 +133,29 @@ def main():
         header.append('A [uA]')
     sh.write_line(fw, header)
 
+    # create database output file
+    if args.database:
+        db_input = sh.load_data('../objs_cv.json', {'db_operator':'agisen', 'db_temperature':'20.0', 'db_humidity':'50', 'db_sensorID':'', 'db_sensorName':'"none"'})
+
+        print('Please provide input for the pixel database file.')
+        db_input['db_operator'] = sh.rlinput('operator: ', db_input['db_operator'])
+        db_input['db_temperature'] = sh.rlinput('operating temperature [°C]: ', db_input['db_temperature'])
+        db_input['db_humidity'] = sh.rlinput('operating humidity [%]: ', db_input['db_humidity'])
+        db_input['db_sensorID'] = sh.rlinput('sensor ID: ', db_input['db_sensorID'])
+        db_input['db_sensorName'] = sh.rlinput('sensor name: ', db_input['db_sensorName'])
+
+        db_date = time.localtime(time.time())
+        db_date = '{:4d}-{:02d}-{:02d}'.format(db_date[0],db_date[1],db_date[2])
+
+        db_file = sh.new_txt_file(outputname+'_database')
+        sh.write_line(db_file, [db_input['db_sensorID'], db_input['db_sensorName']])  # 'serial number', 'local device name'
+        sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date'
+        sh.write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
+        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, '"measurement integration time (in s)"', '"compliance"'])   # 'voltage step', 'delay between steps (in s)', 'measurement integration time (in s)', 'compliance (in A)'
+        sh.write_line(db_file, ['V', 'C'])  # 'V', 'C'
+
+        sh.dump_data('../objs_cv.json', db_input)
+
     # create value arrays
     Us = []
     Cmeans = []
@@ -144,7 +168,8 @@ def main():
     As = []
 
     # live plot
-    if args.livePlot:
+    livePlot = not args.noLivePlot
+    if livePlot:
         plt.ion()
         fig = plt.figure(figsize=(8, 8))
         ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
@@ -161,7 +186,7 @@ def main():
         plt.pause(0.0001)
 
     # start measurement
-    for i in xrange(args.v_steps):
+    for i in range(args.v_steps):
         voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
         print('Set voltage: %.2f V' % voltage)
         d.rampVoltage(voltage, ch)
@@ -195,7 +220,7 @@ def main():
         l.getValues()
         time.sleep(0.1)
 
-        for j in xrange(args.ndaqs):
+        for j in range(args.ndaqs):
             getVoltage = d.getVoltage(ch)
             print('Get voltage: %.2f V' % (getVoltage))
             getCurrent = d.getCurrent(ch)*1E6
@@ -219,12 +244,12 @@ def main():
                 values.append(h)
             for v in Vmeter:
                 values.append(v)
-            for a in Amter:
+            for a in Ameter:
                 values.append(a)
             sh.write_line(fw, values)
 
             Ns.append(j+1)
-            if args.livePlot:
+            if livePlot:
                 ax2.clear()
                 ax2.set_title(r'Voltage step : %0.2f V' % voltage)
                 ax2.set_xlabel(r'$No.$')
@@ -234,7 +259,7 @@ def main():
         Us.append(voltage)
         Cmeans.append(np.mean(Cs))
         Csem.append(sem(Cs))
-        if args.livePlot:
+        if livePlot:
             ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
             plt.pause(0.0001)
 
@@ -255,6 +280,8 @@ def main():
     sh.write_line(fwshort, header)
     for i in range(len(Us)):
         sh.write_line(fwshort, [Us[i], Cmeans[i], Csem[i]])
+        if args.database:
+            sh.write_line(db_file, [Us[i], Cmeans[i]])
 
     # show and save curve
     plt.close('all')
@@ -282,6 +309,8 @@ def main():
         v.close()
     sh.close_txt_file(fw)
     sh.close_txt_file(fwshort)
+    if args.database:
+        sh.close_txt_file(db_file)
 
     #input()
 
