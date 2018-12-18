@@ -13,7 +13,7 @@ class HUBER(Device):
         super(HUBER, self).__init__(connection_type=connection_type, host=host, port=port)
         self.getAndSetParameter()
 
-    def initialze(self):
+    def initialize(self):
         self.getAndSetParameter()
 
     def getAndSetParameter(self):
@@ -26,14 +26,15 @@ class HUBER(Device):
 
     def enablePower(self, sBool):
             self.write('CA@{:05.0f}'.format(sBool))
+            self.Power = sBool
 
     def getSetTemperature(self):
         sTemp = self.ask('SP?')
-        return '{:+06.2f}'.format(float(sTemp[2:])/100)
+        return float('{:+06.2f}'.format(float(sTemp[3:])/100))
 
     def getInTemperature(self):
         sTemp = self.ask('TI?')
-        return '{:+06.2f}'.format(float(sTemp[2:])/100)
+        return float('{:+06.2f}'.format(float(sTemp[3:])/100))
 
     def setTemperature(self, Tset):
         self.write('SP@{:+06.0f}'.format(100 * Tset))

@@ -42,7 +42,7 @@ class JULABO(Device):
         pass
 
     def setTemperature(self, fValue):
-        self.write('out_sp_00 %.1f') % fValue
+        self.write('out_sp_00 {:2.1f}'.format(fValue))
         pass
 
     def getSetTemperature(self):
@@ -65,7 +65,7 @@ class JULABO(Device):
             self.write('out_mode_04 1')
             self.Mode = 'ext'
         else:
-            print('Unknown mode: %s' % sMode)
+            print('Unknown mode:{:s}'.format(sMode))
 
     def getOperationMode(self):
         if (self.ask('in_mode_04') == '0'):

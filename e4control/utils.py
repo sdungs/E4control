@@ -2,7 +2,8 @@
 
 import os
 import sys
-
+import readline
+import json
 
 from .devices import (
     HMP4040,
@@ -19,6 +20,14 @@ from .devices import (
     SHT75,
     HUBER,
 )
+
+
+def rlinput(prompt, prefill=''):
+   readline.set_startup_hook(lambda: readline.insert_text(prefill))
+   try:
+      return input(prompt)
+   finally:
+      readline.set_startup_hook()
 
 
 def read_config(configfile):
@@ -151,6 +160,8 @@ def device_connection(values):
             d.append(LU114(k[1], k[2], int(k[3])))
         elif k[0] == 'SHT75':
             d.append(SHT75(k[1], k[2], int(k[3])))
+        elif k[0] == 'HUBER':
+            d.append(HUBER(k[1], k[2], int(k[3])))
         else:
             sys.exit("Unknown Device: %s" % k[0])
         ch.append(int(k[4]))
@@ -165,7 +176,7 @@ def check_limits(device, channel, V_lim=None, I_lim=None, P_lim=None):
         if (V_hard <= V_lim):
             sys.exit("Hardware Limit is lower than Software Limit!")
     if I_lim:
-        I_hard = device.getCurrentLimit(channel) * 1E6
+        I_hard = device.getCurrentLimit(channel)
         print("I_lim: %.2f uA" % I_lim)
         print("I_lim hardware %.2f uA" % I_hard)
         if (I_hard <= I_lim):
@@ -195,6 +206,23 @@ def write_line(txtfile, values):
             txtfile.write(str(values[i]) + "\t")
     txtfile.flush()
     pass
+
+
+def load_data(file, default_data):
+    try:
+        data = json.load(open(file, 'r'))
+        if data.keys()==default_data.keys():
+            return data
+        else:
+            print('Corrupted data loaded from file. Restoring default data.')
+            return default_data
+    except:
+        print('No data could be loaded from file. Restoring default data.')
+        return default_data
+
+
+def dump_data(file, data):
+    json.dump(data, open(file, 'w'))
 
 
 def create_plot(filename, kind, x, y, xerr=None, yerr=None, save=True, show=True):
@@ -299,6 +327,10 @@ def connect_testbeamDCS_devices(devices):
             d.append(x)
         elif k[1] == "SHT75":
             x = SHT75(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "HUBER":
+            x = HUBER(k[2], k[3], k[4])
             x.initialize()
             d.append(x)
         else:

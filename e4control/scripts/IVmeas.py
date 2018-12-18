@@ -19,11 +19,12 @@ parser.add_argument('v_min', help='min voltage (V)', type=float)
 parser.add_argument('v_max', help='max voltage (V)', type=float)
 parser.add_argument('output', help='output file')
 parser.add_argument('config', help='config file')
-parser.add_argument('-I', '--I_lim', help='current limit (uA)', type=float, default=3)
-parser.add_argument('-s', '--v_steps', help='number of volt steps', type=int, default=2)
-parser.add_argument('-n', '--ndaqs', type=int, default=10)
-parser.add_argument('-d', '--delay', type=int, default=5)
-parser.add_argument('-p', '--livePlot', type=bool, default = True)
+parser.add_argument('-I', '--I_lim', help='current limit, in uA, default=3', type=float, default=3)
+parser.add_argument('-s', '--v_steps', help='number of voltage steps', type=int, default=2)
+parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=10', type=int, default=10)
+parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=5', type=int, default=5)
+parser.add_argument('-p', '--noLivePlot', help='disables the livePlot', action='store_true')
+parser.add_argument('-db', '--database', help='creates an additional logfile, matching the pixel database requirements', action='store_true')
 
 
 def main():
@@ -32,7 +33,7 @@ def main():
     devices = sh.read_config(args.config)
 
     # create setting query
-    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, I_lim=args.I_lim, ndaqs=args.ndaqs)
+    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, I_lim=args.I_lim, ndaqs=args.ndaqs, delay=args.delay)
 
     # connection
     source, source_channel = sh.device_connection(devices['S'])
@@ -109,6 +110,29 @@ def main():
         header.append('A [uA]')
     sh.write_line(fw, header)
 
+    # create database output file
+    if args.database:
+        db_input = sh.load_data('../objs_iv.json', {'db_operator':'agisen', 'db_temperature':'20.0', 'db_humidity':'50', 'db_sensorID':'', 'db_sensorName':'"none"'})
+
+        print('Please provide input for the pixel database file.')
+        db_input['db_operator'] = sh.rlinput('operator: ', db_input['db_operator'])
+        db_input['db_temperature'] = sh.rlinput('operating temperature [°C]: ', db_input['db_temperature'])
+        db_input['db_humidity'] = sh.rlinput('operating humidity [%]: ', db_input['db_humidity'])
+        db_input['db_sensorID'] = sh.rlinput('sensor ID: ', db_input['db_sensorID'])
+        db_input['db_sensorName'] = sh.rlinput('sensor name: ', db_input['db_sensorName'])
+
+        db_date = time.localtime(time.time())
+        db_date = '{:4d}-{:02d}-{:02d}'.format(db_date[0],db_date[1],db_date[2])
+
+        db_file = sh.new_txt_file(outputname+'_database')
+        sh.write_line(db_file, [db_input['db_sensorID'], db_input['db_sensorName']])  # 'serial number', 'local device name'
+        sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date'
+        sh.write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
+        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, '"measurement integration time (in s)"', args.I_lim/1e6])   # 'voltage step', 'delay between steps (in s)', 'measurement integration time (in s)', 'compliance (in A)'
+        sh.write_line(db_file, ['V', 'I'])  # 'V', 'I'
+
+        sh.dump_data('../objs_iv.json', db_input)
+
     # create value arrays
     Us = []
     Imeans = []
@@ -123,7 +147,8 @@ def main():
     softLimit = False
 
     # live plot
-    if args.livePlot:
+    livePlot = not args.noLivePlot
+    if livePlot:
         plt.ion()
         fig = plt.figure(figsize=(8, 8))
         ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
@@ -203,7 +228,7 @@ def main():
             sh.write_line(fw, values)
 
             Ns.append(j+1)
-            if args.livePlot:
+            if livePlot:
                 ax2.clear()
                 ax2.set_title(r'Voltage step : %0.2f V' % voltage)
                 ax2.set_xlabel(r'$No.$')
@@ -215,7 +240,7 @@ def main():
         Us.append(voltage)
         Imeans.append(np.mean(Is))
         Isem.append(sem(Is))
-        if args.livePlot:
+        if livePlot:
            ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
            plt.pause(0.0001)
 
@@ -229,6 +254,8 @@ def main():
     sh.write_line(fwshort, header)
     for i in range(len(Us)):
         sh.write_line(fwshort, [Us[i], Imeans[i], Isem[i]])
+        if args.database:
+            sh.write_line(db_file, [Us[i], Imeans[i]/1e6])
 
     # show and save curve
     plt.close('all')
@@ -252,6 +279,8 @@ def main():
         v.close()
     sh.close_txt_file(fw)
     sh.close_txt_file(fwshort)
+    if args.database:
+        sh.close_txt_file(db_file)
 
      #input()
 
