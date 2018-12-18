@@ -112,7 +112,7 @@ def main():
 
     # create database output file
     if args.database:
-        db_input = sh.load_data('../iv_objs.json', {'db_operator':'agisen', 'db_temperature':'20', 'db_humidity':'50', 'db_sensorID':'', 'db_sensorName':'none'})
+        db_input = sh.load_data('../objs_iv.json', {'db_operator':'agisen', 'db_temperature':'20.0', 'db_humidity':'50', 'db_sensorID':'', 'db_sensorName':'"none"'})
 
         print('Please provide input for the pixel database file.')
         db_input['db_operator'] = sh.rlinput('operator: ', db_input['db_operator'])
@@ -127,11 +127,11 @@ def main():
         db_file = sh.new_txt_file(outputname+'_database')
         sh.write_line(db_file, [db_input['db_sensorID'], db_input['db_sensorName']])  # 'serial number', 'local device name'
         sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date'
-        sh.write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)'
-        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, 'measurement integration time (in s)', args.I_lim/1e6])   # 'voltage step', 'delay between steps (in s)', 'measurement integration time (in s)', 'compliance (in A)'
+        sh.write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
+        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, '"measurement integration time (in s)"', args.I_lim/1e6])   # 'voltage step', 'delay between steps (in s)', 'measurement integration time (in s)', 'compliance (in A)'
         sh.write_line(db_file, ['V', 'I'])  # 'V', 'I'
 
-        sh.dump_data('../iv_objs.json', db_input)
+        sh.dump_data('../objs_iv.json', db_input)
 
     # create value arrays
     Us = []

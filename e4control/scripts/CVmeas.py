@@ -27,6 +27,7 @@ parser.add_argument('-l', '--lvolt', type=float)
 parser.add_argument('-m', '--mode', type=str)
 parser.add_argument('-i', '--integration', type=str)
 parser.add_argument('-p', '--noLivePlot', help='disables the livePlot', action='store_true')
+parser.add_argument('-db', '--database', help='creates an additional logfile, matching the pixel database requirements', action='store_true')
 
 
 def main():
@@ -132,6 +133,29 @@ def main():
         header.append('A [uA]')
     sh.write_line(fw, header)
 
+    # create database output file
+    if args.database:
+        db_input = sh.load_data('../objs_cv.json', {'db_operator':'agisen', 'db_temperature':'20.0', 'db_humidity':'50', 'db_sensorID':'', 'db_sensorName':'"none"'})
+
+        print('Please provide input for the pixel database file.')
+        db_input['db_operator'] = sh.rlinput('operator: ', db_input['db_operator'])
+        db_input['db_temperature'] = sh.rlinput('operating temperature [°C]: ', db_input['db_temperature'])
+        db_input['db_humidity'] = sh.rlinput('operating humidity [%]: ', db_input['db_humidity'])
+        db_input['db_sensorID'] = sh.rlinput('sensor ID: ', db_input['db_sensorID'])
+        db_input['db_sensorName'] = sh.rlinput('sensor name: ', db_input['db_sensorName'])
+
+        db_date = time.localtime(time.time())
+        db_date = '{:4d}-{:02d}-{:02d}'.format(db_date[0],db_date[1],db_date[2])
+
+        db_file = sh.new_txt_file(outputname+'_database')
+        sh.write_line(db_file, [db_input['db_sensorID'], db_input['db_sensorName']])  # 'serial number', 'local device name'
+        sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date'
+        sh.write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
+        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, '"measurement integration time (in s)"', '"compliance"'])   # 'voltage step', 'delay between steps (in s)', 'measurement integration time (in s)', 'compliance (in A)'
+        sh.write_line(db_file, ['V', 'C'])  # 'V', 'C'
+
+        sh.dump_data('../objs_cv.json', db_input)
+
     # create value arrays
     Us = []
     Cmeans = []
@@ -162,7 +186,7 @@ def main():
         plt.pause(0.0001)
 
     # start measurement
-    for i in xrange(args.v_steps):
+    for i in range(args.v_steps):
         voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
         print('Set voltage: %.2f V' % voltage)
         d.rampVoltage(voltage, ch)
@@ -196,7 +220,7 @@ def main():
         l.getValues()
         time.sleep(0.1)
 
-        for j in xrange(args.ndaqs):
+        for j in range(args.ndaqs):
             getVoltage = d.getVoltage(ch)
             print('Get voltage: %.2f V' % (getVoltage))
             getCurrent = d.getCurrent(ch)*1E6
@@ -220,7 +244,7 @@ def main():
                 values.append(h)
             for v in Vmeter:
                 values.append(v)
-            for a in Amter:
+            for a in Ameter:
                 values.append(a)
             sh.write_line(fw, values)
 
@@ -256,6 +280,8 @@ def main():
     sh.write_line(fwshort, header)
     for i in range(len(Us)):
         sh.write_line(fwshort, [Us[i], Cmeans[i], Csem[i]])
+        if args.database:
+            sh.write_line(db_file, [Us[i], Cmeans[i]])
 
     # show and save curve
     plt.close('all')
@@ -283,6 +309,8 @@ def main():
         v.close()
     sh.close_txt_file(fw)
     sh.close_txt_file(fwshort)
+    if args.database:
+        sh.close_txt_file(db_file)
 
     #input()
 
