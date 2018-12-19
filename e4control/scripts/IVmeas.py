@@ -80,7 +80,7 @@ def main():
         os.mkdir(argsoutput)
     os.chdir(argsoutput)
 
-    # create outputfile
+    # create output file
     outputname = argsoutput.split('/')[-1]
     fw = sh.new_txt_file(outputname)
     header = ['time', 'no.', 'U[V]', 'I[uA]']
@@ -110,6 +110,11 @@ def main():
         header.append('A [uA]')
     sh.write_line(fw, header)
 
+    # create short data file
+    fwshort = sh.new_txt_file('%s_short' % outputname)
+    header = ['U[V]', 'Imean[uA]', 'Isem[uA]']
+    sh.write_line(fwshort, header)
+
     # create database output file
     if args.database:
         db_input = sh.load_data('../objs_iv.json', {'db_operator':'agisen', 'db_temperature':'20.0', 'db_humidity':'50', 'db_sensorID':'', 'db_sensorName':'"none"'})
@@ -138,7 +143,6 @@ def main():
     Imeans = []
     Isem = []
     Is = []
-    Ns = []
     Ts = []
     Hs = []
     Vs = []
@@ -153,11 +157,11 @@ def main():
         fig = plt.figure(figsize=(8, 8))
         ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
         ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
-        ax1.errorbar(Us, Imeans, yerr=Isem, fmt='o')
+        ax1.errorbar([], [], yerr=[], fmt='o')
         ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
         ax1.set_ylabel(r'$I_{mean} $ $ [\mathrm{uA}]$')
         ax1.set_title(r'IV curve')
-        ax2.plot(Ns, Is, 'o')
+        ax2.plot([], [], 'o')
         ax2.set_xlabel(r'$No.$')
         ax2.set_ylabel(r'$I $ $ [\mathrm{uA}]$')
         ax2.set_title(r'Voltage steps')
@@ -165,124 +169,128 @@ def main():
         plt.pause(0.0001)
 
     # start measurement
-    for i in range(args.v_steps):
-        voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
-        print('Set voltage: %.2f V' % voltage)
-        d.rampVoltage(voltage, ch)
-        time.sleep(args.delay)
-        Is = []
-        Ns = []
-        Ts = []
-        Hs = []
-        Vs = []
-        As = []
-        for n in range(len(temperature)):
-            if temperature_channel[n] == 50:
-                ts = temperature[n].getTempPT1000all()
-                Ts.append(ts[0])
-                Ts.append(ts[1])
-                Ts.append(ts[2])
-                Ts.append(ts[3])
-                Ts.append(ts[4])
-            elif temperature_channel[n] == 2:
-                ts = temperature[n].getTemperature()
-                Ts.append(ts[0])
-                Ts.append(ts[1])
-            else:
-                Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
+    try:
+        for i in range(args.v_steps):
+            voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
+            print('Set voltage: %.2f V' % voltage)
+            d.rampVoltage(voltage, ch)
+            time.sleep(args.delay)
+            Is = []
+            Ts = []
+            Hs = []
+            Vs = []
+            As = []
+            for n in range(len(temperature)):
+                if temperature_channel[n] == 50:
+                    ts = temperature[n].getTempPT1000all()
+                    Ts.append(ts[0])
+                    Ts.append(ts[1])
+                    Ts.append(ts[2])
+                    Ts.append(ts[3])
+                    Ts.append(ts[4])
+                elif temperature_channel[n] == 2:
+                    ts = temperature[n].getTemperature()
+                    Ts.append(ts[0])
+                    Ts.append(ts[1])
+                else:
+                    Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
 
-        for n in range(len(humidity)):
-            if humidity[n].connection_type == 'lan':
-                Hs.append(humidity[n].getHumidity(humidity_channel[n]))
-            else:
-                Hs.append(humidity[n].getVoltage(humidity_channel[n]))
+            for n in range(len(humidity)):
+                if humidity[n].connection_type == 'lan':
+                    Hs.append(humidity[n].getHumidity(humidity_channel[n]))
+                else:
+                    Hs.append(humidity[n].getVoltage(humidity_channel[n]))
 
-        for n in range(len(Vmeter)):
-            Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
+            for n in range(len(Vmeter)):
+                Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
 
-        for n in range(len(Ameter)):
-            As.append(Ameter[n].getCurrent(Ameter_channel[n]) * 1E6)
+            for n in range(len(Ameter)):
+                As.append(Ameter[n].getCurrent(Ameter_channel[n]) * 1E6)
 
-        for j in range(args.ndaqs):
-            getVoltage = d.getVoltage(ch)
-            print('Get voltage: %.2f V' % (getVoltage))
-            current = d.getCurrent(ch)*1E6
-            print('Get current: %.2f uA' % (current))
-            if (abs(current) > args.I_lim):
-                print('Software Limit reached!')
-                softLimit = True
-                break
-            Is.append(current)
-            timestamp = time.time()
-
-            values = []
-            values = [timestamp, i, getVoltage, current]
-            for t in Ts:
-                values.append(t)
-            for h in Hs:
-                values.append(h)
-            for v in Vs:
-                values.append(v)
-            for a in As:
-                values.append(a)
-            sh.write_line(fw, values)
-
-            Ns.append(j+1)
             if livePlot:
                 ax2.clear()
                 ax2.set_title(r'Voltage step : %0.2f V' % voltage)
                 ax2.set_xlabel(r'$No.$')
                 ax2.set_ylabel(r'$I $ $ [\mathrm{uA}]$')
-                ax2.plot(Ns, Is, 'r--o')
-                plt.pause(0.0001)
-        if softLimit:
-            break
-        Us.append(voltage)
-        Imeans.append(np.mean(Is))
-        Isem.append(sem(Is))
-        if livePlot:
-           ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
-           plt.pause(0.0001)
 
-    # ramp down voltage
-    d.rampVoltage(0, ch)
-    d.enableOutput(False)
+            for j in range(args.ndaqs):
+                getVoltage = d.getVoltage(ch)
+                print('Get voltage: %.2f V' % (getVoltage))
+                current = d.getCurrent(ch)*1E6
+                print('Get current: %.2f uA' % (current))
+                if (abs(current) > args.I_lim):
+                    print('Software Limit reached!')
+                    softLimit = True
+                    break
+                Is.append(current)
+                timestamp = time.time()
 
-    # short data version
-    fwshort = sh.new_txt_file('%s_short' % outputname)
-    header = ['U[V]', 'Imean[uA]', 'Isem[uA]']
-    sh.write_line(fwshort, header)
-    for i in range(len(Us)):
-        sh.write_line(fwshort, [Us[i], Imeans[i], Isem[i]])
+                values = [timestamp, i, getVoltage, current]
+                for t in Ts:
+                    values.append(t)
+                for h in Hs:
+                    values.append(h)
+                for v in Vs:
+                    values.append(v)
+                for a in As:
+                    values.append(a)
+                sh.write_line(fw, values)
+
+                if livePlot:
+                    ax2.plot(j+1, current, 'r--o')
+                    plt.pause(0.0001)
+            if softLimit:
+                break
+            Us.append(voltage)
+            Imeans.append(np.mean(Is))
+            Isem.append(sem(Is))
+            if livePlot:
+               ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
+               plt.pause(0.0001)
+
+            # write to short and data base file
+            sh.write_line(fwshort, [Us[i], Imeans[i], Isem[i]])
+            if args.database:
+                sh.write_line(db_file, [Us[i], Imeans[i]/1e6])
+
+    except (KeyboardInterrupt, SystemExit):
+        print('Measurement was terminated...')
+    finally:
+        # ramp down voltage
+        try:
+            d.rampVoltage(0, ch)
+            d.enableOutput(False)
+        except ValeError as e:
+            print('ValueError while ramping down...')
+            raise e        
+
+        # show and save curve
+        plt.close('all')
+        plt.errorbar(Us, Imeans, yerr=Isem, fmt='o')
+        plt.grid()
+        plt.title(r'IV curve: %s' % outputname)
+        plt.xlabel(r'$U $ $ [\mathrm{V}]$')
+        plt.ylabel(r'$I_{mean} $ $ [\mathrm{uA}]$')
+        plt.xlim(min(Us)-5, max(Us)+5)
+        plt.tight_layout()
+        plt.savefig('%s.pdf' % outputname)
+        print('Plot saved.')
+
+        # close files
+        for s in source:
+            s.close()
+        for t in temperature:
+            t.close()
+        for h in humidity:
+            h.close()
+        for v in Vmeter:
+            v.close()
+        sh.close_txt_file(fw)
+        sh.close_txt_file(fwshort)
         if args.database:
-            sh.write_line(db_file, [Us[i], Imeans[i]/1e6])
+            sh.close_txt_file(db_file)
 
-    # show and save curve
-    plt.close('all')
-    plt.errorbar(Us, Imeans, yerr=Isem, fmt='o')
-    plt.grid()
-    plt.title(r'IV curve: %s' % outputname)
-    plt.xlabel(r'$U $ $ [\mathrm{V}]$')
-    plt.ylabel(r'$I_{mean} $ $ [\mathrm{uA}]$')
-    plt.xlim(min(Us)-5, max(Us)+5)
-    plt.tight_layout()
-    plt.savefig('%s.pdf' % outputname)
-
-    # close files
-    for s in source:
-        s.close()
-    for t in temperature:
-        t.close()
-    for h in humidity:
-        h.close()
-    for v in Vmeter:
-        v.close()
-    sh.close_txt_file(fw)
-    sh.close_txt_file(fwshort)
-    if args.database:
-        sh.close_txt_file(db_file)
-
-     #input()
+         #input()
 
 
 if __name__ == '__main__':
