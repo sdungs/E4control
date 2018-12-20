@@ -63,7 +63,7 @@ def read_config(configfile):
     return(devices)
 
 
-def settings_query(device_list, v_min=None, v_max=None, v_steps=None, I_lim=None, ndaqs=None, delay=None, lcr_freq=None, lcr_volt=None, lcr_aper=None, lcr_mode=None):
+def settings_query(device_list, **kwargs):
     print("------------------------------------------------")
     print("Measurement settings:")
     print("------------------------------------------------")
@@ -101,26 +101,14 @@ def settings_query(device_list, v_min=None, v_max=None, v_steps=None, I_lim=None
             print(i)
 
     print("------------------------------------------------")
-    if v_min:
-        print("v_min: %.2f V" % v_min)
-    if v_max:
-        print("v_max: %.2f V" % v_max)
-    if v_steps:
-        print("v_steps: %i" % v_steps)
-    if I_lim:
-        print("I_lim: %.2f uA" % I_lim)
-    if ndaqs:
-        print("ndaqs: %i" % ndaqs)
-    if delay:
-        print("delay: %i" % delay)
-    if lcr_freq:
-        print("lcr_freq: %.1f" % lcr_freq)
-    if lcr_volt:
-        print("lcr_volt: %f" % lcr_volt)
-    if lcr_aper:
-        print("lcr_aper: %s" % str(lcr_aper))
-    if lcr_mode:
-        print("lcr_mode: %s" % lcr_mode)
+    # Order is preserved only with Python >= 3.6 -> https://docs.python.org/3/whatsnew/3.6.html#whatsnew36-pep468
+    for key, value in kwargs.items():
+        if any(x in key for x in ('v_min','v_max')):
+            print('{0}: {1:.1f} V'.format(key, value))
+        elif 'I_lim' in key:
+            print('{0}: {1:.1f} uA'.format(key, value))
+        else:            
+            print('{0}: {1}'.format(key, value)) 
     print("------------------------------------------------")
     q = input("Settings correct? (y/n)")
     if q == "yes":

@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='e4control',
-    version='0.0.2',
+    version='0.0.3',
     author='Sascha Dungs, Jonas Lönker',
     author_email='sascha.dungs@tu-dortmund.de, jonas.loenker@tu-dortmund.de',
     packages=[
@@ -15,7 +15,7 @@ setup(
         'pylink',
         'python-vxi11',
         'numpy',
-        'matplotlib',
+        'matplotlib >=2.0.0, <3.0.0',
         'scipy',
         'sht-sensor'
     ],

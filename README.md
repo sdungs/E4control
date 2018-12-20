@@ -1,4 +1,4 @@
-# E4control v0.0.2
+# E4control v0.0.3
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -27,10 +27,10 @@ Following devices are currently supported:
 
 
 ## Installation
-Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the sht-sensor requires python 3 to run.
+Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the software is only tested with python3 & pip3, although it may work with python2 as well. At least the sht-sensor requires python 3 to run.
 1. download or clone this repository
 2. open a terminal and change directory to E4control
-3. to install enter: `pip install .` (Again: pip3 needed.)
+3. to install enter: `pip install .` (Again: Ensure pip3 usage.)
 4. *(add PATH to .bashrc)*
 
 ## How to run scripts?
@@ -40,7 +40,7 @@ In the first column the purpose of the respective device is written (S = source 
 
 #### e4control_measure_IV
 To measure the current against voltage, enter:
-`e4control_measure_IV V_min V_max output config -I I_lim -s V_steps -n ndaqs -d delay -noLivePlot -database`
+`e4control_measure_IV V_min V_max output config -I I_lim -s V_steps -n ndaqs -d delay -noLivePlot -db database`
 
 - V_min   -> starting voltage | float | in V
 - V_max   -> end voltage | float | in V
@@ -58,7 +58,7 @@ example:
 
 #### e4control_measure_CV
 To measure the capacitance against voltage, enter:
-`e4control_measure_CV V_min V_max output config -s V_steps -n ndaqs -d delay -f lcr_frequency -p livePlot`
+`e4control_measure_CV V_min V_max output config -s V_steps -n ndaqs -d delay -f lcr_frequency -p noLivePlot -db database`
 
 - V_min   -> starting voltage | float | in V
 - V_max   -> end voltage | float | in V
@@ -71,7 +71,8 @@ To measure the capacitance against voltage, enter:
 - lvolt   ->
 - mode    ->
 - integration->
-- livePlot-> show live plot | bool
+- noLivePlot-> hide live plot | flag
+- database-> enable pixel database output | flag
 
 example:
 `e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`
@@ -98,14 +99,15 @@ example:
 
 #### e4control_measure_It
 To measure the current against time at a fixed voltage, enter:
-`e4control_measure_It output config -v voltage -n ndaqs -d delay -p plot `
+`e4control_measure_It output config -v voltage -n ndaqs -d delay -p noLivePlot -db database`
 
+- voltage -> constant set voltage | float | in V
 - output  -> output directory name | string
 - config  -> config file name | string
-- voltage -> constant set voltage | float | in V
 - ndaqs   -> number of data acquistion at every measure point | int
 - delay   -> delay between two measure points | int | in s
-- plot    -> enable or disable live plotting | 0 == off, 1 == on
+- noLivePlot-> hide live plot | flag
+- database-> enable pixel database output | flag
 
 *this measurement runs until ctrl+C is pressed*
 

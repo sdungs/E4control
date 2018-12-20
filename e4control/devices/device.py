@@ -3,6 +3,7 @@
 import vxi11
 from pylink import TCPLink
 import serial
+from .prologix import Prologix
 
 
 class Device(object):
@@ -29,6 +30,9 @@ class Device(object):
             self.com = vxi11.Instrument(host,sPort)
         elif (connection_type == 'usb'):
             self.com = serial.Serial(host, 9600)
+        elif (connection_type == 'prologix'):
+            self.com = Prologix(host, port)
+            self.com.open()
 
     def __enter__(self):
         self.open()
@@ -52,27 +56,14 @@ class Device(object):
         try:
             if self.connection_type == 'usb':
                 s = self.com.readline()
-                s = s.replace('\r', '')
-                s = s.replace('\n', '')
             else:
                 s = self.com.read()
-                s = s.replace('\r', '')
-                s = s.replace('\n', '')
+            s = s.replace('\r', '')
+            s = s.replace('\n', '')
             return s
-        except:
-            print('Timeout while reading!')
-        return s
-
-#    def read(self):
-#        s = ''
-#        try:
-#            s = self.com.read()
-#            s = s.replace('\r', '')
-#            s = s.replace('\n', '')
-#            return s
-#        except:
-#            print('Timeout while reading!')
-#        return s
+        except Exception as e:
+            print('Timeout while reading from device!')
+            raise e
 
     def write(self, cmd):
         cmd = cmd + self.trm
