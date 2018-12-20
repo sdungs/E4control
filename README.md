@@ -1,4 +1,4 @@
-# E4control v0.0.2
+# E4control v0.0.3
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -27,10 +27,10 @@ Following devices are currently supported:
 
 
 ## Installation
-Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the sht-sensor requires python 3 to run.
+Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the software is only tested with python3 & pip3, although it may work with python2 as well. At least the sht-sensor requires python 3 to run.
 1. download or clone this repository
 2. open a terminal and change directory to E4control
-3. to install enter: `pip install .` (Again: pip3 needed.)
+3. to install enter: `pip install .` (Again: Ensure pip3 usage.)
 4. *(add PATH to .bashrc)*
 
 ## How to run scripts?
