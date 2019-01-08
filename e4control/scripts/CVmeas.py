@@ -153,7 +153,7 @@ def main():
         sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date'
         sh.write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
         sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, '"measurement integration time (in s)"', '"compliance"'])   # 'voltage step', 'delay between steps (in s)', 'measurement integration time (in s)', 'compliance (in A)'
-        sh.write_line(db_file, ['V', 'C'])  # 'V', 'C'
+        sh.write_line(db_file, ['U', 'C'])  # 'V', 'C'
 
         sh.dump_data('../objs_cv.json', db_input)
 
