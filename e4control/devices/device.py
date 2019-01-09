@@ -61,7 +61,11 @@ class Device(object):
                 s = s.replace('\n', '')
             return s
         except:
-            print('Timeout while reading!')
+            print('Failed to read one time!')
+            try:
+                s = self.com.read()
+            except:
+                print('Timeout while reading!')
         return s
 
     def write(self, cmd):
