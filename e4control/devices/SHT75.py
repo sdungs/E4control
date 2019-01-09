@@ -36,7 +36,7 @@ class SHT75(Device):
         data = self.getValues(channels)
         return data[::2]
 
-    def getHumidity(self, channels=1):
+    def getHumidity(self, channels=0):
         data = self.getValues(channels)
         return data[1::2]
 
