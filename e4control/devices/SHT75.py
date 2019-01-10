@@ -44,6 +44,19 @@ class SHT75(Device):
         self.write('CLOSE')
         pass
 
+    def output(self, show=True):
+        header = ['T1[°C]','H1[%]','T2[°C]','H2[%]']
+        values = self.getValues()
+        if show:
+            print('SHT75:')
+            print('sensor 1:\tT: {} °C\tRH: {} %'.format(values[0],values[1]))
+            print('sensor 2:\tT: {} °C\tRH: {} %'.format(values[2],values[3]))
+
+        return([header, [str(i) for i in values]])
+
+    def interaction(self):
+        print('For this device there is nothing to do...')
+
 
 # How to create a rsa-keypair to log on without password:
 # ssh-keygen
