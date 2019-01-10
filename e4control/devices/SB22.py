@@ -178,43 +178,49 @@ class SB22(Device):
     def output(self, show=True):
         sMode = self.getOperationMode()
         bPower = self.Power
-        if show:
-            print('Climate Chamber:')
-            print('Mode: ' + sMode)
-            if bPower == '1':
-                print('Power: \033[32m ON \033[0m')
-            else:
-                print('Power: \033[31m OFF \033[0m')
+
+        fTset = self.getSetTemperature()
+        fTac = self.getTemperature()
+
         if (self.D2 == '0'):
             fHset = self.getSetHumidity()
             fHac = self.getHumidity()
-            if show:
-                print('Humidity:' + '\t' + 'set: %.1f' % fHset + '\t' + 'actual: %.1f' % fHac)
         else:
-            fHset = -1
-            fHac = -1
-        fTset = self.getSetTemperature()
-        fTac = self.getTemperature()
+            fHset = float('nan')
+            fHac = float('nan')
+
+
         if show:
-            print('Temperature:' + '\t' + 'set: %.1f °C' % fTset + '\t' + 'actual: %.1f °C' % fTac)
+            self.printOutput('Climate Chamber:')
+            self.printOutput('Mode: ' + sMode)
+            if bPower == '1':
+                self.printOutput('Power: \033[32m ON \033[0m')
+            else:
+                self.printOutput('Power: \033[31m OFF \033[0m')
+            self.printOutput('Temperature:' + '\t' + 'set: %.1f °C' % fTset + '\t' + 'actual: %.1f °C' % fTac)
+            if (self.D2 == '0'):
+                self.printOutput('Humidity:' + '\t' + 'set: %.1f' % fHset + '\t' + 'actual: %.1f' % fHac)
+
         return([['Mode', 'Power', 'Hset', 'Hac', 'Tset[C]', 'Tac[C]'], [str(sMode), str(bPower), str(fHset), str(fHac), str(fTset), str(fTac)]])
 
     def interaction(self):
-        print('1: enable Power')
+        print('0: Continue dcs mode without changes')
+        print('1: Toggle power')
         print('2: change Mode')
         print('3: set new Temperature')
         print('4: set new Humidity')
+        
         x = input('Number? \n')
-        while x != '1' and x != '2' and x != '3' and x != '4':
-            x = input('Possible Inputs: 1,2,3 or 4! \n')
-        if x == '1':
-            bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on':
-                self.enablePower(1)
-            elif bO == 'OFF' or bO == 'off':
+        while not (x in ['0','1','2','3','4']):
+            x = input('Possible Inputs: 0, 1, 2, 3 or 4! \n')
+
+        if x == '0':
+            pass
+        elif x == '1':
+            if self.Power == '1':
                 self.enablePower(0)
             else:
-                pass
+                self.enablePower(1)
         elif x == '2':
             sM = input('choose: climate or normal \n')
             self.setOperationMode(sM)

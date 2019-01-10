@@ -26,6 +26,7 @@ setup(
             'e4control_measure_Cint = e4control.scripts.CintMeas:main',
             'e4control_measure_It = e4control.scripts.Itmeas:main',
             'e4control_testbeamDCS = e4control.scripts.testbeamDCS:main',
+            'e4control_dcs = e4control.scripts.dcs:main',
         ]
     }
 )
