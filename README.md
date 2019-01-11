@@ -16,7 +16,7 @@ Following devices are currently supported:
 - TTi TSX3510P (Power Supply)
 - Weiss SB22 (Climate Chamber)
 - Espec LU-114 (Climate Chamber)
-- SHT75 (Temperature & Humidity Sensor, connected to a RasPi)
+- SHT75 (Temperature & Humidity Sensor, connected via a RasPi)
 
 ## Scripts
 - *e4control_measure_IV* , to perform a current vs voltage measurement
@@ -30,7 +30,7 @@ Following devices are currently supported:
 Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the software is only tested with python3 & pip3, although it may work with python2 as well. At least the sht-sensor requires python 3 to run.
 1. download or clone this repository
 2. open a terminal and change directory to E4control
-3. to install enter: `pip install .` (Again: Ensure pip3 usage.)
+3. to install enter: `pip3 install .` (Again: Ensure pip3 usage.)
 4. *(add PATH to .bashrc)*
 
 ## How to run scripts?

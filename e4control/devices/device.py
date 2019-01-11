@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import vxi11
 from pylink import TCPLink
 import serial
@@ -79,3 +80,6 @@ class Device(object):
     def ask(self, cmd):
         self.write(cmd)
         return self.read()
+
+    def printOutput(self, string):
+        sys.stdout.write(string+'\r\n')
