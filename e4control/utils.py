@@ -18,6 +18,13 @@ from .devices import (
 )
 
 
+def ask_for_input(ask):
+    if (sys.version_info > (3, 0)):
+        return(input(ask))
+    else:
+        return(raw_input(ask))
+
+
 def read_config(configfile):
     devices = {"S": [], "T": [], "H": [], "P": [], "L": [], "C": [], "V": []}
     for line in open(configfile):
@@ -103,7 +110,7 @@ def settings_query(device_list, v_min=None, v_max=None, v_steps=None, I_lim=None
     if lcr_mode:
         print("lcr_mode: %s" % lcr_mode)
     print("------------------------------------------------")
-    q = input("Settings correct? (y/n)")
+    q = ask_for_input("Settings correct? (y/n)")
     if q == "yes":
         pass
     elif q == "y":
@@ -199,7 +206,7 @@ def check_outputname(output):
     checktxtfile = (output + "/" + outputname + ".txt")
     if os.path.isfile(checktxtfile):
         print("Outputname: " + outputname)
-        n = input("File already exists! Overwrite? (y/n)")
+        n = ask_for_input("File already exists! Overwrite? (y/n)")
         if n == "yes":
             return(output)
         elif n == "y":
@@ -229,7 +236,7 @@ def read_testbeamDCS_config(configfile):
 def show_testbeamDCS_device_list(devices):
     for i in devices:
         print(i)
-    q = input("Correct devices? (y/n)")
+    q = ask_for_input("Correct devices? (y/n)")
     if q == "yes" or q == "y":
         pass
     else:

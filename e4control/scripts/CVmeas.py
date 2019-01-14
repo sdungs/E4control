@@ -265,7 +265,7 @@ def main():
     sh.close_txt_file(fw)
     sh.close_txt_file(fwshort)
 
-    input()
+    sh.ask_for_input()
 
 
 if __name__ == '__main__':

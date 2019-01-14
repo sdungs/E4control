@@ -196,7 +196,7 @@ def main():
             v.close()
         sh.close_txt_file(fw)
 
-        input()
+        sh.ask_for_input()
 
 
 if __name__ == '__main__':
