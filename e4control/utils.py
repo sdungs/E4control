@@ -18,7 +18,7 @@ from .devices import (
 )
 
 
-def ask_for_input(ask):
+def ask_for_input(ask=''):
     if (sys.version_info > (3, 0)):
         return(input(ask))
     else:
