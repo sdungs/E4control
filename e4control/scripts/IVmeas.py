@@ -72,7 +72,7 @@ def main():
         a.initialize('I')
 
     # Check Current limit
-    sh.check_limits(d, ch, I_lim=args.I_lim)
+    sh.check_limits(d, ch, I_lim=args.I_lim/1e6)
 
     # create directory
     argsoutput = sh.check_outputname(args.output)
