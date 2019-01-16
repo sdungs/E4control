@@ -67,7 +67,9 @@ class K2410(Device):
     def getVoltage(self, iChannel=-1):
         sValues = self.ask(':READ?')
         if ',' not in sValues:
-            return -999.
+            sValues = self.ask(':READ?')
+            if ',' not in sValues:
+                return 'error'
         return float(sValues.split(',')[0])
 
     def getCurrent(self, iChannel=-1):
