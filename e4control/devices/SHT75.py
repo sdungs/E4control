@@ -16,7 +16,7 @@ class SHT75(Device):
         call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/StartServer.sh"])
         self.trm = ''
 
-    def initialize(self):
+    def initialize(self, sMode='H'):
         pass
 
     def userCmd(self, cmd):
@@ -34,11 +34,19 @@ class SHT75(Device):
 
     def getTemperature(self, channels=0):
         data = self.getValues(channels)
-        return data[::2]
+        data = data[::2]
+        if len(data) == 1:
+            return data[0]
+        else:
+            return data
 
     def getHumidity(self, channels=0):
         data = self.getValues(channels)
-        return data[1::2]
+        data = data[1::2]
+        if len(data) == 1:
+            return data[0]
+        else:
+            return data
 
     def close(self):
         self.write('CLOSE')
