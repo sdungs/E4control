@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import vxi11
 from pylink import TCPLink
 import serial
@@ -25,6 +26,9 @@ class Device(object):
         elif (connection_type == 'gpib'):
             sPort = 'gpib0,%i' % port
             self.com = vxi11.Instrument(host, sPort)
+        elif (connection_type == 'gpibSerial'):
+            sPort = 'COM1,488'
+            self.com = vxi11.Instrument(host,sPort)
         elif (connection_type == 'usb'):
             self.com = serial.Serial(host, 9600)
         elif (connection_type == 'prologix'):
@@ -49,23 +53,23 @@ class Device(object):
         self.open()
 
     def read(self):
-        s = ''
         try:
             if self.connection_type == 'usb':
                 s = self.com.readline()
-                s = s.replace('\r', '')
-                s = s.replace('\n', '')
             else:
                 s = self.com.read()
-                s = s.replace('\r', '')
-                s = s.replace('\n', '')
-            return s
         except:
-            print('Failed to read one time!')
+            print('First reading attempt failed, trying again...')
             try:
-                s = self.com.read()
+                if self.connection_type == 'usb':
+                    s = self.com.readline()
+                else:
+                    s = self.com.read()
             except:
-                print('Timeout while reading!')
+                print('Timeout while reading from device!')
+                raise
+        s = s.replace('\r', '')
+        s = s.replace('\n', '')
         return s
 
     def write(self, cmd):
@@ -82,3 +86,6 @@ class Device(object):
     def ask(self, cmd):
         self.write(cmd)
         return self.read()
+
+    def printOutput(self, string):
+        sys.stdout.write(string+'\r\n')

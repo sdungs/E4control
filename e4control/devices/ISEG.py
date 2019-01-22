@@ -128,14 +128,14 @@ class ISEG(Device):
         return([['Ilim1[uA]', 'U1[V]', 'I1[uA]', 'Ilim2[uA]', 'U2[V]', 'I2[uA]'], [str(f1Limit), str(f1Voltage), str(f1Current), str(f2Limit), str(f2Voltage), str(f2Current)]])
 
     def interaction(self):
-        sChannel = raw_input('Choose channel! \n')
+        sChannel = input('Choose channel! \n')
         while sChannel != '1' and sChannel != '2':
-            sChannel = raw_input('Possible Channels: 1 or 2! \n')
+            sChannel = input('Possible Channels: 1 or 2! \n')
         iChannel = int(sChannel)
         print('1: set Voltage')
-        x = raw_input('Number? \n')
+        x = input('Number? \n')
         while x != '1':
-            x = raw_input('Possible Inputs: 1! \n')
+            x = input('Possible Inputs: 1! \n')
         if x == '1':
-            fV = raw_input('Please enter new Voltage in V for CH %i\n' % iChannel)
+            fV = input('Please enter new Voltage in V for CH %i\n' % iChannel)
             self.rampVoltage(float(fV), iChannel)

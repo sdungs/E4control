@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -20,15 +19,18 @@ parser.add_argument('v_min', help='min voltage (V)', type=float)
 parser.add_argument('v_max', help='max voltage (V)', type=float)
 parser.add_argument('output', help='output file')
 parser.add_argument('config', help='config file')
-parser.add_argument('-s', '--v_steps', help='number of voltage steps', type=int, default=2)
-parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=5', type=int, default=5)
-parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=1', type=int, default=1)
-parser.add_argument('-f', '--frequency', help='measuring frequency of the LCR meter', type=float)
+parser.add_argument('-I', help='I limit in uA', type=float, default=10)
+parser.add_argument('-s', '--v_steps',
+                    help='number of volt steps', type=int, default=2)
+parser.add_argument('-n', '--ndaqs', type=int, default=10)
+parser.add_argument('-d', '--delay', type=int, default=10)
+parser.add_argument('-f', '--frequenz', type=float)
 parser.add_argument('-l', '--lvolt', type=float)
 parser.add_argument('-m', '--mode', type=str)
 parser.add_argument('-i', '--integration', type=str)
-parser.add_argument('-p', '--noLivePlot', help='disables the livePlot', action='store_true')
-parser.add_argument('-db', '--database', help='creates an additional logfile, matching the pixel database requirements', action='store_true')
+parser.add_argument('-times', '--times of ramps', type=int, default=1)
+parser.add_argument('-hold_V', '--voltage during hold', type=float)
+parser.add_argument('-hold_t', '--time of the hold in seconds', type=int, default=3600)
 
 
 def main():
@@ -38,7 +40,8 @@ def main():
     devices = sh.read_config(args.config)
 
     # create setting query
-    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, ndaqs=args.ndaqs, lcr_freq=args.frequency, lcr_volt=args.lvolt, lcr_aper=args.integration, lcr_mode=args.mode)
+    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, ndaqs=args.ndaqs,
+                      lcr_freq=args.frequenz, lcr_volt=args.lvolt, lcr_aper=args.integration, lcr_mode=args.mode)
 
     # connection
     source, source_channel = sh.device_connection(devices['S'])
@@ -71,8 +74,8 @@ def main():
     d.setVoltage(0, ch)
     d.enableOutput(True, ch)
     l.initialize()
-    if args.frequency:
-        l.setFrequency(args.frequency)
+    if args.frequenz:
+        l.setFrequency(args.frequenz)
     if args.mode:
         l.setMeasurementMode(args.mode)
     if args.integration:
@@ -102,7 +105,8 @@ def main():
     lcr_volt = l.getVoltage()
     lcr_aper = l.getIntegrationTimeAndAveragingRate()
     lcr_mode = l.getMeasurementMode()
-    lcr_details = ['freq='+str(lcr_freq), 'volt='+str(lcr_volt), 'aper='+str(lcr_aper), 'mode='+str(lcr_mode)]
+    lcr_details = ['freq=' + str(lcr_freq), 'volt=' + str(lcr_volt),
+                   'aper=' + str(lcr_aper), 'mode=' + str(lcr_mode)]
     sh.write_line(fw, lcr_details)
 
     header = ['time', 'no.', 'U[V]', 'I[uA]', 'C[pF]', 'Rlcr']
@@ -134,29 +138,6 @@ def main():
         header.append('A [uA]')
     sh.write_line(fw, header)
 
-    # create database output file
-    if args.database:
-        db_input = sh.load_data('../objs_cv.json', {'db_operator':'agisen', 'db_temperature':'20.0', 'db_humidity':'50', 'db_sensorID':'', 'db_sensorName':'"none"'})
-
-        print('Please provide input for the pixel database file.')
-        db_input['db_operator'] = sh.rlinput('operator: ', db_input['db_operator'])
-        db_input['db_temperature'] = sh.rlinput('operating temperature [°C]: ', db_input['db_temperature'])
-        db_input['db_humidity'] = sh.rlinput('operating humidity [%]: ', db_input['db_humidity'])
-        db_input['db_sensorID'] = sh.rlinput('sensor ID: ', db_input['db_sensorID'])
-        db_input['db_sensorName'] = sh.rlinput('sensor name: ', db_input['db_sensorName'])
-
-        db_date = time.localtime(time.time())
-        db_date = '{:4d}-{:02d}-{:02d}'.format(db_date[0],db_date[1],db_date[2])
-
-        db_file = sh.new_txt_file(outputname+'_database')
-        sh.write_line(db_file, [db_input['db_sensorID'], db_input['db_sensorName']])  # 'serial number', 'local device name'
-        sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date'
-        sh.write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
-        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, '"measurement integration time (in s)"', '"compliance"'])   # 'voltage step', 'delay between steps (in s)', 'measurement integration time (in s)', 'compliance (in A)'
-        sh.write_line(db_file, ['U', 'C'])  # 'V', 'C'
-
-        sh.dump_data('../objs_cv.json', db_input)
-
     # create value arrays
     Us = []
     Cmeans = []
@@ -169,27 +150,26 @@ def main():
     As = []
 
     # live plot
-    livePlot = not args.noLivePlot
-    if livePlot:
-        plt.ion()
-        fig = plt.figure(figsize=(8, 8))
-        ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
-        ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
-        ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='o')
-        ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
-        ax1.set_ylabel(r'$C_{mean} $ $ [\mathrm{pF}]$')
-        ax1.set_title(r'CV curve')
-        ax2.plot(Ns, Cs, 'o')
-        ax2.set_xlabel(r'$No.$')
-        ax2.set_ylabel(r'$C $ $ [\mathrm{pF}]$')
-        ax2.set_title(r'Voltage steps')
-        plt.tight_layout()
-        plt.pause(0.0001)
+    plt.ion()
+    fig = plt.figure(figsize=(8, 8))
+    ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2, rowspan=2)
+    ax2 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
+    ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='o')
+    ax1.set_xlabel(r'$U $ $ [\mathrm{V}]$')
+    ax1.set_ylabel(r'$C_{mean} $ $ [\mathrm{pF}]$')
+    ax1.set_title(r'CV curve')
+    ax2.plot(Ns, Cs, 'o')
+    ax2.set_xlabel(r'$No.$')
+    ax2.set_ylabel(r'$C $ $ [\mathrm{pF}]$')
+    ax2.set_title(r'Voltage steps')
+    plt.tight_layout()
+    plt.pause(0.0001)
 
     # start measurement
-    try:
-        for i in range(args.v_steps):
-            voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
+    for m in range(times):
+        for i in xrange(args.v_steps):
+            voltage = args.v_min + (args.v_max - args.v_min) / \
+                (args.v_steps - 1) * i
             print('Set voltage: %.2f V' % voltage)
             d.rampVoltage(voltage, ch)
             time.sleep(args.delay)
@@ -212,8 +192,9 @@ def main():
 
             for n in range(len(humidity)):
                 Hs.append(humidity[n].getVoltage(humidity_channel[n]))
+
             for n in range(len(Ameter)):
-                As.append(Ameter[n].getCurrent(Ameter_channel[n]) * 1E6)
+                As.append(Ameter[n].getCurrent(Ameter_channel[n])*1E6)
 
             l.getValues()
             time.sleep(0.1)
@@ -222,11 +203,17 @@ def main():
             l.getValues()
             time.sleep(0.1)
 
-            for j in range(args.ndaqs):
+            for j in xrange(args.ndaqs):
                 getVoltage = d.getVoltage(ch)
                 print('Get voltage: %.2f V' % (getVoltage))
-                getCurrent = d.getCurrent(ch)*1E6
+                getCurrent = d.getCurrent(ch) * 1E6
                 print('Get current: %.2f uA' % (getCurrent))
+
+                if (abs(getCurrent) > abs(args.I)):
+                    print('Software Limit reached!')
+                    sh.write_line(fw, ['Software Limit reached!', getCurrent])
+                    softLimit = True
+                    break
 
                 Lvalues = l.getValues()
                 capacity = Lvalues[0] * 1E12
@@ -246,28 +233,45 @@ def main():
                     values.append(h)
                 for v in Vmeter:
                     values.append(v)
-                for a in Ameter:
+                for a in As:
                     values.append(a)
                 sh.write_line(fw, values)
 
-                Ns.append(j+1)
-                if livePlot:
-                    ax2.clear()
-                    ax2.set_title(r'Voltage step : %0.2f V' % voltage)
-                    ax2.set_xlabel(r'$No.$')
-                    ax2.set_ylabel(r'$C $ $ [\mathrm{pF}]$')
-                    ax2.plot(Ns, Cs, 'r--o')
-                    plt.pause(0.0001)
-
+                Ns.append(j + 1)
+                ax2.clear()
+                ax2.set_title(r'Voltage step : %0.2f V' % voltage)
+                ax2.set_xlabel(r'$No.$')
+                ax2.set_ylabel(r'$C $ $ [\mathrm{pF}]$')
+                ax2.plot(Ns, Cs, 'r--o')
+                plt.pause(0.0001)
             Us.append(voltage)
             Cmeans.append(np.mean(Cs))
             Csem.append(sem(Cs))
-            if livePlot:   
-                ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
-                plt.pause(0.0001)
-    except(KeyboardInterrupt, SystemExit):
-        pass
-      
+            ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
+            plt.pause(0.0001)
+            if softLimit:
+                break
+
+            if m < args.times - 1:
+                # vor dem schlafen gehen hochrampen
+                d.rampVoltage(args.hold_V, ch)
+                print('Hold Voltage at: ', d.getVoltage(ch))
+                print('Wartezeit in Sekunden:', args.hold_t)
+                print('Rest Ramps: ', (args.times - m - 1))
+                stoptime = time.time()
+                while((stoptime + args.hold_t) > time.time()):
+                    getCurrent = d.getCurrent(ch) * 1E6
+                    if (abs(curr) > abs(args.I)):
+                        print('Software Limit reached!')
+                        sh.write_line(fw, ['Software Limit reached!', getCurrent])
+                        softLimit = True
+                        break
+                    if ((stoptime + delay_longrun - time.time()) > 60):
+                        print('Rest Ramps: ', times - m - 1,
+                              ' Wartezeit: ', stoptime + args.hold_t - time.time())
+                        time.sleep(60)
+                    else:
+                        time.sleep(stoptime + delay_longrun - time.time())
     # ramp down voltage
     d.rampVoltage(0, ch)
     remaining = d.getCurrent(ch) * 1E6
@@ -285,19 +289,16 @@ def main():
     sh.write_line(fwshort, header)
     for i in range(len(Us)):
         sh.write_line(fwshort, [Us[i], Cmeans[i], Csem[i]])
-        if args.database:
-            sh.write_line(db_file, [Us[i], Cmeans[i]])
 
     # show and save curve
     plt.close('all')
     nCmeans = np.array(Cmeans)
-    c1 = 1/nCmeans**2
-    plt.plot(Us, c1, 'o')
+    plt.plot(Us, nCmeans, 'o')
     plt.grid()
     plt.title(r'CV curve: %s' % outputname)
     plt.xlabel(r'$U $ $ [\mathrm{V}]$')
-    plt.ylabel(r'$1/C_{mean}^2 $ [$\mathrm{1/pF}^2$]')
-    plt.xlim(min(Us)-5, max(Us)+5)
+    plt.ylabel(r'$C_{int} $ [$\mathrm{pF}$]')
+    plt.xlim(min(Us) - 5, max(Us) + 5)
     plt.tight_layout()
     plt.savefig('%s.pdf' % outputname)
 
@@ -314,11 +315,8 @@ def main():
         v.close()
     sh.close_txt_file(fw)
     sh.close_txt_file(fwshort)
-    if args.database:
-        sh.close_txt_file(db_file)
 
-    # wait until the user finishes the measurement
-    input()
+    #input()
 
 
 if __name__ == '__main__':

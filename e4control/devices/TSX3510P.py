@@ -55,7 +55,8 @@ class TSX3510P(Device):
             self.write('OP 0')
 
     def output(self, show=True):
-        bOutput = self.getEnableOutput()
+        #self.enableOutput(False)
+        bOutput = None
         fVlim = self.getVoltageLimit()
         fVoltage = self.getVoltage()
         fCurrent = self.getCurrent()
@@ -77,11 +78,11 @@ class TSX3510P(Device):
         print('2: set OVP')
         print('3: set Voltage')
         print('4: set Current')
-        x = raw_input('Number? \n')
+        x = input('Number? \n')
         while x != '1' and x != '2' and x != '3' and x != '4':
-            x = raw_input('Possible Inputs: 1,2,3 or 4! \n')
+            x = input('Possible Inputs: 1,2,3 or 4! \n')
         if x == '1':
-            bO = raw_input('Please enter ON or OFF! \n')
+            bO = input('Please enter ON or OFF! \n')
             if bO == 'ON' or bO == 'on':
                 self.enableOutput(True)
             elif bO == 'OFF' or bO == 'off':
@@ -89,11 +90,11 @@ class TSX3510P(Device):
             else:
                 pass
         elif x == '2':
-            sOVP = raw_input('Please enter new OVP in V\n')
+            sOVP = input('Please enter new OVP in V\n')
             self.setVoltageLimit(float(sOVP))
         elif x == '3':
-            sV = raw_input('Please enter new Voltage in V\n')
+            sV = input('Please enter new Voltage in V\n')
             self.setVoltage(float(sV))
         elif x == '4':
-            sI = raw_input('Please enter new Current in A\n')
+            sI = input('Please enter new Current in A\n')
             self.setCurrent(float(sI))

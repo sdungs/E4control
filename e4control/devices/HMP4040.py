@@ -96,18 +96,18 @@ class HMP4040(Device):
         return([sHeader, sValues])
 
     def interaction(self):
-        sChannel = raw_input('Choose channel! \n')
+        sChannel = input('Choose channel! \n')
         while sChannel != '1' and sChannel != '2' and sChannel != '3' and sChannel != '4':
-            sChannel = raw_input('Possible Channels: 1,2,3 or 4! \n')
+            sChannel = input('Possible Channels: 1,2,3 or 4! \n')
         iChannel = int(sChannel)
         print('1: enable Output')
         print('2: set Voltage')
         print('3: set Current')
-        x = raw_input('Number? \n')
+        x = input('Number? \n')
         while x != '1' and x != '2' and x != '3':
-            x = raw_input('Possible Inputs: 1,2 or 3! \n')
+            x = input('Possible Inputs: 1,2 or 3! \n')
         if x == '1':
-            bO = raw_input('Please enter ON or OFF! \n')
+            bO = input('Please enter ON or OFF! \n')
             if bO == 'ON' or bO == 'on':
                 self.enableOutput(iChannel, True)
             elif bO == 'OFF' or bO == 'off':
@@ -115,8 +115,8 @@ class HMP4040(Device):
             else:
                 pass
         elif x == '2':
-            sVoltage = raw_input('Please enter new Voltage in V for CH %i\n' % iChannel)
+            sVoltage = input('Please enter new Voltage in V for CH %i\n' % iChannel)
             self.setVoltage(iChannel, float(sVoltage))
         elif x == '3':
-            sCurrent = raw_input('Please enter new Current in A for CH %i\n' % iChannel)
+            sCurrent = input('Please enter new Current in A for CH %i\n' % iChannel)
             self.setCurrent(iChannel, float(sCurrent))

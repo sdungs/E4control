@@ -6,11 +6,12 @@ from .device import Device
 
 
 class K2410(Device):
-    rampSpeed_step = 5
+    rampSpeed_step = 10
     rampSpeed_delay = 1  # s
 
     def __init__(self, connection_type, host, port):
-        super(K2410, self).__init__(connection_type=connection_type, host=host, port=port)
+        super(K2410, self).__init__(
+            connection_type=connection_type, host=host, port=port)
 
     def userCmd(self, cmd):
         print('user cmd: %s' % cmd)
@@ -86,7 +87,7 @@ class K2410(Device):
 
     def setRampSpeed(self, iRampSpeed, iDelay):
         if iRampSpeed < 1 or iRampSpeed > 255:
-            print('Set RampSpeed size is out off range!')
+            print('Set RampSpeed size is out of range!')
         else:
             self.rampSpeed_step = iRampSpeed
         if iDelay < 0:
@@ -100,12 +101,14 @@ class K2410(Device):
     def rampVoltage(self, fVnew, iChannel=-1):
         V = self.getVoltage(iChannel)
         V = round(V, 4)
-        if abs(fVnew-V) <= self.rampSpeed_step:
+        if abs(fVnew - V) <= self.rampSpeed_step:
             self.setVoltage(fVnew, iChannel)
             print('Voltage reached: %.2f V' % fVnew)
         else:
-            self.setVoltage(V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V))
-            print('Ramp Voltage: %.2f V' % (V+self.rampSpeed_step*(fVnew-V)/abs(fVnew-V)))
+            self.setVoltage(V + self.rampSpeed_step *
+                            (fVnew - V) / abs(fVnew - V))
+            print('Ramp Voltage: %.2f V' %
+                  (V + self.rampSpeed_step * (fVnew - V) / abs(fVnew - V)))
             sleep(self.rampSpeed_delay)
             self.rampVoltage(fVnew, iChannel)
             pass
@@ -122,43 +125,53 @@ class K2410(Device):
     def reset(self):
         self.write('*RST')
 
-    def output(self,  show=True):
+    def output(self, show=True):
         bPower = self.getEnableOutput()
         fLimit = self.getCurrentLimit() * 1E6
-        if show:
-            print('K2410:')
-            if bPower == '1':
-                print('Output \033[32m ON \033[0m')
-            else:
-                print('Output \033[31m OFF \033[0m')
-            print('Current Limit: %0.1f uA' % fLimit)
+
         if bPower == '1':
             fVoltage = self.getVoltage()
             fCurrent = self.getCurrent() * 1E6
-            if show:
-                print('Voltage = %0.1f V' % fVoltage)
-                print('Current = %0.3f uA' % fCurrent)
         else:
-            if show:
-                print('Voltage = ---- V')
-                print('Current = ---- uA')
             fVoltage = 0
             fCurrent = 0
+
+        if show:
+            self.printOutput('K2410:')
+            if bPower == '1':
+                self.printOutput('Output \033[32m ON \033[0m')
+                self.printOutput('Current Limit: %0.1f uA' % fLimit)
+                self.printOutput('Voltage = %0.1f V' % fVoltage)
+                self.printOutput('Current = %0.3f uA' % fCurrent)
+            else:
+                self.printOutput('Output \033[31m OFF \033[0m')
+                self.printOutput('Current Limit: %0.1f uA' % fLimit)
+                self.printOutput('Voltage = ---- V')
+                self.printOutput('Current = ---- uA')
+
         return([['Output', 'Ilim[uA]', 'U[V]', 'I[uA]'], [str(bPower), str(fLimit), str(fVoltage), str(fCurrent)]])
 
     def interaction(self):
-        print('1: enable Output')
-        print('2: set Voltage')
-        x = raw_input('Number? \n')
-        while x != '1' and x != '2':
-            x = raw_input('Possible Inputs: 1 or 2! \n')
-        if x == '1':
-            bO = raw_input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on':
-                self.enableOutput(True)
-            else:
+        print('0: Continue dcs mode without any changes')
+        print('1: Toggle output')
+        print('2: Set voltage')
+        print('3: Set currrent limit')
+
+        x = input('Number? \n')
+        while not (x in ['0','1','2','3',]):
+            x = input('Possible Inputs: 0, 1, 2 or 3! \n')
+
+        if x == '0':
+            pass
+        elif x == '1':
+            if self.getEnableOutput() == '1':
                 self.rampVoltage(0)
                 self.enableOutput(False)
+            else:
+                self.enableOutput(True)
         elif x == '2':
-            fV = raw_input('Please enter new Voltage in V \n')
+            fV = input('Please enter new Voltage in V \n')
             self.rampVoltage(float(fV))
+        elif x == '3':
+            fIlim = input('Please enter new current limit in uA \n')
+            self.setCurrentLimit(float(fIlim)/1E6)

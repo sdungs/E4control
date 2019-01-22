@@ -33,6 +33,10 @@ class K2000(Device):
             self.setKind('DCV')
             self.setRange('R4')
             self.mode = 'V'
+        elif (sMode == 'I'):
+            self.setKind('DCI')
+            self.setRange('R0')
+            self.mode = 'I'
         else:
             print('Initializing not possible: Unknown mode!')
 
@@ -93,9 +97,10 @@ class K2000(Device):
         return float(sValue[4:])
 
     def getResistance(self, iChannel):
-        self.write('N%iX' % iChannel)
-        fR = self.getValue()
-        return fR
+        fR = self.ask('N%iX' % iChannel)
+        # self.write('N%iX' % iChannel)
+        # fR = self.getValue()
+        return float(fR[4:])
 
     def getVoltage(self, iChannel):
         self.write('N%iX' % iChannel)
@@ -144,13 +149,13 @@ class K2000(Device):
 
     def output(self, show=True):
         if show:
-            print('K2000:')
+            self.printOutput('K2000:')
         values = []
         header = []
         if (self.mode == 'H'):
             fHumidity = self.getVoltage(1)
             if show:
-                print('Humidity = %0.4f V' % fHumidity)
+                self.printOutput('Humidity = %0.4f V' % fHumidity)
             values.append(str(fHumidity))
             header.append('H[V]')
         elif (self.mode == 'T2W'):
@@ -163,7 +168,7 @@ class K2000(Device):
                 values.append(str(fTemperature))
                 header.append('T%i[C]' % i)
                 if show:
-                    print('Ch %i:' % i+'\t'+'%.2f Ohm' % fResistance + '\t' + '%.1f C' % fTemperature)
+                    self.printOutput('Ch %i:' % i+'\t'+'%.2f Ohm' % fResistance + '\t' + '%.1f C' % fTemperature)
                 i += 1
         elif (self.mode == 'T'):
             i = 1
@@ -175,16 +180,16 @@ class K2000(Device):
                 values.append(str(fTemperature))
                 header.append('T%i[C]' % i)
                 if show:
-                    print('Ch %i:' % i+'\t'+'%.2f Ohm' % fResistance + '\t' + '%.1f °C' % fTemperature)
+                    self.printOutput('Ch %i:' % i+'\t'+'%.2f Ohm' % fResistance + '\t' + '%.1f °C' % fTemperature)
                 i += 1
         elif (self.mode == 'V'):
             fVoltage = self.getVoltage(1)
             if show:
-                print('Voltage = %0.4f V' % fVoltage)
+                self.printOutput('Voltage = %0.4f V' % fVoltage)
             values.append(str(fVoltage))
             header.append('U[V]')
         else:
-            print('Error!')
+            self.printOutput('Error!')
         return([header, values])
 
     def interaction(self):

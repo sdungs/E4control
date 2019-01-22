@@ -1,12 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
 
 import os
 import sys
 import argparse
 import time
+import termios, tty
 
 from threading import Thread
 
@@ -17,22 +15,25 @@ parser = argparse.ArgumentParser()
 parser.add_argument('config', help='config file')
 parser.add_argument('-l', '--logfile', help='potential logfile')
 
-def getKey(threadname):
-    global cont
-    global cont2
-    cont = 1
-    cont2 = 1
-    while True:
-        x = input()
-        if x == 'q':
-            cont = 0
-            print('Quit')
-            break
-        elif x == 'c':
-            cont2 = 0
-            break
-        else:
-            print('Nooooooo')
+
+class pressedKeyThread(Thread):
+    pressed_key = ''
+
+    def run(self):
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+     
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        self.pressed_key = ch
+        print('"{}" has been pressed.'.format(self.pressed_key))
+
+
+def print(string):
+    sys.stdout.write(string+'\r\n')
 
 def main():
     args = parser.parse_args()
@@ -63,18 +64,13 @@ def main():
             header = header + (i.output(show=False)[0])
         sh.write_line(fw, d_names)
         sh.write_line(fw, header)
-    global cont
-    global cont2
-    cont = 1
-    cont2 = 1
 
     starttime = time.time()
 
-    while cont == 1:
-        cont2 = 1
-        threadKey = Thread(target=getKey, args=('Thread-1',))
-        threadKey.start()
-        while cont == 1 and cont2 == 1:
+    while True:
+        key_thread = pressedKeyThread()
+        key_thread.start()
+        while key_thread.is_alive():
             values = [str(time.time())]
             print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
             timestamp = (time.time()-starttime) / 60
@@ -93,25 +89,36 @@ def main():
                     h, v = d.output()
                     values += v
                     print('-----------------------------------------------------')
-            print('press c (=CHANGE PARAMETER) or q (=QUIT) and ENTER')
-            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-            print('')
             if args.logfile:
                 sh.write_line(fw, values)
-            if cont == 1 and cont2 == 1:
-                time.sleep(5)
-        threadKey.join()
-        if cont == 1:
+            time.sleep(1)
+            print('press c (=CHANGE PARAMETER) or q (=QUIT) and ENTER')
+            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+            if key_thread.is_alive():
+                time.sleep(10)
+            print('')
+
+        key_thread.join()
+        key = key_thread.pressed_key
+        print('Interpreting "{}" key...'.format(key_thread.pressed_key))
+
+        if key == 'q':
+            print('Quitting...')
+            break
+
+        if key == 'c':
             print('List of active Devices:')
+            print('0: Continue dcs mode without changes')
             for i in range(len(config_devices)):
                 print('%i: %s' % (i+1, config_devices[i][1]))
-            x = input('Choose the number of a Device:')
-            try:
-                x = int(x)
-            except:
-                x = 100
+            x = int(input('Choose the number of a Device:'))
             if (x-1) in range(len(config_devices)):
-                devices[int(x)-1].interaction()
+                devices[x-1].interaction()
+            else:
+                continue
+        else:
+            print('Cannot handle this key. Continuing.')
+            time.sleep(1)
 
     # print(threadKey.is_alive())
     for d in devices:

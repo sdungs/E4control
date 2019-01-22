@@ -2,7 +2,8 @@
 
 import os
 import sys
-
+import readline
+import json
 
 from .devices import (
     HMP4040,
@@ -15,18 +16,23 @@ from .devices import (
     K2410,
     SB22,
     TSX3510P,
+    LU114,
+    SHT75,
+    HUBER,
 )
 
 
-def ask_for_input(ask=''):
-    if (sys.version_info > (3, 0)):
-        return(input(ask))
-    else:
-        return(raw_input(ask))
+# have an input with a prefilled text
+def rlinput(prompt, prefill=''):
+   readline.set_startup_hook(lambda: readline.insert_text(prefill))
+   try:
+      return input(prompt)
+   finally:
+      readline.set_startup_hook()
 
 
 def read_config(configfile):
-    devices = {"S": [], "T": [], "H": [], "P": [], "L": [], "C": [], "V": []}
+    devices = {"S": [], "T": [], "H": [], "P": [], "L": [], "C": [], "V": [], "I": []}
     for line in open(configfile):
         m = line.replace("\n", "")
         n = m.split(" ")
@@ -50,12 +56,15 @@ def read_config(configfile):
             devices["C"].append([model, connection_type, host, port, channel])
         elif (x == "V"):
             devices["V"].append([model, connection_type, host, port, channel])
+        elif (x == "I"):
+            devices["I"].append([model, connection_type, host, port, channel])
+
         else:
             sys.exit("Unknown parameter while reading configfile!")
     return(devices)
 
 
-def settings_query(device_list, v_min=None, v_max=None, v_steps=None, I_lim=None, ndaqs=None, delay=None, lcr_freq=None, lcr_volt=None, lcr_aper=None, lcr_mode=None):
+def settings_query(device_list, **kwargs):
     print("------------------------------------------------")
     print("Measurement settings:")
     print("------------------------------------------------")
@@ -87,28 +96,20 @@ def settings_query(device_list, v_min=None, v_max=None, v_steps=None, I_lim=None
         print("Volt meter:")
         for i in device_list["V"]:
             print(i)
+    if device_list["I"]:
+        print("Ampere meter:")
+        for i in device_list["I"]:
+            print(i)
 
     print("------------------------------------------------")
-    if v_min:
-        print("v_min: %.2f V" % v_min)
-    if v_max:
-        print("v_max: %.2f V" % v_max)
-    if v_steps:
-        print("v_steps: %i" % v_steps)
-    if I_lim:
-        print("I_lim: %.2f uA" % I_lim)
-    if ndaqs:
-        print("ndaqs: %i" % ndaqs)
-    if delay:
-        print("delay: %i" % delay)
-    if lcr_freq:
-        print("lcr_freq: %.1f" % lcr_freq)
-    if lcr_volt:
-        print("lcr_volt: %f" % lcr_volt)
-    if lcr_aper:
-        print("lcr_aper: %s" % str(lcr_aper))
-    if lcr_mode:
-        print("lcr_mode: %s" % lcr_mode)
+    # Order is preserved only with Python >= 3.6 -> https://docs.python.org/3/whatsnew/3.6.html#whatsnew36-pep468
+    for key, value in kwargs.items():
+        if any(x in key for x in ('v_min','v_max')):
+            print('{0}: {1:.1f} V'.format(key, value))
+        elif 'I_lim' in key:
+            print('{0}: {1:.1f} uA'.format(key, value))
+        else:            
+            print('{0}: {1}'.format(key, value)) 
     print("------------------------------------------------")
     q = ask_for_input("Settings correct? (y/n)")
     if q == "yes":
@@ -144,6 +145,12 @@ def device_connection(values):
             d.append(SB22(k[1], k[2], int(k[3])))
         elif k[0] == "TSX3510P":
             d.append(TSX3510P(k[1], k[2], int(k[3])))
+        elif k[0] == 'LU114':
+            d.append(LU114(k[1], k[2], int(k[3])))
+        elif k[0] == 'SHT75':
+            d.append(SHT75(k[1], k[2], int(k[3])))
+        elif k[0] == 'HUBER':
+            d.append(HUBER(k[1], k[2], int(k[3])))
         else:
             sys.exit("Unknown Device: %s" % k[0])
         ch.append(int(k[4]))
@@ -158,9 +165,9 @@ def check_limits(device, channel, V_lim=None, I_lim=None, P_lim=None):
         if (V_hard <= V_lim):
             sys.exit("Hardware Limit is lower than Software Limit!")
     if I_lim:
-        I_hard = device.getCurrentLimit(channel) * 1E6
-        print("I_lim: %.2f uA" % I_lim)
-        print("I_lim hardware %.2f uA" % I_hard)
+        I_hard = device.getCurrentLimit(channel)
+        print('I_lim software: {:.2f} uA'.format(I_lim*1e6))
+        print('I_lim hardware: {:.2f} uA'.format(I_hard*1e6))
         if (I_hard <= I_lim):
             sys.exit("Hardware Limit is lower than Software Limit!")
     if P_lim:
@@ -188,6 +195,23 @@ def write_line(txtfile, values):
             txtfile.write(str(values[i]) + "\t")
     txtfile.flush()
     pass
+
+
+def load_data(file, default_data):
+    try:
+        data = json.load(open(file, 'r'))
+        if data.keys()==default_data.keys():
+            return data
+        else:
+            print('Corrupted data loaded from file. Restoring default data.')
+            return default_data
+    except:
+        print('No data could be loaded from file. Restoring default data.')
+        return default_data
+
+
+def dump_data(file, data):
+    json.dump(data, open(file, 'w'))
 
 
 def create_plot(filename, kind, x, y, xerr=None, yerr=None, save=True, show=True):
@@ -284,6 +308,18 @@ def connect_testbeamDCS_devices(devices):
             d.append(x)
         elif k[1] == "TSX3510P":
             x = TSX3510P(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "LU114":
+            x = LU114(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "SHT75":
+            x = SHT75(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "HUBER":
+            x = HUBER(k[2], k[3], k[4])
             x.initialize()
             d.append(x)
         else:

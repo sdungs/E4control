@@ -1,3 +1,4 @@
+from .device import Device
 from .HMP4040 import HMP4040
 from .HP4284A import HP4284A
 from .ISEG import ISEG
@@ -8,8 +9,12 @@ from .K2000 import K2000
 from .K2410 import K2410
 from .SB22 import SB22
 from .TSX3510P import TSX3510P
+from .LU114 import LU114
+from .SHT75 import SHT75
+from .HUBER import HUBER
 
 __all__ = [
+    'Device'
     'HMP4040',
     'HP4284A',
     'ISEG',
@@ -20,4 +25,7 @@ __all__ = [
     'K2410',
     'SB22',
     'TSX3510P',
+    'LU114',
+    'SHT75',
+    'HUBER'
 ]

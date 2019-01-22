@@ -28,6 +28,10 @@ class K196(Device):
             self.setKind('DCV')
             self.setRange('R0')
             self.mode = 'V'
+        elif (sMode == 'I'):
+            self.setKind('DCI')
+            self.setRange('R0')
+            self.mode = 'I'
         else:
             print('Initializing not possible: Unknown mode!')
 
@@ -85,6 +89,10 @@ class K196(Device):
         return ((V-b)/a)/(1.0546-0.00216*fTemp)
 
     def getVoltage(self, iChannel=-1):
+        fV = self.getValue()
+        return(fV)
+
+    def getCurrent(self, iChannel = -1):
         fV = self.getValue()
         return(fV)
 
