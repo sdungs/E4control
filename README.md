@@ -27,11 +27,19 @@ Following devices are currently supported:
 
 
 ## Installation
-Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the software is only tested with python3 & pip3, although it may work with python2 as well. At least the sht-sensor requires python 3 to run.
+Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the software is only tested with python3 & pip3, although it may work with python2 as well. At least the sht-sensor requires python3 to run.
 1. download or clone this repository
 2. open a terminal and change directory to E4control
 3. to install enter: `pip3 install .` (Again: Ensure pip3 usage.)
 4. *(add PATH to .bashrc)*
+
+## How to use the SHT75 Temperature & Humidity Sensor
+0. A Raspberry Pi is required for read-out.
+1. Install the latest version of E4control also on the Pi.
+2. Connect the SHT75 to the corresponding pins of the Pi. Check [SHT_Server](SHT_Server.py) for some information on the pin configuration.
+3. Ensure the ssh connection by adjusting the __init__ function in [SHT75 class](SHT75.pyh).
+
+Running E4control directly on the Pi has not yet been tested.
 
 ## How to run scripts?
 #### config file
