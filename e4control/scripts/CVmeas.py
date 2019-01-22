@@ -150,76 +150,78 @@ def main():
     plt.pause(0.0001)
 
     # start measurement
-    for i in range(args.v_steps):
-        voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
-        print('Set voltage: %.2f V' % voltage)
-        d.rampVoltage(voltage, ch)
-        time.sleep(args.delay)
-        Cs = []
-        Ns = []
-        Ts = []
-        Hs = []
-        Vs = []
-        for n in range(len(temperature)):
-            if temperature_channel[n] == 50:
-                ts = temperature[n].getTempPT1000all()
-                Ts.append(ts[0])
-                Ts.append(ts[1])
-                Ts.append(ts[2])
-                Ts.append(ts[3])
-                Ts.append(ts[4])
-            else:
-                Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
+    try:
+        for i in range(args.v_steps):
+            voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
+            print('Set voltage: %.2f V' % voltage)
+            d.rampVoltage(voltage, ch)
+            time.sleep(args.delay)
+            Cs = []
+            Ns = []
+            Ts = []
+            Hs = []
+            Vs = []
+            for n in range(len(temperature)):
+                if temperature_channel[n] == 50:
+                    ts = temperature[n].getTempPT1000all()
+                    Ts.append(ts[0])
+                    Ts.append(ts[1])
+                    Ts.append(ts[2])
+                    Ts.append(ts[3])
+                    Ts.append(ts[4])
+                else:
+                    Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
 
-        for n in range(len(humidity)):
-            Hs.append(humidity[n].getVoltage(humidity_channel[n]))
+            for n in range(len(humidity)):
+                Hs.append(humidity[n].getVoltage(humidity_channel[n]))
 
-        l.getValues()
-        time.sleep(0.1)
-        l.getValues()
-        time.sleep(0.1)
-        l.getValues()
-        time.sleep(0.1)
+            l.getValues()
+            time.sleep(0.1)
+            l.getValues()
+            time.sleep(0.1)
+            l.getValues()
+            time.sleep(0.1)
 
-        for j in range(args.ndaqs):
-            getVoltage = d.getVoltage(ch)
-            print('Get voltage: %.2f V' % (getVoltage))
-            getCurrent = d.getCurrent(ch)*1E6
-            print('Get current: %.2f uA' % (getCurrent))
+            for j in range(args.ndaqs):
+                getVoltage = d.getVoltage(ch)
+                print('Get voltage: %.2f V' % (getVoltage))
+                getCurrent = d.getCurrent(ch)*1E6
+                print('Get current: %.2f uA' % (getCurrent))
 
-            Lvalues = l.getValues()
-            capacity = Lvalues[0] * 1E12
-            print('Get capacity: %.2f pF' % (capacity))
-            resis = Lvalues[1]
-            Cs.append(capacity)
-            timestamp = time.time()
+                Lvalues = l.getValues()
+                capacity = Lvalues[0] * 1E12
+                print('Get capacity: %.2f pF' % (capacity))
+                resis = Lvalues[1]
+                Cs.append(capacity)
+                timestamp = time.time()
 
-            for n in range(len(Vmeter)):
-                Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
+                for n in range(len(Vmeter)):
+                    Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
 
-            values = []
-            values = [timestamp, i, getVoltage, getCurrent, capacity, resis]
-            for t in Ts:
-                values.append(t)
-            for h in Hs:
-                values.append(h)
-            for v in Vmeter:
-                values.append(v)
-            sh.write_line(fw, values)
+                values = []
+                values = [timestamp, i, getVoltage, getCurrent, capacity, resis]
+                for t in Ts:
+                    values.append(t)
+                for h in Hs:
+                    values.append(h)
+                for v in Vmeter:
+                    values.append(v)
+                sh.write_line(fw, values)
 
-            Ns.append(j+1)
-            ax2.clear()
-            ax2.set_title(r'Voltage step : %0.2f V' % voltage)
-            ax2.set_xlabel(r'$No.$')
-            ax2.set_ylabel(r'$C $ $ [\mathrm{pF}]$')
-            ax2.plot(Ns, Cs, 'r--o')
+                Ns.append(j+1)
+                ax2.clear()
+                ax2.set_title(r'Voltage step : %0.2f V' % voltage)
+                ax2.set_xlabel(r'$No.$')
+                ax2.set_ylabel(r'$C $ $ [\mathrm{pF}]$')
+                ax2.plot(Ns, Cs, 'r--o')
+                plt.pause(0.0001)
+            Us.append(voltage)
+            Cmeans.append(np.mean(Cs))
+            Csem.append(sem(Cs))
+            ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
             plt.pause(0.0001)
-        Us.append(voltage)
-        Cmeans.append(np.mean(Cs))
-        Csem.append(sem(Cs))
-        ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
-        plt.pause(0.0001)
-
+    except(KeyboardInterrupt, SystemExit):
+        pass
     # ramp down voltage
     d.rampVoltage(0, ch)
     remaining = d.getCurrent(ch) * 1E6
