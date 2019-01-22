@@ -39,13 +39,13 @@ def main():
     args = parser.parse_args()
 
     # read configfile
-    config_devices = sh.read_testbeamDCS_config(args.config)
+    config_devices = sh.read_dcs_config(args.config)
 
     # create setting query
-    sh.show_testbeamDCS_device_list(config_devices)
+    sh.show_dcs_device_list(config_devices)
 
     # connection
-    devices = sh.connect_testbeamDCS_devices(config_devices)
+    devices = sh.connect_dcs_devices(config_devices)
 
     # logfile
     if args.logfile:
@@ -92,7 +92,7 @@ def main():
             if args.logfile:
                 sh.write_line(fw, values)
             time.sleep(1)
-            print('press c (=CHANGE PARAMETER) or q (=QUIT) and ENTER')
+            print('press c (=CHANGE PARAMETER) or q (=QUIT)')
             print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
             if key_thread.is_alive():
                 time.sleep(10)

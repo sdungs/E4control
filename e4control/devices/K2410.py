@@ -68,7 +68,9 @@ class K2410(Device):
     def getVoltage(self, iChannel=-1):
         sValues = self.ask(':READ?')
         if ',' not in sValues:
-            return -999.
+            sValues = self.ask(':READ?')
+            if ',' not in sValues:
+                return 'error'
         return float(sValues.split(',')[0])
 
     def getCurrent(self, iChannel=-1):
@@ -150,10 +152,12 @@ class K2410(Device):
         return([['Output', 'Ilim[uA]', 'U[V]', 'I[uA]'], [str(bPower), str(fLimit), str(fVoltage), str(fCurrent)]])
 
     def interaction(self):
-        print('0: Continue dcs mode without any changes')
-        print('1: Toggle output')
-        print('2: Set voltage')
-        print('3: Set currrent limit')
+        print(
+            '0: Continue dcs mode without any changes\n'
+            '1: Toggle output\n'
+            '2: Set voltage (enables the output if its off)\n'
+            '3: Set currrent limit'
+            )
 
         x = input('Number? \n')
         while not (x in ['0','1','2','3',]):
@@ -169,6 +173,9 @@ class K2410(Device):
                 self.enableOutput(True)
         elif x == '2':
             fV = input('Please enter new Voltage in V \n')
+            if not self.getEnableOutput() == '1':
+                print('Enabled output. Now ramping...')
+                self.enableOutput(True)
             self.rampVoltage(float(fV))
         elif x == '3':
             fIlim = input('Please enter new current limit in uA \n')

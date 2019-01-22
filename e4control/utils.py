@@ -22,6 +22,7 @@ from .devices import (
 )
 
 
+# have an input with a prefilled text
 def rlinput(prompt, prefill=''):
    readline.set_startup_hook(lambda: readline.insert_text(prefill))
    try:
@@ -242,7 +243,7 @@ def check_outputname(output):
     return(output)
 
 
-def read_testbeamDCS_config(configfile):
+def read_dcs_config(configfile):
     devices = []
     for line in open(configfile):
         m = line.replace("\n", "")
@@ -256,7 +257,7 @@ def read_testbeamDCS_config(configfile):
     return(devices)
 
 
-def show_testbeamDCS_device_list(devices):
+def show_dcs_device_list(devices):
     for i in devices:
         print(i)
     q = input("Correct devices? (y/n)")
@@ -266,7 +267,7 @@ def show_testbeamDCS_device_list(devices):
         sys.exit("Aborted!")
 
 
-def connect_testbeamDCS_devices(devices):
+def connect_dcs_devices(devices):
     d = []
     for k in devices:
         if k[1] == "HMP4040":
