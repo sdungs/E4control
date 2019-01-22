@@ -92,7 +92,7 @@ def main():
             if args.logfile:
                 sh.write_line(fw, values)
             time.sleep(1)
-            print('press c (=CHANGE PARAMETER) or q (=QUIT) and ENTER')
+            print('press c (=CHANGE PARAMETER) or q (=QUIT)')
             print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
             if key_thread.is_alive():
                 time.sleep(10)

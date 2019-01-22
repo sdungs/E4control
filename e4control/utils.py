@@ -111,7 +111,7 @@ def settings_query(device_list, **kwargs):
         else:            
             print('{0}: {1}'.format(key, value)) 
     print("------------------------------------------------")
-    q = ask_for_input("Settings correct? (y/n)")
+    q = input("Settings correct? (y/n)")
     if q == "yes":
         pass
     elif q == "y":
@@ -230,7 +230,7 @@ def check_outputname(output):
     checktxtfile = (output + "/" + outputname + ".txt")
     if os.path.isfile(checktxtfile):
         print("Outputname: " + outputname)
-        n = ask_for_input("File already exists! Overwrite? (y/n)")
+        n = input("File already exists! Overwrite? (y/n)")
         if n == "yes":
             return(output)
         elif n == "y":
@@ -260,7 +260,7 @@ def read_testbeamDCS_config(configfile):
 def show_testbeamDCS_device_list(devices):
     for i in devices:
         print(i)
-    q = ask_for_input("Correct devices? (y/n)")
+    q = input("Correct devices? (y/n)")
     if q == "yes" or q == "y":
         pass
     else:
