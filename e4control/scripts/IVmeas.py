@@ -239,6 +239,7 @@ def main():
                 if livePlot:
                     ax2.plot(j+1, current, 'r--o')
                     plt.pause(0.0001)
+
             if softLimit:
                 break
             Us.append(voltage)
@@ -290,7 +291,8 @@ def main():
         if args.database:
             sh.close_txt_file(db_file)
 
-         #input()
+        # wait until the user finishes the measurement
+        input()
 
 
 if __name__ == '__main__':

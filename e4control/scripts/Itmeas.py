@@ -249,7 +249,8 @@ def main():
         if args.database:
             sh.close_txt_file(db_file)
 
-        # input()
+        # wait until the user finishes the measurement
+        input()
 
 
 if __name__ == '__main__':
