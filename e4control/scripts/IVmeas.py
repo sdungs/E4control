@@ -117,7 +117,7 @@ def main():
 
     # create database output file
     if args.database:
-        db_input = sh.load_data('../objs_iv.json', {'db_operator':'agisen', 'db_temperature':'20.0', 'db_humidity':'50', 'db_sensorID':'', 'db_sensorName':'"none"'})
+        db_input = sh.load_data('../objs_iv.json', {'db_operator':'"operator"', 'db_temperature':'20.0', 'db_humidity':'40', 'db_sensorID':'"sensorID"', 'db_sensorName':'"none"'})
 
         print('Please provide input for the pixel database file.')
         db_input['db_operator'] = sh.rlinput('operator: ', db_input['db_operator'])

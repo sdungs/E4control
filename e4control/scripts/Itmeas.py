@@ -107,13 +107,13 @@ def main():
     sh.write_line(fw, header)
 
     # create short data file
-    fwshort = sh.new_txt_file('%s_short' % outputname)
+    fwshort = sh.new_txt_file('{}_short'.format(outputname))
     header = ['time [s]', 'duration [s]', 'Imean [uA]', 'Tmean [°C]', 'Hmean [%]']
     sh.write_line(fwshort, header)
 
     # create database output file
     if args.database:
-        db_input = sh.load_data('../objs_it.json', {'db_operator':'agisen', 'db_sensorID':'', 'db_sensorName':'"none"', 'db_tempChannel':'1'})
+        db_input = sh.load_data('../objs_it.json', {'db_operator':'"operator"', 'db_sensorID':'"sensorID"', 'db_sensorName':'"none"', 'db_tempChannel':'1'})
 
         print('Please provide input for the pixel database file.')
         db_input['db_operator'] = sh.rlinput('operator: ', db_input['db_operator'])
@@ -125,11 +125,11 @@ def main():
         db_date = '{:4d}-{:02d}-{:02d}'.format(db_date[0],db_date[1],db_date[2])
         db_tempChannel = int(db_input['db_tempChannel'])-1
 
-        db_file = sh.new_txt_file(outputname+'_database')
+        db_file = sh.new_txt_file('{}_It_1'.format(db_input['db_sensorID']))
         sh.write_line(db_file, [db_input['db_sensorID'], db_input['db_sensorName']])  # 'serial number', 'local device name'
         sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date'
-        sh.write_line(db_file, [args.voltage[0]])   # 'constant bias voltage (in V)'
-        sh.write_line(db_file, ['time', 'I', 'T', 'RH'])  # 'time', 'I', 'T', 'RH'
+        sh.write_line(db_file, [args.voltage[0], args.delay, args.ndaqs, '1e5'])   # 'constant bias voltage (in V)'
+        sh.write_line(db_file, ['time', 'U', 'I_avg', 'I_std', 'T', 'RH'])  # 'time', 'I', 'T', 'RH'
 
         sh.dump_data('../objs_it.json', db_input)
 
@@ -158,8 +158,8 @@ def main():
             timestamp0 = time.time()
             Us = []
             Is = []
-            Ts = [20]
-            Hs = [50]
+            Ts = []
+            Hs = []
             for n in range(len(temperature)):
                 if temperature_channel[n] == 50:
                     ts = temperature[n].getTempPT1000all()
@@ -170,8 +170,8 @@ def main():
                     Ts.append(ts[4])
                 else:
                     Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
-            for n in range(len(humidity)):
-                Hs.append(humidity[n].getVoltage(humidity_channel[n]))
+            for h in humidity:
+                Hs.append(h.getHumidity(humidity_channel[n]))
             for j in range(args.ndaqs):
                 timestamp = time.time()
                 values = [timestamp, k]
@@ -205,14 +205,15 @@ def main():
 
             duration = round(timestamp-timestamp0, 1)
             Umean = np.mean(Us)
-            Imean = np.mean(Is)
+            Imean = np.mean(Is)*1e6
+            Istd = np.std(Is)*1e6
             Tmean = np.mean(Ts)
             Hmean = np.mean(Hs)
 
             # write to short and database file
             sh.write_line(fwshort, [timestamp0, duration, Umean, Imean, Tmean, Hmean])
             if args.database:
-                sh.write_line(db_file, [round(timestamp0-t0), Imean/1e6, Ts[db_tempChannel], Hs[0]])
+                sh.write_line(db_file, [round(timestamp0-t0), Umean, '{:.6}'.format(Imean), '{:.6}'.format(Istd), '{:.4}'.format(Ts[db_tempChannel]), Hs[0]])
 
             time.sleep(args.delay)
             k += 1
@@ -249,8 +250,8 @@ def main():
         if args.database:
             sh.close_txt_file(db_file)
 
-        # wait until the user finishes the measurement
-        input()
+    # wait until the user finishes the measurement
+    # input()
 
 
 if __name__ == '__main__':

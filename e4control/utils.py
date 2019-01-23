@@ -111,7 +111,7 @@ def settings_query(device_list, **kwargs):
         else:            
             print('{0}: {1}'.format(key, value)) 
     print("------------------------------------------------")
-    q = ask_for_input("Settings correct? (y/n)")
+    q = input("Settings correct? (y/n)")
     if q == "yes":
         pass
     elif q == "y":
@@ -230,7 +230,7 @@ def check_outputname(output):
     checktxtfile = (output + "/" + outputname + ".txt")
     if os.path.isfile(checktxtfile):
         print("Outputname: " + outputname)
-        n = ask_for_input("File already exists! Overwrite? (y/n)")
+        n = input("File already exists! Overwrite? (y/n)")
         if n == "yes":
             return(output)
         elif n == "y":
@@ -243,7 +243,7 @@ def check_outputname(output):
     return(output)
 
 
-def read_testbeamDCS_config(configfile):
+def read_dcs_config(configfile):
     devices = []
     for line in open(configfile):
         m = line.replace("\n", "")
@@ -257,17 +257,17 @@ def read_testbeamDCS_config(configfile):
     return(devices)
 
 
-def show_testbeamDCS_device_list(devices):
+def show_dcs_device_list(devices):
     for i in devices:
         print(i)
-    q = ask_for_input("Correct devices? (y/n)")
+    q = input("Correct devices? (y/n)")
     if q == "yes" or q == "y":
         pass
     else:
         sys.exit("Aborted!")
 
 
-def connect_testbeamDCS_devices(devices):
+def connect_dcs_devices(devices):
     d = []
     for k in devices:
         if k[1] == "HMP4040":
