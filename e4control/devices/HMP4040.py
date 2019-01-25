@@ -9,7 +9,7 @@ class HMP4040(Device):
         super(HMP4040, self).__init__(connection_type=connection_type, host=host, port=port)
 
     def userCmd(self, cmd):
-        print('user cmd: %s' % cmd)
+        print('user cmd: {}'.format(cmd))
         return self.ask(cmd)
 
     def initialize(self):
@@ -17,53 +17,53 @@ class HMP4040(Device):
 
     #Global power (=OUTPUT button on PS)
     def enablePower(self, bValue):
-        self.write('OUTP:GEN %i' % bValue)
+        self.write('OUTP:GEN {}'.format(bValue))
 
     def getEnablePower(self):
         return self.ask('OUTP:GEN?')
 
     #Output for individual channels
     def enableOutput(self, iOutput, bValue):
-        self.write('INST OUT%i' % iOutput)
-        self.write('OUTP %i' % bvalue)
+        self.write('INST OUT {}'.format(iOutput))
+        self.write('OUTP {}'.format(bValue))
 
     def getEnableOutput(self, iOutput):
-        self.write('INST OUT%i' % iOutput)
+        self.write('INST OUT {}'.format(iOutput))
         return self.ask('OUTP?')
 
     #Over voltage protection
     def setVoltageLimit(self, iOutput, fValue):
-        self.write('INST OUT%i' % iOutput)
-        self.write('VOLT:PROT %f' % fValue)
+        self.write('INST OUT {}'.format(iOutput))
+        self.write('VOLT:PROT {}'.format(fValue))
 
     def getVoltageLimit(self, iOutput):
-        self.write('INST OUT%i' % iOutput)
+        self.write('INST OUT {}'.format(iOutput))
         return float(self.ask('VOLT:PROT?'))
 
     #Nominal voltage to apply
     def setVoltage(self, iOutput, fValue):
-        self.write('INST OUT%i' % iOutput)
-        self.write('VOLT %f' % fValue)
+        self.write('INST OUT {}'.format(iOutput))
+        self.write('VOLT {}'.format(fValue))
 
     def getVoltage(self, iOutput):
-        self.write('INST OUT%i' % iOutput)
+        self.write('INST OUT {}'.format(iOutput))
         return float(self.ask('VOLT?'))
 
     def measVoltage(self, iOutput):
-        self.write('INST OUT%i' % iOutput)
+        self.write('INST OUT {}'.format(iOutput))
         return float(self.ask('MEAS:VOLT?'))
 
     #Current (limit)
     def setCurrent(self, iOutput, fValue):
-        self.write('INST OUT%i' % iOutput)
-        self.write('CURR %f' % fValue)
+        self.write('INST OUT {}'.format(iOutput))
+        self.write('CURR {}'.format(fValue))
 
     def getCurrent(self, iOutput):
-        self.write('INST OUT%i' % iOutput)
+        self.write('INST OUT {}'.format(iOutput))
         return float(self.ask('CURR?'))
 
     def measCurrent(self, iOutput):
-        self.write('INST OUT%i' % iOutput)
+        self.write('INST OUT {}'.format(iOutput))
         return float(self.ask('MEAS:CURR?'))
 
 
@@ -84,10 +84,10 @@ class HMP4040(Device):
             fCurrent.append(c)
             if show:
                 if a == '1':
-                    print('CH %i:' % i + '\t' + '\033[32m ON \033[0m')
+                    print('CH {}: \t \033[32m ON \033[0m'.format(i))
                 else:
-                    print('CH %i:' % i + '\t' + '\033[31m OFF \033[0m')
-                print('Voltage = %0.1fV' % b + '\t' + 'Current = %0.3fA' % c)
+                    print('CH {}: \t \033[31m OFF \033[0m'.format(i))
+                print('Voltage = {:0.1f}V \t Current = {:0.3f}A'.format(b,c))
             sValues.append(str(a))
             sValues.append(str(b))
             sValues.append(str(c))
@@ -115,8 +115,8 @@ class HMP4040(Device):
             else:
                 pass
         elif x == '2':
-            sVoltage = input('Please enter new Voltage in V for CH %i\n' % iChannel)
+            sVoltage = input('Please enter new Voltage in V for CH {}\n'.format(iChannel))
             self.setVoltage(iChannel, float(sVoltage))
         elif x == '3':
-            sCurrent = input('Please enter new Current in A for CH %i\n' % iChannel)
+            sCurrent = input('Please enter new Current in A for CH {}\n'.format(iChannel))
             self.setCurrent(iChannel, float(sCurrent))
