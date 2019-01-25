@@ -24,7 +24,7 @@ parser.add_argument('-s', '--v_steps', help='number of voltage steps', type=int,
 parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=5', type=int, default=5)
 parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=1', type=int, default=1)
 parser.add_argument('-f', '--frequency', help='measuring frequency of the LCR meter', type=float)
-parser.add_argument('-l', '--lvolt', type=float)
+parser.add_argument('-l', '--lvolt', help='signal amplitude, in V, default=0.050', type=float, default=0.05)
 parser.add_argument('-m', '--mode', type=str)
 parser.add_argument('-i', '--integration', type=str)
 parser.add_argument('-p', '--noLivePlot', help='disables the livePlot', action='store_true')
@@ -134,26 +134,34 @@ def main():
         header.append('A [uA]')
     sh.write_line(fw, header)
 
+    # create short data file
+    fwshort = sh.new_txt_file('%s_short' % outputname)
+    header = ['U[V]', 'Cmean[pF]', 'Csem[pF]']
+    sh.write_line(fwshort, header)
+
     # create database output file
     if args.database:
-        db_input = sh.load_data('../objs_cv.json', {'db_operator':'"operator"', 'db_temperature':'20.0', 'db_humidity':'50', 'db_sensorID':'"sensorID"', 'db_sensorName':'"none"'})
+        db_input = sh.load_data('../objs_cv.json', {'db_operator':'"operator"', 'db_sensorID':'"sensorID"', 'db_sensorComment':'"none"', 'db_tempChannel':'1', 'db_temperature':'20.0', 'db_humChannel':'0', 'db_humidity':'40.0'})
 
         print('Please provide input for the pixel database file.')
         db_input['db_operator'] = sh.rlinput('operator: ', db_input['db_operator'])
+        db_input['db_sensorID'] = sh.rlinput('sensor ID: ', db_input['db_sensorID'])
+        db_input['db_sensorComment'] = sh.rlinput('sensor name: ', db_input['db_sensorComment'])
+        db_input['db_tempChannel'] = sh.rlinput('channel for the temperature data: ', db_input['db_tempChannel'])
+        db_input['db_humChannel'] = sh.rlinput('channel for the humidity data: ', db_input['db_humChannel'])
         db_input['db_temperature'] = sh.rlinput('operating temperature [°C]: ', db_input['db_temperature'])
         db_input['db_humidity'] = sh.rlinput('operating humidity [%]: ', db_input['db_humidity'])
-        db_input['db_sensorID'] = sh.rlinput('sensor ID: ', db_input['db_sensorID'])
-        db_input['db_sensorName'] = sh.rlinput('sensor name: ', db_input['db_sensorName'])
 
         db_date = time.localtime(time.time())
-        db_date = '{:4d}-{:02d}-{:02d}'.format(db_date[0],db_date[1],db_date[2])
+        db_date = '{:4d}-{:02d}-{:02d}_{:02d}:{:02d}'.format(db_date[0],db_date[1],db_date[2],db_date[3],db_date[4])
 
-        db_file = sh.new_txt_file(outputname+'_database')
-        sh.write_line(db_file, [db_input['db_sensorID'], db_input['db_sensorName']])  # 'serial number', 'local device name'
-        sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date'
+        db_file = sh.new_txt_file('{}_CV_1'.format(db_input['db_sensorID']))
+        sh.write_line(db_file, [db_input['db_sensorID']]) # 'serial number'
+        sh.write_line(db_file, [db_input['db_sensorComment']])  # 'comment or local device name'
+        sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date + time'
+        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, args.ndaqs, 1e-5])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'compliance (in uA)'
         sh.write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
-        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, '"measurement integration time (in s)"', '"compliance"'])   # 'voltage step', 'delay between steps (in s)', 'measurement integration time (in s)', 'compliance (in A)'
-        sh.write_line(db_file, ['U', 'C'])  # 'V', 'C'
+        sh.write_line(db_file, ['t/s', 'U/V', 'Cavg/pF', 'Cstd/pF', 'T/C', 'RH/%']) # 'time', 'U', 'average of all C's', 'std deviation of all C's', temperature, relative humidity
 
         sh.dump_data('../objs_cv.json', db_input)
 
@@ -187,12 +195,14 @@ def main():
         plt.pause(0.0001)
 
     # start measurement
+    t0 = time.time()+args.delay
     try:
         for i in range(args.v_steps):
             voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
             print('Set voltage: %.2f V' % voltage)
             d.rampVoltage(voltage, ch)
             time.sleep(args.delay)
+            timestamp0 = time.time()
             Cs = []
             Ns = []
             Ts = []
@@ -210,8 +220,11 @@ def main():
                 else:
                     Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
 
-            for n in range(len(humidity)):
-                Hs.append(humidity[n].getVoltage(humidity_channel[n]))
+            for idx,h in enumerate(humidity):
+                if h.connection_type == 'lan':
+                    Hs.append(h.getHumidity(humidity_channel[idx]))
+                else:
+                    Hs.append(h.getVoltage(humidity_channel[idx]))
             for n in range(len(Ameter)):
                 As.append(Ameter[n].getCurrent(Ameter_channel[n]) * 1E6)
 
@@ -261,64 +274,76 @@ def main():
 
             Us.append(voltage)
             Cmeans.append(np.mean(Cs))
+            Cstd = np.std(Cs)
             Csem.append(sem(Cs))
             if livePlot:   
                 ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
                 plt.pause(0.0001)
+
+            # write to short and data base file            
+            sh.write_line(fwshort, [Us[i], Cmeans[i], Csem[i]])
+            if args.database:
+                if Ts == []:
+                    Ts = float('nan')
+                else:
+                    Ts = Ts[int(db_input['db_tempChannel'])]
+                if Hs == []:
+                    Hs = float('nan')
+                else:
+                    Hs = Hs[int(db_input['db_humChannel'])]
+
+                sh.write_line(db_file, [round(timestamp0-t0), Us[i], '{:.5}'.format(Cmeans[i]), '{:.5}'.format(Cstd), '{:.3}'.format(Ts), '{:.3}'.format(Hs)])
+
     except(KeyboardInterrupt, SystemExit):
-        pass
-      
-    # ramp down voltage
-    d.rampVoltage(0, ch)
-    remaining = d.getCurrent(ch) * 1E6
-    k = 0
-    while k <= 10 and remaining > 0.01:
-        print('Please wait! Current still: %0.6f uA' % remaining)
-        time.sleep(5)
-        remaining = d.getCurrent(ch) * 1E6
-        k += 1
-    d.enableOutput(False)
+        print('Measurement was terminated...')
+    finally:
+        # ramp down voltage
+        try:     
+            d.rampVoltage(0, ch)
+            remaining = d.getCurrent(ch) * 1E6
+            k = 0
+            while k <= 10 and remaining > 0.01:
+                print('Please wait! Current still: {:0.6f} uA'.format(remaining))
+                time.sleep(5)
+                remaining = d.getCurrent(ch) * 1E6
+                k += 1
+            d.enableOutput(False)
+        except ValeError as e:
+            print('ValueError while ramping down...')
+            raise e 
 
-    # short data version
-    fwshort = sh.new_txt_file('%s_short' % outputname)
-    header = ['U[V]', 'Cmean[pF]', 'Csem[pF]']
-    sh.write_line(fwshort, header)
-    for i in range(len(Us)):
-        sh.write_line(fwshort, [Us[i], Cmeans[i], Csem[i]])
+        # show and save curve
+        plt.close('all')
+        nCmeans = np.array(Cmeans)
+        c1 = 1/nCmeans**2
+        plt.plot(Us, c1, 'o')
+        plt.grid()
+        plt.title(r'CV curve: %s' % outputname)
+        plt.xlabel(r'$U $ $ [\mathrm{V}]$')
+        plt.ylabel(r'$1/C_{mean}^2 $ [$\mathrm{1/pF}^2$]')
+        plt.xlim(min(Us)-5, max(Us)+5)
+        plt.tight_layout()
+        plt.savefig('%s.pdf' % outputname)
+
+        # close files
+        for s in source:
+            s.close()
+        for dl in lcr:
+            dl.close()
+        for t in temperature:
+            t.close()
+        for h in humidity:
+            h.close()
+        for v in Vmeter:
+            v.close()
+        sh.close_txt_file(fw)
+        sh.close_txt_file(fwshort)
         if args.database:
-            sh.write_line(db_file, [Us[i], Cmeans[i]])
+            sh.close_txt_file(db_file)
 
-    # show and save curve
-    plt.close('all')
-    nCmeans = np.array(Cmeans)
-    c1 = 1/nCmeans**2
-    plt.plot(Us, c1, 'o')
-    plt.grid()
-    plt.title(r'CV curve: %s' % outputname)
-    plt.xlabel(r'$U $ $ [\mathrm{V}]$')
-    plt.ylabel(r'$1/C_{mean}^2 $ [$\mathrm{1/pF}^2$]')
-    plt.xlim(min(Us)-5, max(Us)+5)
-    plt.tight_layout()
-    plt.savefig('%s.pdf' % outputname)
-
-    # close files
-    for s in source:
-        s.close()
-    for dl in lcr:
-        dl.close()
-    for t in temperature:
-        t.close()
-    for h in humidity:
-        h.close()
-    for v in Vmeter:
-        v.close()
-    sh.close_txt_file(fw)
-    sh.close_txt_file(fwshort)
-    if args.database:
-        sh.close_txt_file(db_file)
-
-    # wait until the user finishes the measurement
-    input()
+        # wait until the user finishes the measurement
+        print('Press "Enter" to finish the measurement.')
+        input()
 
 
 if __name__ == '__main__':
