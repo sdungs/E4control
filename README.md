@@ -3,6 +3,8 @@ E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
 
+The device classes can be used in any Python environment to establish a communication link and to execute commands, but the easiest way to perform measurements is to run one of the scripts provided.
+
 ## Devices
 Following devices are currently supported:
 - Hameg HMP4040 (Power Supply)
@@ -22,26 +24,33 @@ Following devices are currently supported:
 - *e4control_measure_IV* , to perform a current vs voltage measurement
 - *e4control_measure_CV* , to perform a capacity vs voltage measurement
 - *e4control_measure_It* , to perform a current vs time measurement
-- *e4control_measure_Cint*, to perform a capcity vs. voltage measurement with hold for 'hold_t' at 'hold_v' for 'times' times
+<!-- - *e4control_measure_Cint*, to perform a capcity vs. voltage measurement with hold for 'hold_t' at 'hold_v' for 'times' times -->
 - *e4control_dcs* , for manual real time device controlling
 
 
 ## Installation
-Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the software is only tested with python3 & pip3, although it may work with python2 as well. At least the sht-sensor requires python3 to run.
+### Prerequisites
+To use e4control, Python is needed. To ease installation, [pip for Python](https://pypi.python.org/pypi/pip) is also needed.
+
+Please note, that the software is only tested with Python 3 & pip3, although it may work with Python 2 as well. But at least the SHT sensor requires Python 3 to run.
+
+### Installation procedure
 1. download or clone this repository
 2. open a terminal and change directory to E4control
-3. to install enter: `pip3 install .` (Again: Ensure pip3 usage.)
+3. to install enter: `pip install .` (Ensure Python/pip 3 usage!)
 4. *(add PATH to .bashrc)*
 
-## How to use the SHT75 Temperature & Humidity Sensor
+### How to use the SHT75 Temperature & Humidity Sensor
 0. A Raspberry Pi is required for read-out.
 1. Install the latest version of E4control also on the Pi.
-2. Connect the SHT75 to the corresponding pins of the Pi. Check [SHT_Server](SHT_Server.py) for some information on the pin configuration.
-3. Ensure the ssh connection by adjusting the __init__ function in [SHT75 class](SHT75.pyh).
+2. Connect the SHT75 to the corresponding pins of the Pi. Check [SHT_Server class](e4control/devices/SHT_Server.py) for some information on the pin configuration.
+3. Ensure the ssh connection by adjusting the __init__ function in [SHT75 class](e4control/devices/SHT75.py).
 
 Running E4control directly on the Pi has not yet been tested.
 
 ## How to run scripts?
+If -h or --help is supplied at the command line, the basic usage of the script will be explained, printing a short explanation of each argument.
+
 #### config file
 A config file with all used devices is needed for every script. For an example see [exampleConfig](exampleConfig).
 In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. The colums are seperated by a single space.
@@ -85,7 +94,7 @@ To measure the capacitance against voltage, enter:
 example:
 `e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`
 
-#### e4control_measure_Cint
+<!-- #### e4control_measure_Cint
 enter:
 `e4control_measure_Cint V_min V_max output config -I_lim -I I_Lim -s V_steps -n ndaqs -d delay -f lcr_frequenz -times times
 -hold_V hold_v -hold_t hold_t`
@@ -104,7 +113,7 @@ enter:
 
 example:
 `e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`
-
+ -->
 #### e4control_measure_It
 To measure the current against time at a fixed voltage, enter:
 `e4control_measure_It output config -v voltage -n ndaqs -d delay -p noLivePlot -db database`
