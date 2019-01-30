@@ -29,6 +29,7 @@ class Device(object):
         elif (connection_type == 'gpibSerial'):
             sPort = 'COM1,488'
             self.com = vxi11.Instrument(host,sPort)
+            #This probably will solely work with Keysight E5810B
         elif (connection_type == 'usb'):
             self.com = serial.Serial(host, 9600)
         elif (connection_type == 'prologix'):

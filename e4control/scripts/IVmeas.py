@@ -117,24 +117,27 @@ def main():
 
     # create database output file
     if args.database:
-        db_input = sh.load_data('../objs_iv.json', {'db_operator':'"operator"', 'db_temperature':'20.0', 'db_humidity':'40', 'db_sensorID':'"sensorID"', 'db_sensorName':'"none"'})
+        db_input = sh.load_data('../objs_iv.json', {'db_operator':'"operator"', 'db_sensorID':'"sensorID"', 'db_sensorComment':'"none"', 'db_tempChannel':'1', 'db_temperature':'20.0', 'db_humChannel':'0', 'db_humidity':'40.0'})
 
         print('Please provide input for the pixel database file.')
         db_input['db_operator'] = sh.rlinput('operator: ', db_input['db_operator'])
+        db_input['db_sensorID'] = sh.rlinput('sensor ID: ', db_input['db_sensorID'])
+        db_input['db_sensorComment'] = sh.rlinput('sensor comment: ', db_input['db_sensorComment'])
+        db_input['db_tempChannel'] = sh.rlinput('channel for the temperature data: ', db_input['db_tempChannel'])
+        db_input['db_humChannel'] = sh.rlinput('channel for the humidity data: ', db_input['db_humChannel'])
         db_input['db_temperature'] = sh.rlinput('operating temperature [°C]: ', db_input['db_temperature'])
         db_input['db_humidity'] = sh.rlinput('operating humidity [%]: ', db_input['db_humidity'])
-        db_input['db_sensorID'] = sh.rlinput('sensor ID: ', db_input['db_sensorID'])
-        db_input['db_sensorName'] = sh.rlinput('sensor name: ', db_input['db_sensorName'])
 
         db_date = time.localtime(time.time())
-        db_date = '{:4d}-{:02d}-{:02d}'.format(db_date[0],db_date[1],db_date[2])
+        db_date = '{:4d}-{:02d}-{:02d}_{:02d}:{:02d}'.format(db_date[0],db_date[1],db_date[2],db_date[3],db_date[4])
 
-        db_file = sh.new_txt_file(outputname+'_database')
-        sh.write_line(db_file, [db_input['db_sensorID'], db_input['db_sensorName']])  # 'serial number', 'local device name'
-        sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date'
+        db_file = sh.new_txt_file('{}_IV_1'.format(db_input['db_sensorID']))
+        sh.write_line(db_file, [db_input['db_sensorID']]) # 'serial number'
+        sh.write_line(db_file, [db_input['db_sensorComment']])  # 'comment or local device name'
+        sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date + time'
+        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, args.ndaqs, args.I_lim/1e6])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'compliance (in uA)'
         sh.write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
-        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, '"measurement integration time (in s)"', args.I_lim/1e6])   # 'voltage step', 'delay between steps (in s)', 'measurement integration time (in s)', 'compliance (in A)'
-        sh.write_line(db_file, ['U', 'I'])  # 'V', 'I'
+        sh.write_line(db_file, ['t/s', 'U/V', 'Iavg/uA', 'Istd/uA', 'T/C', 'RH/%']) # 'time', 'U', 'average of all I's', 'std deviation of all I's', temperature, relative humidity
 
         sh.dump_data('../objs_iv.json', db_input)
 
@@ -169,12 +172,14 @@ def main():
         plt.pause(0.0001)
 
     # start measurement
+    t0 = time.time()+args.delay
     try:
         for i in range(args.v_steps):
             voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
             print('Set voltage: %.2f V' % voltage)
             d.rampVoltage(voltage, ch)
             time.sleep(args.delay)
+            timestamp0 = time.time()
             Is = []
             Ts = []
             Hs = []
@@ -195,17 +200,17 @@ def main():
                 else:
                     Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
 
-            for n in range(len(humidity)):
-                if humidity[n].connection_type == 'lan':
-                    Hs.append(humidity[n].getHumidity(humidity_channel[n]))
+            for idx,h in enumerate(humidity):
+                if h.connection_type == 'lan':
+                    Hs.append(h.getHumidity(humidity_channel[idx]))
                 else:
-                    Hs.append(humidity[n].getVoltage(humidity_channel[n]))
+                    Hs.append(h.getVoltage(humidity_channel[idx]))
 
             for n in range(len(Vmeter)):
                 Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
 
             for n in range(len(Ameter)):
-                As.append(Ameter[n].getCurrent(Ameter_channel[n]) * 1E6)
+                As.append(Ameter[n].getCurrent(Ameter_channel[n])*1E6)
 
             if livePlot:
                 ax2.clear()
@@ -244,6 +249,7 @@ def main():
                 break
             Us.append(voltage)
             Imeans.append(np.mean(Is))
+            Istd = np.std(Is)
             Isem.append(sem(Is))
             if livePlot:
                ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
@@ -252,7 +258,16 @@ def main():
             # write to short and data base file
             sh.write_line(fwshort, [Us[i], Imeans[i], Isem[i]])
             if args.database:
-                sh.write_line(db_file, [Us[i], Imeans[i]/1e6])
+                if Ts == []:
+                    Ts = float('nan')
+                else:
+                    Ts = Ts[int(db_input['db_tempChannel'])]
+                if Hs == []:
+                    Hs = float('nan')
+                else:
+                    Hs = Hs[int(db_input['db_humChannel'])]
+
+                sh.write_line(db_file, [round(timestamp0-t0), Us[i], '{:.5}'.format(Imeans[i]), '{:.5}'.format(Istd), '{:.3}'.format(Ts), '{:.3}'.format(Hs)])
 
     except (KeyboardInterrupt, SystemExit):
         print('Measurement was terminated...')
@@ -292,6 +307,7 @@ def main():
             sh.close_txt_file(db_file)
 
         # wait until the user finishes the measurement
+        print('Press "Enter" to finish the measurement.')
         input()
 
 
