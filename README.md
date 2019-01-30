@@ -38,7 +38,7 @@ Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is no
 0. A Raspberry Pi is required for read-out.
 1. Install the latest version of E4control also on the Pi. Default path is *~/software/* (otherwise see 3.)
 2. Connect the SHT75 to the corresponding pins of the Pi. Check [SHT_Server](/e4control/devices/SHT_Server.py) for some information on the pin configuration.
-3. Ensure the ssh connection by adjusting the __init__ function in [SHT75 class](e4control/devices/SHT75.py). This may include copying the ssh-key to the Pi in order to get rid of the necessity to manually type in the password, changing the default shell to bash and making [StartServer.sh](/e4control/devices/StartServer.sh) executable. Default username is *labuser*.
+3. Ensure the ssh connection by adjusting the __init__ function in [SHT75 class](e4control/devices/SHT75.py). This may include copying the ssh-key to the Pi in order to get rid of the necessity to manually type in the password, changing the default shell to bash and making StartServer.sh executable. Default username is *labuser*. If the path is differing from the default, it needs to adapted in [StartServer.sh](/e4control/devices/StartServer.sh), as well.
 
 Running E4control directly on the Pi is possible. The config should read:
 ` T SHT75 lan localhost 50000 1`
