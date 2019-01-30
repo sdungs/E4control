@@ -15,6 +15,10 @@ class SHT75(Device):
         userAtHost = 'labuser@{}'.format(self.host)
         call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/StartServer.sh"])
         self.trm = ''
+        
+        # How to create a rsa-keypair to log on without password:
+        # ssh-keygen
+        # ssh-copy-id user@host
 
     def initialize(self, sMode='H'):
         pass
@@ -66,6 +70,3 @@ class SHT75(Device):
         print('For this device there is nothing to do...')
 
 
-# How to create a rsa-keypair to log on without password:
-# ssh-keygen
-# ssh-copy-id user@host
