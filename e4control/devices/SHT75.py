@@ -3,6 +3,7 @@
 from socket import socket
 from .device import Device
 from subprocess import call
+from time import sleep
 
 
 class SHT75(Device):
@@ -21,6 +22,7 @@ class SHT75(Device):
         # ssh-copy-id user@host
 
     def initialize(self, sMode='H'):
+        sleep(0.2)
         pass
 
     def userCmd(self, cmd):
