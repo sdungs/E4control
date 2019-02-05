@@ -15,6 +15,7 @@ class SHT75(Device):
         super(SHT75, self).__init__(connection_type=connection_type, host=host, port=port)
         userAtHost = 'labuser@{}'.format(self.host)
         call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/StartServer.sh"])
+        sleep(0.2)
         self.trm = ''
         
         # How to create a rsa-keypair to log on without password:
@@ -22,7 +23,6 @@ class SHT75(Device):
         # ssh-copy-id user@host
 
     def initialize(self, sMode='H'):
-        sleep(0.2)
         pass
 
     def userCmd(self, cmd):
