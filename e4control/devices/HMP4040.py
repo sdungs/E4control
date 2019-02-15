@@ -73,7 +73,7 @@ class HMP4040(Device):
         fCurrent = []
         sValues = []
         if show:
-            print('HMP4040:')
+            self.printOutput('HMP4040:')
         i = 1
         while i <= 4:
             a = self.getEnableOutput(i)
@@ -84,10 +84,10 @@ class HMP4040(Device):
             fCurrent.append(c)
             if show:
                 if a == '1':
-                    print('CH {}: \t \033[32m ON \033[0m'.format(i))
+                    self.printOutput('CH {}: \t \033[32m ON \033[0m'.format(i))
                 else:
-                    print('CH {}: \t \033[31m OFF \033[0m'.format(i))
-                print('Voltage = {:0.1f}V \t Current = {:0.3f}A'.format(b,c))
+                    self.printOutput('CH {}: \t \033[31m OFF \033[0m'.format(i))
+                self.printOutput('Voltage = {:0.1f}V \t Current = {:0.3f}A'.format(b,c))
             sValues.append(str(a))
             sValues.append(str(b))
             sValues.append(str(c))
