@@ -17,23 +17,23 @@ class HMP4040(Device):
 
     #Global power (=OUTPUT button on PS)
     def enablePower(self, bValue):
-        self.write('OUTP:GEN {}'.format(bValue))
+        self.write('OUTP:GEN {0:d}'.format(bValue))
 
     def getEnablePower(self):
         return self.ask('OUTP:GEN?')
 
     #Output for individual channels
     def enableOutput(self, iOutput, bValue):
-        self.write('INST OUT {}'.format(iOutput))
-        self.write('OUTP {}'.format(bValue))
+        self.write('INST OUT{}'.format(iOutput))
+        self.write('OUTP {0:d}'.format(bValue))
 
     def getEnableOutput(self, iOutput):
-        self.write('INST OUT {}'.format(iOutput))
+        self.write('INST OUT{}'.format(iOutput))
         return self.ask('OUTP?')
 
     #Over voltage protection
     def setVoltageLimit(self, iOutput, fValue):
-        self.write('INST OUT {}'.format(iOutput))
+        self.write('INST OUT{}'.format(iOutput))
         self.write('VOLT:PROT {}'.format(fValue))
 
     def getVoltageLimit(self, iOutput):
@@ -42,28 +42,28 @@ class HMP4040(Device):
 
     #Nominal voltage to apply
     def setVoltage(self, iOutput, fValue):
-        self.write('INST OUT {}'.format(iOutput))
+        self.write('INST OUT{}'.format(iOutput))
         self.write('VOLT {}'.format(fValue))
 
     def getVoltage(self, iOutput):
-        self.write('INST OUT {}'.format(iOutput))
+        self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('VOLT?'))
 
     def measVoltage(self, iOutput):
-        self.write('INST OUT {}'.format(iOutput))
+        self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('MEAS:VOLT?'))
 
     #Current (limit)
     def setCurrent(self, iOutput, fValue):
-        self.write('INST OUT {}'.format(iOutput))
+        self.write('INST OUT{}'.format(iOutput))
         self.write('CURR {}'.format(fValue))
 
     def getCurrent(self, iOutput):
-        self.write('INST OUT {}'.format(iOutput))
+        self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('CURR?'))
 
     def measCurrent(self, iOutput):
-        self.write('INST OUT {}'.format(iOutput))
+        self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('MEAS:CURR?'))
 
 
@@ -108,9 +108,9 @@ class HMP4040(Device):
             x = input('Possible Inputs: 1,2 or 3! \n')
         if x == '1':
             bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on':
+            if bO == 'ON' or bO == 'on' or bO == '1':
                 self.enableOutput(iChannel, True)
-            elif bO == 'OFF' or bO == 'off':
+            elif bO == 'OFF' or bO == 'off' or bO == '0':
                 self.enableOutput(iChannel, False)
             else:
                 pass
