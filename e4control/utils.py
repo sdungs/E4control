@@ -21,6 +21,14 @@ from .devices import (
     HUBER,
 )
 
+from e4control import __version__
+
+def print_welcome():
+    print(
+        'This is e4control, v{}.\n'
+        'If you are not familiar with this version, please check the log ("git log") for recent changes.'
+        ''.format(__version__)
+        )
 
 # have an input with a prefilled text
 def rlinput(prompt, prefill=''):

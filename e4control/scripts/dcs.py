@@ -38,6 +38,9 @@ def print(string):
 def main():
     args = parser.parse_args()
 
+    # print welcome message
+    sh.print_welcome()
+
     # read configfile
     config_devices = sh.read_dcs_config(args.config)
 
