@@ -33,7 +33,7 @@ class Device(object):
             #This probably will solely work with Keysight E5810B
         elif (connection_type == 'usb'):
             if 'baudrate' in kwargs:
-                self.com = serial.Serial(host, *baudrate)
+                self.com = serial.Serial(host, kwargs.get('baudrate'))
             else:
                 self.com = serial.Serial(host, 9600)
         elif (connection_type == 'prologix'):
