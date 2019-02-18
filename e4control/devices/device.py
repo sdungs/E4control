@@ -59,14 +59,14 @@ class Device(object):
             else:
                 s = self.com.read()
         except:
-            print('First reading attempt failed, trying again...')
+            print('First reading attempt failed on "{}", trying again...'.format(type(self).__name__))
             try:
                 if self.connection_type == 'usb':
                     s = self.com.readline()
                 else:
                     s = self.com.read()
             except:
-                print('Timeout while reading from device!')
+                print('Timeout while reading from "{}"!'.format(type(self).__name__))
                 raise
         s = s.replace('\r', '')
         s = s.replace('\n', '')
