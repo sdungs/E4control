@@ -7,7 +7,7 @@ The device classes can be used in any Python environment to establish a communic
 
 ## Devices
 Following devices are currently supported:
-- Hameg HMP4040 (Power Supply)
+- Rohde&Schwarz HMP4040 (Power Supply)
 - HP 4284A (LCR Meter)
 - Iseg SHQ (Source Meter)
 - Julabo FP88 (Chiller)
@@ -18,7 +18,8 @@ Following devices are currently supported:
 - TTi TSX3510P (Power Supply)
 - Weiss SB22 (Climate Chamber)
 - Espec LU-114 (Climate Chamber)
-- SHT75 (Temperature & Humidity Sensor, connected via a RasPi)
+- Huber Minichiller (Chiller)
+- Sensirion SHT75 (Temperature & Humidity Sensor, connected via a RasPi)
 
 ## Scripts
 - *e4control_measure_IV* , to perform a current vs voltage measurement
@@ -29,31 +30,28 @@ Following devices are currently supported:
 
 
 ## Installation
-### Prerequisites
-To use e4control, Python is needed. To ease installation, [pip for Python](https://pypi.python.org/pypi/pip) is also needed.
-
-Please note, that the software is only tested with Python 3 & pip3, although it may work with Python 2 as well. But at least the SHT sensor requires Python 3 to run.
-
-### Installation procedure
-1. download or clone this repository
+Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the software is only tested with python3 & pip3, although it may work with python2 as well. At least the sht-sensor requires python3 to run.
+1. Download or clone this repository.
 2. open a terminal and change directory to E4control
-3. to install enter: `pip install .` (Ensure Python/pip 3 usage!)
-4. *(add PATH to .bashrc)*
+3. to install enter: `pip3 install .` (Again: Ensure pip3 usage.)
+4. *(add PATH to .bashrc)* 
 
 ### How to use the SHT75 Temperature & Humidity Sensor
 0. A Raspberry Pi is required for read-out.
-1. Install the latest version of E4control also on the Pi.
-2. Connect the SHT75 to the corresponding pins of the Pi. Check [SHT_Server class](e4control/devices/SHT_Server.py) for some information on the pin configuration.
-3. Ensure the ssh connection by adjusting the __init__ function in [SHT75 class](e4control/devices/SHT75.py).
+1. Install the latest version of E4control also on the Pi. Default path is *~/software/* (otherwise see 3.)
+2. Connect the SHT75 to the corresponding pins of the Pi. Check [SHT_Server](/e4control/devices/SHT_Server.py) for some information on the pin configuration.
+3. Ensure the ssh connection by adjusting the __init__ function in [SHT75 class](e4control/devices/SHT75.py). This may include copying the ssh-key to the Pi in order to get rid of the necessity to manually type in the password, changing the default shell to bash and making StartServer.sh executable. Default username is *labuser*. If the path is differing from the default, it needs to adapted in [StartServer.sh](/e4control/devices/StartServer.sh), as well.
 
-Running E4control directly on the Pi has not yet been tested.
+
+Running E4control directly on the Pi is possible. The config should read:
+` T SHT75 lan localhost 50000 1`
 
 ## How to run scripts?
 If -h or --help is supplied at the command line, the basic usage of the script will be explained, printing a short explanation of each argument.
 
 #### config file
 A config file with all used devices is needed for every script. For an example see [exampleConfig](exampleConfig).
-In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. The colums are seperated by a single space.
+In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. The columns are separated by a single space.
 
 #### e4control_measure_IV
 To measure the current against voltage, enter:
