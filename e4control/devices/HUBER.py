@@ -43,15 +43,15 @@ class HUBER(Device):
     def output(self, show = True):
         bPower = self.Power
         if show:
-            print('Minichiller:')
+            self.printOutput('Minichiller:')
             if bPower:
-                print('Power: \033[32m ON \033[0m')
+                self.printOutput('Power: \033[32m ON \033[0m')
             else:
-                print('Power: \033[31m OFF \033[0m')
+                self.printOutput('Power: \033[31m OFF \033[0m')
         fTset = self.getSetTemperature()
         fTin = self.getInTemperature()
         if show:
-            print('T_set = {:.2f}'.format(fTset) + '\t' + 'T_in = {:.2f}'.format(fTin))
+            self.printOutput('T_set = {:.2f}'.format(fTset) + '\t' + 'T_in = {:.2f}'.format(fTin))
         return([['Power', 'Tset[C]', 'Tin[C]'], [ str(bPower), str(fTset), str(fTin)]])
 
     def interaction(self):
