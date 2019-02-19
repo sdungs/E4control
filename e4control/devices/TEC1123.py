@@ -3,42 +3,21 @@
 from .device import Device
 from PyCRC.CRCCCITT import CRCCCITT
 import time
+from struct import pack, unpack
+
 
 
 class TEC1123(Device):
-    self.trm = '\r'
+    trm = '\r'
+    adress = 0
+    sequence = 0x00E4
+
 
     def __init__(self, connection_type, host, port, baudrate=57600, timeout=1):
         super(TEC1123, self).__init__(connection_type=connection_type, host=host, port=port, baudrate=baudrate, timeout=timeout)
 
-    def compose(self, part=False):
-        """
-        Returns the frame as bytes, the return-value can be directly send via serial.
-        :param part: bool
-        :return: bytes
-        """
-        # first part
-        frame = self._SOURCE + "{:02X}".format(self.ADDRESS) + "{:04X}".format(self.SEQUENCE)
-        # payload can be str or float or int
-        for p in self.PAYLOAD:
-            if type(p) is str:
-                frame += p
-            elif type(p) is int:
-                frame += "{:08X}".format(p)
-            elif type(p) is float:
-                # frame += hex(unpack('<I', pack('<f', p))[0])[2:].upper()  # please do not ask
-                # if p = 0 CRC fails, e.g. !01000400000000 composes to b'!0100040' / missing zero padding
-                frame += '{:08X}'.format(unpack('<I', pack('<f', p))[0])  # still do not aks
-        # if we only want a partial frame, return here
-        if part:
-            return frame.encode()
-        # add checksum
-        if self.CRC is None:
-            self.crc()
-        frame += "{:04X}".format(self.CRC)
-        # add end of line (carriage return)
-        frame += self._EOL
-        return frame.encode()
+    def buildFrame(self, cmd):
+        frame = '#'.encode() + '{:02X}{:04X}.format(self.adress, self.sequence)'        
 
     PARAMETERS = [
         # Device Identification
@@ -83,7 +62,8 @@ class TEC1123(Device):
         {"id": 51015, "name": "PID Parameter Ti", "format": "FLOAT32"},  # read-only
         {"id": 51016, "name": "PID Parameter Td", "format": "FLOAT32"},  # read-only
         {"id": 51017, "name": "Corase Temp Remp", "format": "FLOAT32"},  # read-only, returns recommended value for target coarse temp
-        {"id": 51020, "name": "Tuning Status", "format": "INT32"},  # read-only, 0 = Idle, 1 = Ramping to Target, 2 = Preparing, 3 = Acquiring data, 4 = Success, 10 = Error
+        {"id": 51020, "name": "Tuning Status", "format": "INT32"},  # read-only, 0 = Idle, 1 = Ramping to Target, 2 = Preparing, 
+                                                                    # 3 = Acquiring data, 4 = Success, 10 = Error
         {"id": 51021, "name": "Tuning Process (%)", "format": "FLOAT32"},  # read-only,
         {"id": 6310, "name": "Delay till Restart", "format": "FLOAT32"},  # error state auto restart delay, ins [s]
     ]

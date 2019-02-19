@@ -19,6 +19,7 @@ from .devices import (
     LU114,
     SHT75,
     HUBER,
+    TEC1123,
 )
 
 
@@ -166,8 +167,8 @@ def check_limits(device, channel, V_lim=None, I_lim=None, P_lim=None):
             sys.exit("Hardware Limit is lower than Software Limit!")
     if I_lim:
         I_hard = device.getCurrentLimit(channel)
-        print('I_lim software: {:.2f} uA'.format(I_lim*1e6))
-        print('I_lim hardware: {:.2f} uA'.format(I_hard*1e6))
+        print('I_lim software: {:.2f} uA'.format(I_lim * 1e6))
+        print('I_lim hardware: {:.2f} uA'.format(I_hard * 1e6))
         if (I_hard <= I_lim):
             sys.exit("Hardware Limit is lower than Software Limit!")
     if P_lim:
