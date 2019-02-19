@@ -73,7 +73,7 @@ class JULABO(Device):
         else:
             return('ext')
 
-    def output(self,  show=True):
+    def output(self, show=True):
         sMode = self.Mode
         bPower = self.Power
         if show:

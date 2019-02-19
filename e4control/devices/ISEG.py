@@ -11,7 +11,7 @@ class ISEG(Device):
 
     def __init__(self, connection_type, host, port):
         super(ISEG, self).__init__(connection_type=connection_type, host=host, port=port)
-        self.setHardwareRampSpeed(255,  1)
+        self.setHardwareRampSpeed(255, 1)
         self.setHardwareRampSpeed(255, 2)
 
     def userCmd(self, cmd):
@@ -27,13 +27,13 @@ class ISEG(Device):
     def getVoltage(self, iChannel):
         sV = self.ask('U%i' % iChannel)
         sV = sV.replace('U%i' % iChannel, '')
-        fV = float(sV[:-3])*10**float(sV[-3:])
+        fV = float(sV[:-3]) * 10**float(sV[-3:])
         return fV
 
     def getCurrent(self, iChannel):
         sI = self.ask('I%i' % iChannel)
         sI = sI.replace('I%i' % iChannel, '')
-        fI = float(sI[:-3])*10**float(sI[-3:])
+        fI = float(sI[:-3]) * 10**float(sI[-3:])
         return fI
 
     def setCurrentLimit(self, iChannel):
@@ -52,12 +52,12 @@ class ISEG(Device):
     def getCurrentLimit(self, iChannel):
         sCurrentLim = self.ask('N%i' % iChannel)
         sCurrentLim = sCurrentLim.replace('N%i' % iChannel, '')
-        return (float(sCurrentLim)*6 * 1E3 / 100)
+        return (float(sCurrentLim) * 6 * 1E3 / 100)
 
     def getSetVoltage(self, iChannel):
         sV = self.ask('D%i' % iChannel)
         sV = sV.replace('D%i' % iChannel, '')
-        fV = float(sV[:-3])*10**float(sV[-3:])
+        fV = float(sV[:-3]) * 10**float(sV[-3:])
         return fV
 
     def getHardwareRampSpeed(self, iChannel):
@@ -92,12 +92,12 @@ class ISEG(Device):
         fVnew = abs(fVnew)
         V = self.getVoltage(iChannel)
         V = round(V, 4)
-        if abs(fVnew-abs(V)) <= self.rampSpeed_step:
+        if abs(fVnew - abs(V)) <= self.rampSpeed_step:
             self.setVoltage(fVnew, iChannel)
             print('Voltage reached: %.2f V' % fVnew)
         else:
-            self.setVoltage(abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V)), iChannel)
-            print('Ramp Voltage: %.2f V' % (abs(V)+self.rampSpeed_step*(fVnew-abs(V))/abs(fVnew-abs(V))))
+            self.setVoltage(abs(V) + self.rampSpeed_step * (fVnew - abs(V)) / abs(fVnew - abs(V)), iChannel)
+            print('Ramp Voltage: %.2f V' % (abs(V) + self.rampSpeed_step * (fVnew - abs(V)) / abs(fVnew - abs(V))))
             sleep(self.rampSpeed_delay)
             self.rampVoltage(fVnew, iChannel)
 
@@ -111,7 +111,7 @@ class ISEG(Device):
         sRamp = sRamp.replace('G%i' % iChannel, '')
         print(sRamp)
 
-    def output(self,  show=True):
+    def output(self, show=True):
         f1Limit = self.getCurrentLimit(1) * 1E6
         f2Limit = self.getCurrentLimit(2) * 1E6
         f1Voltage = self.getVoltage(1)

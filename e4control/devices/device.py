@@ -30,10 +30,13 @@ class Device(object):
         elif (connection_type == 'gpibSerial'):
             sPort = 'COM1,488'
             self.com = vxi11.Instrument(host, sPort)
-            #This probably will solely work with Keysight E5810B
+            # This probably will solely work with Keysight E5810B
         elif (connection_type == 'usb'):
             if 'baudrate' in kwargs:
                 self.com = serial.Serial(host, kwargs.get('baudrate'))
+            elif 'baudrate' and 'timeout' in kwargs:
+                self.com = serial.Serial(host, baudrate=kwargs.get('baudrate'),
+                                         timeout=kwargs.get('timeout'), write_timeout=kwargs.get('timeout'))
             else:
                 self.com = serial.Serial(host, 9600)
         elif (connection_type == 'prologix'):
@@ -93,4 +96,4 @@ class Device(object):
         return self.read()
 
     def printOutput(self, string):
-        sys.stdout.write(string+'\r\n')
+        sys.stdout.write(string + '\r\n')

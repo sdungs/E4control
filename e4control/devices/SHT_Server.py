@@ -1,7 +1,5 @@
 import socket
 from sht_sensor import Sht
-from subprocess import call
-import signal
 
 
 def read_sensors(sensors):
