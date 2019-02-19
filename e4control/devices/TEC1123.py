@@ -12,14 +12,13 @@ class TEC1123(Device):
     adress = 0
     sequence = 0x00E4
 
-
     def __init__(self, connection_type, host, port, baudrate=57600, timeout=1):
         super(TEC1123, self).__init__(connection_type=connection_type, host=host, port=port, baudrate=baudrate, timeout=timeout)
 
     def buildFrame(self, cmd):
-        frame = '#'.encode() + '{:02X}{:04X}.format(self.adress, self.sequence)'        
+        frame = '#'.encode() + '{:02X}{:04X}.format(self.adress, self.sequence)'
 
-    PARAMETERS = [
+    PARAMETERS = dict(
         # Device Identification
         {"id": 104, "name": "Device Status", "format": "INT32"},
         {"id": 108, "name": "Save Data to Flash", "format": "INT32"},
@@ -62,11 +61,11 @@ class TEC1123(Device):
         {"id": 51015, "name": "PID Parameter Ti", "format": "FLOAT32"},  # read-only
         {"id": 51016, "name": "PID Parameter Td", "format": "FLOAT32"},  # read-only
         {"id": 51017, "name": "Corase Temp Remp", "format": "FLOAT32"},  # read-only, returns recommended value for target coarse temp
-        {"id": 51020, "name": "Tuning Status", "format": "INT32"},  # read-only, 0 = Idle, 1 = Ramping to Target, 2 = Preparing, 
+        {"id": 51020, "name": "Tuning Status", "format": "INT32"},  # read-only, 0 = Idle, 1 = Ramping to Target, 2 = Preparing,
                                                                     # 3 = Acquiring data, 4 = Success, 10 = Error
         {"id": 51021, "name": "Tuning Process (%)", "format": "FLOAT32"},  # read-only,
         {"id": 6310, "name": "Delay till Restart", "format": "FLOAT32"},  # error state auto restart delay, ins [s]
-    ]
+    )
 
 
 ERRORS = [
