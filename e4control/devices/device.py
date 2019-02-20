@@ -60,14 +60,14 @@ class Device(object):
             else:
                 s = self.com.read()
         except:
-            print('First reading attempt failed, trying again...')
+            print('First reading attempt failed on "{}", trying again...'.format(type(self).__name__))
             try:
                 if self.connection_type == 'usb':
                     s = self.com.readline()
                 else:
                     s = self.com.read()
             except:
-                print('Timeout while reading from device!')
+                print('Timeout while reading from "{}"!'.format(type(self).__name__))
                 raise
         s = s.replace('\r', '')
         s = s.replace('\n', '')
@@ -82,7 +82,8 @@ class Device(object):
             try:
                 self.com.write(cmd)
             except:
-                print('Timeout while writing')
+                print('Timeout while writing to "{}"!'.format(type(self).__name__))
+                raise
 
     def ask(self, cmd):
         self.write(cmd)

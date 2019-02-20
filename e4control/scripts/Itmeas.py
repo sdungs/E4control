@@ -1,7 +1,4 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
 
 import os
 import argparse
@@ -27,6 +24,9 @@ parser.add_argument('-db', '--database', help='creates an additional logfile, ma
 def main():
     # parse arguments
     args = parser.parse_args()
+
+    # print welcome message
+    sh.print_welcome()
 
     # read configfile
     devices = sh.read_config(args.config)

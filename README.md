@@ -1,4 +1,4 @@
-# E4control v0.0.3
+# E4control v1.0.0
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -30,10 +30,15 @@ Following devices are currently supported:
 
 
 ## Installation
-Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is not available yet. Please note, that the software is only tested with python3 & pip3, although it may work with python2 as well. At least the sht-sensor requires python3 to run.
+### Prerequisites
+To use e4control, Python is needed. To ease installation, [pip for Python](https://pypi.python.org/pypi/pip) is also needed.
+
+Please note that the software is only tested with Python 3 & pip3, although it may work with Python 2 as well. But at least the SHT sensor requires Python 3 to run.
+
+### Installation procedure
 1. Download or clone this repository.
-2. open a terminal and change directory to E4control
-3. to install enter: `pip3 install .` (Again: Ensure pip3 usage.)
+2. Open a terminal and change directory to E4control.
+3. For installation enter: `pip install .` (Ensure python3/pip3 usage!)
 4. *(add PATH to .bashrc)* 
 
 ### How to use the SHT75 Temperature & Humidity Sensor
@@ -41,7 +46,6 @@ Python [pip](https://pypi.python.org/pypi/pip) is needed, install it if it is no
 1. Install the latest version of E4control also on the Pi. Default path is *~/software/* (otherwise see 3.)
 2. Connect the SHT75 to the corresponding pins of the Pi. Check [SHT_Server](/e4control/devices/SHT_Server.py) for some information on the pin configuration.
 3. Ensure the ssh connection by adjusting the __init__ function in [SHT75 class](e4control/devices/SHT75.py). This may include copying the ssh-key to the Pi in order to get rid of the necessity to manually type in the password, changing the default shell to bash and making StartServer.sh executable. Default username is *labuser*. If the path is differing from the default, it needs to adapted in [StartServer.sh](/e4control/devices/StartServer.sh), as well.
-
 
 Running E4control directly on the Pi is possible. The config should read:
 ` T SHT75 lan localhost 50000 1`
@@ -137,5 +141,5 @@ enter:
 - logfile -> logfile name | string
 
 example:
-`e4control_dcs config_TDCS -l log_1 ` *with log*  
-`e4control_dcs config_TDCS ` *without log*
+`e4control_dcs config_dcs -l log_1 ` *with log named log_1*  
+`e4control_dcs config_dcs ` *without log*
