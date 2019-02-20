@@ -121,7 +121,8 @@ class HP4284A(Device):
         self.write('*RST')
 
     def output(self, show=True):
-        print('no output')
+        self.printOutput('HP4284A:')
+        self.printOutput('no output')
         return([[], []])
 
     def interaction(self):

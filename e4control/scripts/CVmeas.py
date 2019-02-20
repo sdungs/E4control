@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -33,6 +32,9 @@ parser.add_argument('-db', '--database', help='creates an additional logfile, ma
 
 def main():
     args = parser.parse_args()
+
+    # print welcome message
+    sh.print_welcome()
 
     # read configfile
     devices = sh.read_config(args.config)

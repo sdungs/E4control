@@ -28,6 +28,9 @@ def main():
     # parse arguments
     args = parser.parse_args()
 
+    # print welcome message
+    sh.print_welcome()
+
     # read configfile
     devices = sh.read_config(args.config)
 
