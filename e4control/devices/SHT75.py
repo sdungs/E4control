@@ -56,7 +56,6 @@ class SHT75(Device):
 
     def close(self):
         self.write('CLOSE')
-        pass
 
     def output(self, show=True):
         header = ['T1[°C]','H1[%]','T2[°C]','H2[%]']
