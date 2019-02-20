@@ -140,7 +140,7 @@ def main():
 
     # create database output file
     if args.database:
-        db_input = sh.initialize_db('CV')
+        db_file, db_input = sh.initialize_db('CV', args)
 
     # create value arrays
     Us = []
@@ -195,13 +195,11 @@ def main():
                     Ts.append(ts[3])
                     Ts.append(ts[4])
                 else:
-                    Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
+                    Ts.append(temperature[n].getTemperature(temperature_channel[n]))
 
             for idx,h in enumerate(humidity):
-                if h.connection_type == 'lan':
-                    Hs.append(h.getHumidity(humidity_channel[idx]))
-                else:
-                    Hs.append(h.getVoltage(humidity_channel[idx]))
+                Hs.append(h.getHumidity(humidity_channel[idx]))
+
             for n in range(len(Ameter)):
                 As.append(Ameter[n].getCurrent(Ameter_channel[n]) * 1E6)
 
@@ -319,7 +317,7 @@ def main():
             sh.close_txt_file(db_file)
 
         # wait until the user finishes the measurement
-        print('Press "Enter" to finish the measurement.')
+        print('Press "Enter" to close the measurement.')
         input()
 
 

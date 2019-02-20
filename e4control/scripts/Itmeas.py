@@ -113,7 +113,7 @@ def main():
 
     # create database output file
     if args.database:        
-        db_input = sh.initialize_db('It')
+        db_file, db_input = sh.initialize_db('It', args)
 
     # ramp to const bias voltage
     for d in range(len(source)):
@@ -133,11 +133,13 @@ def main():
         plt.xlabel(r'$time$  [$\mathrm{s}$]')
 
     # start measurement
+    print('This measurement runs until ctrl+C is pressed!')
     t0 = time.time()
     k = 0
     try:
         while True:
             timestamp0 = time.time()
+            print('This measurement has been runing for a total time of {}.'.format(time.strftime('%Hh:%Mm:%Ss', time.gmtime(timestamp0-t0))))
             Us = []
             Is = []
             Ts = []
@@ -151,7 +153,7 @@ def main():
                     Ts.append(ts[3])
                     Ts.append(ts[4])
                 else:
-                    Ts.append(temperature[n].getTempPT1000(temperature_channel[n]))
+                    Ts.append(temperature[n].getTemperature(temperature_channel[n]))
             for idx,h in enumerate(humidity):
                 Hs.append(h.getHumidity(humidity_channel[idx]))
             for j in range(args.ndaqs):
@@ -242,7 +244,8 @@ def main():
             sh.close_txt_file(db_file)
 
     # wait until the user finishes the measurement
-    # input()
+    print('Press "Enter" to close the measurement.')
+    input()
 
 
 if __name__ == '__main__':
