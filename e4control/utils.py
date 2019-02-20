@@ -44,6 +44,8 @@ def print_welcome():
 def read_config(configfile):
     devices = {"S": [], "T": [], "H": [], "P": [], "L": [], "C": [], "V": [], "I": []}
     for line in open(configfile):
+        if line[0]=='#':
+            continue
         m = line.replace("\n", "")
         n = m.split(" ")
         x = n[0]
@@ -222,6 +224,42 @@ def load_data(file, default_data):
 
 def dump_data(file, data):
     json.dump(data, open(file, 'w'))
+
+def initialize_db(meas_type):
+    db_input = sh.load_data('../objs_{}.json'.format(meas_type.lower()), {'db_operator':'"operator"', 'db_sensorID':'"sensorID"', 'db_sensorComment':'"none"', 'db_tempChannel':'2', 'db_temperature':'20.0', 'db_humChannel':'1', 'db_humidity':'40.0'})
+
+    print('Please provide input for the pixel database file.')
+    db_input['db_operator'] = sh.rlinput('operator: ', db_input['db_operator'])
+    db_input['db_sensorID'] = sh.rlinput('sensor ID: ', db_input['db_sensorID'])
+    db_input['db_sensorComment'] = sh.rlinput('sensor comment: ', db_input['db_sensorComment'])
+    db_input['db_tempChannel'] = sh.rlinput('channel for the temperature data: ', db_input['db_tempChannel'])
+    db_input['db_humChannel'] = sh.rlinput('channel for the humidity data: ', db_input['db_humChannel'])
+    db_input['db_temperature'] = sh.rlinput('operating temperature [°C]: ', db_input['db_temperature'])
+    db_input['db_humidity'] = sh.rlinput('operating humidity [%]: ', db_input['db_humidity'])
+
+    db_date = time.localtime(time.time())
+    db_date = '{:4d}-{:02d}-{:02d}_{:02d}:{:02d}'.format(db_date[0],db_date[1],db_date[2],db_date[3],db_date[4])
+
+    db_file = sh.new_txt_file('{}_{}_1'.format(db_input['db_sensorID'], meas_type))
+    sh.write_line(db_file, [db_input['db_sensorID'], meas_type]) # 'serial number'
+    sh.write_line(db_file, [db_input['db_sensorComment']])  # 'comment or local device name'
+    sh.write_line(db_file, ['dortmund', db_input['db_operator'], db_date])   # 'group', 'operator', 'date + time'
+    if meas_type == 'IV' or meas_type == 'It':
+        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, args.ndaqs, args.I_lim/1e6])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'compliance (in A)'
+    elif meas_type == 'CV':
+        sh.write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, args.ndaqs, args.frequecy])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'frequecy (in Hz)'
+    sh.write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
+    if meas_type == 'IV' or meas_type == 'It':
+        sh.write_line(db_file, ['t/s', 'U/V', 'Iavg/uA', 'Istd/uA', 'T/C', 'RH/%']) # 'time', 'U', 'average of all I's', 'std deviation of all I's', temperature, relative humidity
+    elif meas_type == 'CV':
+        sh.write_line(db_file, ['t/s', 'U/V', 'Cavg/pF', 'Cstd/pF', 'T/C', 'RH/%']) # 'time', 'U', 'average of all C's', 'std deviation of all C's', temperature, relative humidity
+
+    sh.dump_data('../objs_{}.json'.format(meas_type.lower()), db_input)
+
+    db_input['db_tempChannel'] = int(db_input['db_tempChannel'])-1
+    db_input['db_humChannel'] = int(db_input['db_humChannel'])-1
+
+    return db_input
 
 
 def create_plot(filename, kind, x, y, xerr=None, yerr=None, save=True, show=True):
