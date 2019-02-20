@@ -82,7 +82,8 @@ class Device(object):
             try:
                 self.com.write(cmd)
             except:
-                print('Timeout while writing')
+                print('Timeout while writing to "{}"!'.format(type(self).__name__))
+                raise
 
     def ask(self, cmd):
         self.write(cmd)

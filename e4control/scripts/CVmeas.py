@@ -1,8 +1,4 @@
-
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
 
 import os
 import argparse
@@ -14,7 +10,7 @@ from scipy.stats import sem
 
 from .. import utils as sh
 
-
+# arg parser
 parser = argparse.ArgumentParser()
 parser.add_argument('v_min', help='min voltage (V)', type=float)
 parser.add_argument('v_max', help='max voltage (V)', type=float)
@@ -33,6 +29,9 @@ parser.add_argument('-db', '--database', help='creates an additional logfile, ma
 
 def main():
     args = parser.parse_args()
+
+    # print welcome message
+    sh.print_welcome()
 
     # read configfile
     devices = sh.read_config(args.config)
