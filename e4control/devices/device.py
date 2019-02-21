@@ -4,6 +4,7 @@ import sys
 import vxi11
 from pylink import TCPLink
 import serial
+from time import sleep
 from .prologix import Prologix
 
 
@@ -59,6 +60,7 @@ class Device(object):
     def reconnect(self):
         self.close()
         self.open()
+        sleep(0.5)
 
     def read(self):
         try:
@@ -82,14 +84,15 @@ class Device(object):
 
     def write(self, cmd):
         cmd = cmd + self.trm
-        try:
-            self.com.write(cmd)
-        except:
-            self.reconnect()
-            try:
-                self.com.write(cmd)
-            except:
-                print('Timeout while writing')
+        self.com.write(cmd)
+        # try:
+        #     self.com.write(cmd)
+        # except:
+        #     self.reconnect()
+        #     try:
+        #         self.com.write(cmd)
+        #     except:
+        #         print('Timeout while writing')
 
     def ask(self, cmd):
         self.write(cmd)

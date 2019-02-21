@@ -14,7 +14,7 @@ class SHT75(Device):
         super(SHT75, self).__init__(connection_type=connection_type, host=host, port=port)
         userAtHost = 'labuser@{}'.format(self.host)
         call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/StartServer.sh"])
-        sleep(0.2)  # This is to give the RasPi some time to start up properply
+        sleep(0.5)  # This is to give the RasPi some time to start up properply
         self.trm = ''
 
         # How to create a rsa-keypair to log on without password:
@@ -30,6 +30,7 @@ class SHT75(Device):
         return data.decode('utf-8')
 
     def getValues(self, channels=0):  # Each channel equals one sensor, thus touple of (Temperature, Humidity). 0 equals each channel
+        sleep(0.5)
         if channels == 0:
             data = self.ask('READ')
         else:
