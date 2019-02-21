@@ -17,7 +17,7 @@ class TEC1123(Device):
     def buildFrame(self, payload):
         frame = '#' + '{:02X}{:04X}'.format(self.adress, self.sequence)
         frame += payload
-        frame += buildCheckSum(frame)
+        frame += self.buildCheckSum(frame)
         return frame.encode()
 
     def buildCheckSum(self, frame):
