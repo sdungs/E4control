@@ -14,8 +14,28 @@ class TEC1123(Device):
     def __init__(self, connection_type, host, port, baudrate=57600, timeout=1):
         super(TEC1123, self).__init__(connection_type=connection_type, host=host, port=port, baudrate=baudrate, timeout=timeout)
 
-    def buildFrame(self, cmd):
-        frame = '#'.encode() + '{:02X}{:04X}.format(self.adress, self.sequence)'
+    def buildFrame(self, payload):
+        frame = '#' + '{:02X}{:04X}'.format(self.adress, self.sequence)
+        frame += payload
+        frame += buildCheckSum(frame)
+        return frame.encode()
+
+    def buildCheckSum(self, frame):
+        return '{:04X}'.format(CRCCCITT().calculate(input_data=frame))
+
+    def buildPayload(self, param, channel, set=False, **kwargs):  # **kwargs for value to be set
+        if not set:  # read-ony operation
+            payload = '?VR{:04X}{:02d}'.format(self.PARAMETERS[str(param)], channel)
+        if set:
+            payload = 'VS{:04X}{:02d}'.format(self.PARAMETERS[str(param)], channel)
+            if self.PARAMETERS[str(param)]['format'] == 'UINT32':
+                payload += '{:08d}'.format(kwargs.get('value'))
+            elif self.PARAMETERS[str(param)]['format'] == 'FLOAT32':
+                payload += '{:08f}'.format(kwargs.get('value'))
+        return payload
+
+    def getTemp(self, channel):
+        self.buildFrame(self.buildPayload(1000, 1))
 
     PARAMETERS = {
         # Device Identification
