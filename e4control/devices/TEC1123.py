@@ -67,7 +67,7 @@ class TEC1123(Device):
         '6310': dict([('id', 6310), ('name', 'Delay Until Restart'), ('format', 'FLOAT32')]),  # error state auto restart delay in [s]
     }
 
-    ERRORS {
+    ERRORS = {
         '1': dict([('code', 1), ('symbol', 'ERR_CMD_NOT_AVAILABLE'), ('description', 'Command not available')]),
         '2': dict([('code', 2), ('symbol', 'ERR_DEVICE_BUSY'), ('description', 'Device is busy')]),
         '3': dict([('code', 3), ('symbol', 'ERR_GENERAL_COM'), ('description', 'General communication error')]),
