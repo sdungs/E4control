@@ -25,9 +25,9 @@ class TEC1123(Device):
 
     def buildPayload(self, param, channel, set=False, **kwargs):  # **kwargs for value to be set
         if not set:  # read-ony operation
-            payload = '?VR{:04X}{:02d}'.format(self.PARAMETERS[str(param)], channel)
+            payload = '?VR{:04X}{:02d}'.format(self.PARAMETERS[str(param)]['id'], channel)
         if set:
-            payload = 'VS{:04X}{:02d}'.format(self.PARAMETERS[str(param)], channel)
+            payload = 'VS{:04X}{:02d}'.format(self.PARAMETERS[str(param)]['id'], channel)
             if self.PARAMETERS[str(param)]['format'] == 'UINT32':
                 payload += '{:08d}'.format(kwargs.get('value'))
             elif self.PARAMETERS[str(param)]['format'] == 'FLOAT32':
