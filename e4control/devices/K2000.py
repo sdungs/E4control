@@ -107,6 +107,9 @@ class K2000(Device):
         fV = self.getValue()
         return fV
 
+    def getTemperature(self, iChannel):
+        return self.getTempPT1000(iChannel)
+
     def getTempPT100(self, iChannel):
         a = 3.90802E-3
         b = -5.802E-7
