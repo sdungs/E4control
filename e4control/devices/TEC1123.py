@@ -46,6 +46,7 @@ class TEC1123(Device):
 
 ###############################################################
     def getPowerStatus(self):
+        self.Power = []
         for i in self.channels:
             answ = self.ask(
                 self.buildFrame(self.buildPayload(104, i)))
@@ -64,6 +65,7 @@ class TEC1123(Device):
         return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
 
     def getSetTemperature(self, *args):  # channelnumber as *args if only 1 should be returned
+        self.T_set = []
         for i in self.channels:
             answ = self.ask(self.buildFrame(self.buildPayload(1010, i)))
             self.T_set[i - 1] = round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
