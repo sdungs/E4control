@@ -16,7 +16,7 @@ class TEC1123(Device):
     def __init__(self, connection_type, host, port, baudrate=57600, timeout=1):
         super(TEC1123, self).__init__(connection_type=connection_type, host=host, port=port, baudrate=baudrate, timeout=timeout)
 
-    def read(self, cmd):
+    def read(self):
         return self.com.read_until('\r'.encode())
 
     def buildFrame(self, payload):
