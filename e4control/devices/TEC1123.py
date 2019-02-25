@@ -68,7 +68,7 @@ class TEC1123(Device):
         self.T_set = []
         for i in self.channels:
             answ = self.ask(self.buildFrame(self.buildPayload(1010, i)))
-            self.T_set[i - 1] = round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
+            self.T_set.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
         if args:
             return self.T_set[args[0]]
         else:
