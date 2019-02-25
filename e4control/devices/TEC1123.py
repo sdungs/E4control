@@ -33,16 +33,22 @@ class TEC1123(Device):
             payload = '?VR{:04X}{:02d}'.format(self.PARAMETERS[str(param)]['id'], channel)
         if set:
             payload = 'VS{:04X}{:02d}'.format(self.PARAMETERS[str(param)]['id'], channel)
-            if self.PARAMETERS[str(param)]['format'] == 'UINT32':
+            if self.PARAMETERS[str(param)]['format'] == 'INT32':
                 payload += '{:08d}'.format(kwargs.get('value'))
             elif self.PARAMETERS[str(param)]['format'] == 'FLOAT32':
                 payload += '{:8f0}'.format(kwargs.get('value'))
         return payload
 
-    def getTemp(self, channel):
-        cmd = self.buildFrame(self.buildPayload(1000, 1))
+    def getTemp(self, channel=1):
+        cmd = self.buildFrame(self.buildPayload(1000, channel))
         answ = self.ask(cmd)
-        return unpack('f', pack('I', int(answ[7:15], 16)))[0]
+        return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
+
+    def getSetTemp(self, channel=1):
+        cmd = self.buildFrame(self.buildPayload(1010,channel))
+        answ = self.ask(cmd)
+        return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
+
 
     PARAMETERS = {
         # Device Identification
