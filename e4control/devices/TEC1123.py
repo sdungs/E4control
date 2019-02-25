@@ -50,9 +50,9 @@ class TEC1123(Device):
             answ = self.ask(
                 self.buildFrame(self.buildPayload(104, i)))
             if unpack('f', pack('I', int(answ[7:15], 16)))[0] == 2:
-                self.Power[i-1] = True
+                self.Power.append(True)
             else:
-                self.Power[i-1] = False
+                self.Power.append(False)
 
     def enablePower(self, channel, sBool):
         self.ask(self.buildFrame(self.buildPayload(2010, channel, set=True, value=sBool)))
@@ -66,7 +66,7 @@ class TEC1123(Device):
     def getSetTemperature(self, *args):  # channelnumber as *args if only 1 should be returned
         for i in self.channels:
             answ = self.ask(self.buildFrame(self.buildPayload(1010, i)))
-            self.T_set[i-1] = round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
+            self.T_set[i - 1] = round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
         if args:
             return self.T_set[args[0]]
         else:
