@@ -41,7 +41,7 @@ class TEC1123(Device):
             if self.PARAMETERS[str(param)]['format'] == 'INT32':
                 payload += '{:08d}'.format(kwargs.get('value'))
             elif self.PARAMETERS[str(param)]['format'] == 'FLOAT32':
-                payload += '{:08X}'.format(kwargs.get('value'))
+                payload += '{:08X}'.format(unpack('<I', pack('<f', kwargs.get('value')))[0])
         return payload
 
     def getPowerStatus(self):
