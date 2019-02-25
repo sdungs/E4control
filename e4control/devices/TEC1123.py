@@ -41,19 +41,19 @@ class TEC1123(Device):
             if self.PARAMETERS[str(param)]['format'] == 'INT32':
                 payload += '{:08d}'.format(kwargs.get('value'))
             elif self.PARAMETERS[str(param)]['format'] == 'FLOAT32':
-                payload += '{:08f}'.format(kwargs.get('value'))
+                payload += '{:08X}'.format(kwargs.get('value'))
         return payload
 
-###############################################################
     def getPowerStatus(self):
         self.Power = []
         for i in self.channels:
             answ = self.ask(
                 self.buildFrame(self.buildPayload(104, i)))
-            if unpack('f', pack('I', int(answ[7:15], 16)))[0] == 2:
+            if unpack('I', pack('I', int(answ[7:15], 16)))[0] == 2:
                 self.Power.append(True)
             else:
                 self.Power.append(False)
+        return self.Power
 
     def enablePower(self, channel, sBool):
         self.ask(self.buildFrame(self.buildPayload(2010, channel, set=True, value=sBool)))
@@ -70,7 +70,7 @@ class TEC1123(Device):
             answ = self.ask(self.buildFrame(self.buildPayload(1010, i)))
             self.T_set.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
         if args:
-            return self.T_set[args[0]]
+            return self.T_set[args[0] + 1]
         else:
             return self.T_set
 
