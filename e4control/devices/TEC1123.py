@@ -12,9 +12,14 @@ class TEC1123(Device):
     trm = '\r'.encode()
     adress = 0
     sequence = 0xE4E4
+    channels = [1,2]
+    Power  = []
+    T_set = []
 
     def __init__(self, connection_type, host, port, baudrate=57600, timeout=1):
         super(TEC1123, self).__init__(connection_type=connection_type, host=host, port=port, baudrate=baudrate, timeout=timeout)
+        self.getPowerStatus()
+        self.getSetTemperature()
 
     def read(self):
         return self.com.read_until('\r'.encode())
@@ -36,23 +41,41 @@ class TEC1123(Device):
             if self.PARAMETERS[str(param)]['format'] == 'INT32':
                 payload += '{:08d}'.format(kwargs.get('value'))
             elif self.PARAMETERS[str(param)]['format'] == 'FLOAT32':
-                payload += '{:8f0}'.format(kwargs.get('value'))
+                payload += '{:08f}'.format(kwargs.get('value'))
         return payload
+
+###############################################################
+    def getPowerStatus(self):
+        for i in self.channels:
+            answ = self.ask(
+                self.buildFrame(self.buildPayload(104, i)))
+            if unpack('f', pack('I', int(answ[7:15], 16)))[0] == 2:
+                self.Power[i] = True
+            else:
+                self.Power[i] = False
+
+    def enablePower(self, channel, sBool):
+        self.ask(self.buildFrame(self.buildPayload(2010, channel, set=True, value=sBool)))
+        self.Power[channel] = sBool
 
     def getTemp(self, channel=1):
         cmd = self.buildFrame(self.buildPayload(1000, channel))
         answ = self.ask(cmd)
         return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
 
-    def getSetTemp(self, channel=1):
-        cmd = self.buildFrame(self.buildPayload(1010,channel))
-        answ = self.ask(cmd)
-        return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
-
+    def getSetTemperature(self, *args):  # channelnumber as *args if only 1 should be returned
+        for i in self.channels:
+            answ = self.ask(self.buildFrame(self.buildPayload(1010, i)))
+            self.T_set[i] = round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
+        if args:
+            return self.T_set[args[0]]
+        else:
+            return self.T_set
 
     PARAMETERS = {
         # Device Identification
         '104': dict([('id', 104), ('name', 'Device Status'), ('format', 'INT32')]),
+        '107': dict([('id', 105), ('name', 'Error Number'), ('format', 'INT32')]),
         '108': dict([('id', 108), ('name', 'Save Data To Flash'), ('format', 'INT32')]),
         '109': dict([('id', 109), ('name', 'Flash Status'), ('format', 'INT32')]),  # 0 = Enabled, 1 = Disabled
         # Temperature Measurement
