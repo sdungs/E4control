@@ -5,14 +5,19 @@ from PyCRC.CRCCCITT import CRCCCITT
 import time
 from struct import pack, unpack
 
+#  bin(0X41CD2F28) z.B.
+#  '{0:b}'.format()
 
 class TEC1123(Device):
-    trm = '\r'
+    trm = '\r'.encode()
     adress = 0
-    sequence = 0x00E4
+    sequence = 0xE4E4
 
     def __init__(self, connection_type, host, port, baudrate=57600, timeout=1):
         super(TEC1123, self).__init__(connection_type=connection_type, host=host, port=port, baudrate=baudrate, timeout=timeout)
+
+    def read(self, cmd):
+        return self.com.read_until('\r'.encode())
 
     def buildFrame(self, payload):
         frame = '#' + '{:02X}{:04X}'.format(self.adress, self.sequence)
@@ -31,11 +36,13 @@ class TEC1123(Device):
             if self.PARAMETERS[str(param)]['format'] == 'UINT32':
                 payload += '{:08d}'.format(kwargs.get('value'))
             elif self.PARAMETERS[str(param)]['format'] == 'FLOAT32':
-                payload += '{:08f}'.format(kwargs.get('value'))
+                payload += '{:8f0}'.format(kwargs.get('value'))
         return payload
 
     def getTemp(self, channel):
-        self.buildFrame(self.buildPayload(1000, 1))
+        cmd = self.buildFrame(self.buildPayload(1000, 1))
+        answ = self.ask(cmd)
+        return unpack('f', pack('I', int(answ[7:15], 16)))[0]
 
     PARAMETERS = {
         # Device Identification
