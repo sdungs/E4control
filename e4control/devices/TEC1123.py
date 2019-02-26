@@ -122,6 +122,8 @@ class TEC1123(Device):
         # Device Identification
         '104': dict([('id', 104), ('name', 'Device Status'), ('format', 'INT32')]),
         '105': dict([('id', 105), ('name', 'Error Number'), ('format', 'INT32')]),
+        '106': dict([('id', 106), ('name', 'Error Instance'), ('format', 'INT32')]),
+        '107': dict([('id', 107), ('name', 'Error Parameter'), ('format', 'INT32')]),
         '108': dict([('id', 108), ('name', 'Save Data To Flash'), ('format', 'INT32')]),
         '109': dict([('id', 109), ('name', 'Flash Status'), ('format', 'INT32')]),  # 0 = Enabled, 1 = Disabled
         # Temperature Measurement
@@ -157,7 +159,7 @@ class TEC1123(Device):
         # Auto Tuning
         '51000': dict([('id', 51000), ('name', 'Auto Tuning Start'), ('format', 'INT32')]),  # Write 1 to start the process
         '51001': dict([('id', 51001), ('name', 'Auto Tuning Cancel'), ('format', 'INT32')]),  # Write 1 to cancel process
-        '51002': dict([('id', 51002), ('name', 'THermal Mode Speed'), ('format', 'INT32')]),  # 0 = Fast Model, 1 = Slow Model
+        '51002': dict([('id', 51002), ('name', 'Thermal Mode Speed'), ('format', 'INT32')]),  # 0 = Fast Model, 1 = Slow Model
         '51014': dict([('id', 51014), ('name', 'PID Parameter Kp'), ('format', 'FLOAT32')]),  # read-only
         '51015': dict([('id', 51015), ('name', 'PID Parameter Ti'), ('format', 'FLOAT32')]),  # read-only
         '51016': dict([('id', 51016), ('name', 'PID Parameter Td'), ('format', 'FLOAT32')]),  # read-only
