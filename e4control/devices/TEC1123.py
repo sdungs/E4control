@@ -76,7 +76,7 @@ class TEC1123(Device):
 
     def enablePower(self, channel, sBool):
         self.ask(self.buildFrame(2010, channel, set=True, value=sBool))
-        self.Power[channel - 1] = sBool
+        self.Power[channel - 1] = bool(sBool)
 
     def getTemperature(self, channel=1):
         cmd = self.buildFrame(1000, channel)
@@ -96,13 +96,21 @@ class TEC1123(Device):
     def AutoTune(self, channel):
         self.ask(self.buildFrame(51000, channel, set=True, value=1))
         sleep(1)
-        while self.getAutoTuneStatus(channel) <= 100.0:
-            print(self.getAutoTuneStatus(channel))
+        while True:
+            status = self.getAutoTuneStatus(channel)
+            if status[0] is 3:
+                print('Error, please check')
+            elif status[0] is not 4:
+                print(status[1])
             sleep(5)
 
     def getAutoTuneStatus(self, channel):
+        values = []
+        answ = self.ask(self.buildFrame(51020, channel))
+        values.append(round(unpack('I', pack('I', int(answ[7:15], 16)))[0], 2))
         answ = self.ask(self.buildFrame(51021, channel))
-        return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
+        values.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
+        return values
 
     def setTemperature(self, channel, fValue):
         self.ask(self.buildFrame(3000, channel, set=True, value=fValue))
@@ -167,9 +175,9 @@ class TEC1123(Device):
         '51014': dict([('id', 51014), ('name', 'PID Parameter Kp'), ('format', 'FLOAT32')]),  # read-only
         '51015': dict([('id', 51015), ('name', 'PID Parameter Ti'), ('format', 'FLOAT32')]),  # read-only
         '51016': dict([('id', 51016), ('name', 'PID Parameter Td'), ('format', 'FLOAT32')]),  # read-only
-        # read-only, return recommended value for target coarse temp
+        # 51017: read-only, return recommended value for target coarse temp
         '51017': dict([('id', 51017), ('name', 'Coarse Temp Ramp'), ('format', 'FLOAT32')]),
-        # read-only, 0 = Idle, 1 = Ramping to Target, 2 = Preparing, 3 = Acquiring data, 4 = Success, 10 = Error
+        # 51020: read-only, 0 = Idle, 1 = Ramping to Target, 2 = Preparing, 3 = Acquiring data, 4 = Success, 10 = Error
         '51020': dict([('id', 51020), ('name', 'Tuning Status'), ('format', 'INT32')]),
         '51021': dict([('id', 51021), ('name', 'Tuning Status (%)'), ('format', 'FLOAT32')]),
         '6310': dict([('id', 6310), ('name', 'Delay Until Restart'), ('format', 'FLOAT32')]),  # error state auto restart delay in [s]
