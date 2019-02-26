@@ -108,14 +108,14 @@ class TEC1123(Device):
         self.ask(self.buildFrame(3000, channel, set=True, value=fValue))
         pass
 
-    def getCurrent(self, channel=1):
+    def getCurrent(self, channel):
         values = []
         for i in self.channels:
             answ = self.ask(self.buildFrame(1020, channel))
             values.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
             return values
 
-    def getVoltage(self, channel=1):
+    def getVoltage(self, channel):
         values = []
         for i in self.channels:
             answ = self.ask(self.buildFrame(1021, channel))
