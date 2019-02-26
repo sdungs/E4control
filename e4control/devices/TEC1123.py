@@ -97,7 +97,7 @@ class TEC1123(Device):
         self.ask(self.buildFrame(51000, channel, set=True, value=1))
         sleep(1)
         while self.getAutoTuneStatus() <= 100.0:
-            print(self.getAutoTuneStatus())
+            print(self.getAutoTuneStatus(channel))
             sleep(5)
 
     def getAutoTuneStatus(self, channel):
