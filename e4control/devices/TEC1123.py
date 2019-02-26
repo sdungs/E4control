@@ -98,10 +98,14 @@ class TEC1123(Device):
         sleep(1)
         while True:
             status = self.getAutoTuneStatus(channel)
-            if status[0] is 3:
+            if status[0] is 10:
                 print('Error, please check')
-            elif status[0] is not 4:
-                print(status[1])
+                break
+            elif status[0] in [1,2,3]:
+                print('Progress: {:2f}'.format(status[1]))
+            elif status[0] is 4:
+                print('AutoTune was successful')
+
             sleep(5)
 
     def getAutoTuneStatus(self, channel):
