@@ -22,7 +22,7 @@ class TEC1123(Device):
     def read(self):
         return self.com.read_until('\r'.encode())
 
-    def buildFrame(self, param, channel, set=False, **kwargs):  # **kwargs for value to be set
+    def buildFrame(self, param, channel, set=False, reset=False, **kwargs):  # **kwargs for value to be set
         frame = '#' + '{:02X}{:04X}'.format(self.adress, self.sequence)
         if not set:  # read-ony operation
             payload = '?VR{:04X}{:02d}'.format(self.PARAMETERS[str(param)]['id'], channel)
@@ -32,6 +32,8 @@ class TEC1123(Device):
                 payload += '{:08d}'.format(kwargs.get('value'))
             elif self.PARAMETERS[str(param)]['format'] == 'FLOAT32':
                 payload += '{:08X}'.format(unpack('<I', pack('<f', kwargs.get('value')))[0])
+        if reset:
+            payload += 'RS'
         frame += payload
         frame += self.buildCheckSum(frame)
         return frame.encode()
@@ -66,9 +68,15 @@ class TEC1123(Device):
                 self.Power.append(False)
         return self.Power
 
+    def resetDevice(self):
+        self.ask(self.buildFrame(104, 1, reset=True))
+        sleep(1)
+        self.getAndSetParameter()
+        pass
+
     def enablePower(self, channel, sBool):
         self.ask(self.buildFrame(2010, channel, set=True, value=sBool))
-        self.Power[channel] = sBool
+        self.Power[channel - 1] = sBool
 
     def getTemperature(self, channel=1):
         cmd = self.buildFrame(1000, channel)
@@ -88,8 +96,8 @@ class TEC1123(Device):
     def AutoTune(self, channel):
         self.ask(self.buildFrame(51000, channel, set=True, value=1))
         sleep(1)
-        while self.ask(self.buildFrame(51002, channel)) < 100:
-            print(self.ask(self.buildFrame(51002, channel)))
+        while self.ask(self.buildFrame(51021, channel)) < 100:
+            print(self.ask(self.buildFrame(51021, channel)))
             sleep(5)
 
     def setTemperature(self, channel, fValue):
@@ -97,12 +105,18 @@ class TEC1123(Device):
         pass
 
     def getCurrent(self, channel=1):
-        answ = self.ask(self.buildFrame(1020, channel))
-        return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
+        values = []
+        for i in self.channels:
+            answ = self.ask(self.buildFrame(1020, channel))
+            values.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
+            return values
 
     def getVoltage(self, channel=1):
-        answ = self.ask(self.buildFrame(1021, channel))
-        return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
+        values = []
+        for i in self.channels:
+            answ = self.ask(self.buildFrame(1021, channel))
+            values.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
+            return values
 
     PARAMETERS = {
         # Device Identification
