@@ -4,9 +4,8 @@ from .device import Device
 from PyCRC.CRCCCITT import CRCCCITT
 import time
 from struct import pack, unpack
+from time import sleep
 
-#  bin(0X41CD2F28) z.B.
-#  '{0:b}'.format()
 
 class TEC1123(Device):
     trm = '\r'.encode()
@@ -18,22 +17,13 @@ class TEC1123(Device):
 
     def __init__(self, connection_type, host, port, baudrate=57600, timeout=1):
         super(TEC1123, self).__init__(connection_type=connection_type, host=host, port=port, baudrate=baudrate, timeout=timeout)
-        self.getPowerStatus()
-        self.getSetTemperature()
+        self.getAndSetParameter()
 
     def read(self):
         return self.com.read_until('\r'.encode())
 
-    def buildFrame(self, payload):
+    def buildFrame(self, param, channel, set=False, **kwargs):  # **kwargs for value to be set
         frame = '#' + '{:02X}{:04X}'.format(self.adress, self.sequence)
-        frame += payload
-        frame += self.buildCheckSum(frame)
-        return frame.encode()
-
-    def buildCheckSum(self, frame):
-        return '{:04X}'.format(CRCCCITT().calculate(input_data=frame))
-
-    def buildPayload(self, param, channel, set=False, **kwargs):  # **kwargs for value to be set
         if not set:  # read-ony operation
             payload = '?VR{:04X}{:02d}'.format(self.PARAMETERS[str(param)]['id'], channel)
         if set:
@@ -42,13 +32,34 @@ class TEC1123(Device):
                 payload += '{:08d}'.format(kwargs.get('value'))
             elif self.PARAMETERS[str(param)]['format'] == 'FLOAT32':
                 payload += '{:08X}'.format(unpack('<I', pack('<f', kwargs.get('value')))[0])
-        return payload
+        frame += payload
+        frame += self.buildCheckSum(frame)
+        return frame.encode()
+
+    def buildCheckSum(self, frame):
+        return '{:04X}'.format(CRCCCITT().calculate(input_data=frame))
+
+    # def buildPayload(self, param, channel, set=False, **kwargs):  # **kwargs for value to be set
+    #     if not set:  # read-ony operation
+    #         payload = '?VR{:04X}{:02d}'.format(self.PARAMETERS[str(param)]['id'], channel)
+    #     if set:
+    #         payload = 'VS{:04X}{:02d}'.format(self.PARAMETERS[str(param)]['id'], channel)
+    #         if self.PARAMETERS[str(param)]['format'] == 'INT32':
+    #             payload += '{:08d}'.format(kwargs.get('value'))
+    #         elif self.PARAMETERS[str(param)]['format'] == 'FLOAT32':
+    #             payload += '{:08X}'.format(unpack('<I', pack('<f', kwargs.get('value')))[0])
+    #     return payload
+
+    def getAndSetParameter(self):
+        self.getPowerStatus()
+        self.getSetTemperature()
+        pass
 
     def getPowerStatus(self):
         self.Power = []
         for i in self.channels:
             answ = self.ask(
-                self.buildFrame(self.buildPayload(104, i)))
+                self.buildFrame(104, i))
             if unpack('I', pack('I', int(answ[7:15], 16)))[0] == 2:
                 self.Power.append(True)
             else:
@@ -56,28 +67,47 @@ class TEC1123(Device):
         return self.Power
 
     def enablePower(self, channel, sBool):
-        self.ask(self.buildFrame(self.buildPayload(2010, channel, set=True, value=sBool)))
+        self.ask(self.buildFrame(2010, channel, set=True, value=sBool))
         self.Power[channel] = sBool
 
-    def getTemp(self, channel=1):
-        cmd = self.buildFrame(self.buildPayload(1000, channel))
+    def getTemperature(self, channel=1):
+        cmd = self.buildFrame(1000, channel)
         answ = self.ask(cmd)
         return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
 
     def getSetTemperature(self, *args):  # channelnumber as *args if only 1 should be returned
         self.T_set = []
         for i in self.channels:
-            answ = self.ask(self.buildFrame(self.buildPayload(1010, i)))
+            answ = self.ask(self.buildFrame(1010, i))
             self.T_set.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
         if args:
-            return self.T_set[args[0] + 1]
+            return self.T_set[args[0] - 1]
         else:
             return self.T_set
+
+    def AutoTune(self, channel):
+        self.ask(self.buildFrame(51000, channel, set=True, value=1))
+        sleep(1)
+        while self.ask(self.buildFrame(51002, channel)) < 100:
+            print(self.ask(self.buildFrame(51002, channel)))
+            sleep(5)
+
+    def setTemperature(self, channel, fValue):
+        self.ask(self.buildFrame(3000, channel, set=True, value=fValue))
+        pass
+
+    def getCurrent(self, channel=1):
+        answ = self.ask(self.buildFrame(1020, channel))
+        return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
+
+    def getVoltage(self, channel=1):
+        answ = self.ask(self.buildFrame(1021, channel))
+        return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
 
     PARAMETERS = {
         # Device Identification
         '104': dict([('id', 104), ('name', 'Device Status'), ('format', 'INT32')]),
-        '107': dict([('id', 105), ('name', 'Error Number'), ('format', 'INT32')]),
+        '105': dict([('id', 105), ('name', 'Error Number'), ('format', 'INT32')]),
         '108': dict([('id', 108), ('name', 'Save Data To Flash'), ('format', 'INT32')]),
         '109': dict([('id', 109), ('name', 'Flash Status'), ('format', 'INT32')]),  # 0 = Enabled, 1 = Disabled
         # Temperature Measurement
@@ -99,7 +129,7 @@ class TEC1123(Device):
         '2051': dict([('id', 2051), ('name', 'Device Address'), ('format', 'FLOAT32')]),
         # Temperature Control Settings
         '3000': dict([('id', 3000), ('name', 'Target Object Temp (set)'), ('format', 'FLOAT32')]),
-        '3003': dict([('id', 3003), ('name', 'Corase Temp Ramp'), ('format', 'FLOAT32')]),
+        '3003': dict([('id', 3003), ('name', 'Coarse Temp Ramp'), ('format', 'FLOAT32')]),
         '3010': dict([('id', 3010), ('name', 'Kp'), ('format', 'FLOAT32')]),
         '3011': dict([('id', 3011), ('name', 'Ti'), ('format', 'FLOAT32')]),
         '3012': dict([('id', 3012), ('name', 'Td'), ('format', 'FLOAT32')]),
