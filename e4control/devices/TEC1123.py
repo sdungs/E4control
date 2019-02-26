@@ -11,8 +11,8 @@ class TEC1123(Device):
     trm = '\r'.encode()
     adress = 0
     sequence = 0xE4E4
-    channels = [1,2]
-    Power  = []
+    channels = [1, 2]
+    Power = []
     T_set = []
 
     def __init__(self, connection_type, host, port, baudrate=57600, timeout=1):
@@ -96,7 +96,7 @@ class TEC1123(Device):
     def AutoTune(self, channel):
         self.ask(self.buildFrame(51000, channel, set=True, value=1))
         sleep(1)
-        while self.getAutoTuneStatus() <= 100.0:
+        while self.getAutoTuneStatus(channel) <= 100.0:
             print(self.getAutoTuneStatus(channel))
             sleep(5)
 

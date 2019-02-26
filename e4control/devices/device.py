@@ -32,10 +32,6 @@ class Device(object):
             sPort = 'COM1,488'
             # This probably will solely work with Keysight E5810B
             self.com = vxi11.Instrument(host, sPort)
-        elif (connection_type == 'gpibUsb'):
-            sPort = 'usb0'
-            self.com = vxi11.Instrument(host, sPort)
-            # This probably will solely work with Keysight E5810B
         elif (connection_type == 'usb'):
             if 'baudrate' in kwargs:
                 self.com = serial.Serial(host, kwargs.get('baudrate'))
