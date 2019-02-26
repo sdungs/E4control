@@ -16,7 +16,7 @@ class Device(object):
     port = None
 
     def __init__(self, connection_type, host, port, **kwargs):
-        # *args can be used to specify baudrate other than 9600
+        # *kwargs can be used to specify baudrate other than 9600
         self.connection_type = connection_type
         self.host = host
         self.port = port
@@ -30,6 +30,10 @@ class Device(object):
             self.com = vxi11.Instrument(host, sPort)
         elif (connection_type == 'gpibSerial'):
             sPort = 'COM1,488'
+            # This probably will solely work with Keysight E5810B
+            self.com = vxi11.Instrument(host, sPort)
+        elif (connection_type == 'gpibUsb'):
+            sPort = 'usb0'
             self.com = vxi11.Instrument(host, sPort)
             # This probably will solely work with Keysight E5810B
         elif (connection_type == 'usb'):
