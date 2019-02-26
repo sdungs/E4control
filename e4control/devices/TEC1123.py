@@ -96,9 +96,13 @@ class TEC1123(Device):
     def AutoTune(self, channel):
         self.ask(self.buildFrame(51000, channel, set=True, value=1))
         sleep(1)
-        while self.ask(self.buildFrame(51021, channel)) < 100:
-            print(self.ask(self.buildFrame(51021, channel)))
+        while self.getAutoTuneStatus() <= 100.0:
+            print(self.getAutoTuneStatus())
             sleep(5)
+
+    def getAutoTuneStatus(self, channel):
+        answ = self.ask(self.buildFrame(51021, channel))
+        return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
 
     def setTemperature(self, channel, fValue):
         self.ask(self.buildFrame(3000, channel, set=True, value=fValue))
