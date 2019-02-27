@@ -1,4 +1,4 @@
-# E4control v1.0.0
+# E4control v1.1.3
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -56,6 +56,8 @@ If -h or --help is supplied at the command line, the basic usage of the script w
 #### config file
 A config file with all used devices is needed for every script. For an example see [exampleConfig](exampleConfig).
 In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. The columns are separated by a single space.
+
+A line is ignored if it has '#' as its first character.
 
 #### e4control_measure_IV
 To measure the current against voltage, enter:
