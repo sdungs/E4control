@@ -3,6 +3,7 @@
 import os
 import argparse
 import time
+import datetime as dt
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -147,8 +148,8 @@ def main():
     k = 0
     try:
         while True:
-            timestamp0 = time.time()
-            print('This measurement has been runing for a total time of {}.'.format(time.strftime('%Hh:%Mm:%Ss', time.gmtime(timestamp0-t0))))
+            timestamp0 = time.time() + 10000
+            print('This measurement has been runing for a total time of {}.'.format(str(dt.timedelta(seconds=timestamp0-t0))))
             Us = []
             Is = []
             Ts = []
