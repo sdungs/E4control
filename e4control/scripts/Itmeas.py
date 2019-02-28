@@ -148,8 +148,8 @@ def main():
     k = 0
     try:
         while True:
-            timestamp0 = time.time() + 10000
-            print('This measurement has been runing for a total time of {}.'.format(str(dt.timedelta(seconds=timestamp0-t0))))
+            timestamp0 = time.time()
+            print('This measurement has been runing for a total time of {}.'.format(str(dt.timedelta(seconds=timestamp0-t0)).split('.')[0]))
             Us = []
             Is = []
             Ts = []
