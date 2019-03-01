@@ -93,7 +93,7 @@ class TEC1123(Device):
         else:
             return self.T_set
 
-    def AutoTune(self, channel):
+    def AutoTune(self, channel, set=False):
         self.ask(self.buildFrame(51000, channel, set=True, value=1))
         sleep(1)
         while True:
@@ -101,12 +101,17 @@ class TEC1123(Device):
             if status[0] is 10:
                 print('Error, please check')
                 break
-            elif status[0] in [1,2,3]:
-                print('Progress: {:2f}'.format(status[1]))
+            elif status[0] in [1, 2, 3]:
+                print('Status: {:d},  Progress: {:.2f}'.format(status[0], status[1]))
             elif status[0] is 4:
                 print('AutoTune was successful')
-
+                return self.getAutoTunePidParameter(channel, set=set)
             sleep(5)
+        pass
+
+    def CancelAutoTune(self, channel):
+        self.ask(self.buildFrame(51001, 1, set=True, value=1))
+        pass
 
     def getAutoTuneStatus(self, channel):
         values = []
@@ -115,6 +120,32 @@ class TEC1123(Device):
         answ = self.ask(self.buildFrame(51021, channel))
         values.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
         return values
+
+    def getAutoTunePidParameter(self, channel, set=False):
+        values = []
+        for i in range(4):
+            answ = self.ask(self.buildFrame(51014 + i, channel))
+            values.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
+        return values
+        if set:
+            for i in range(len(values)):
+                self.ask(self.buildFrame(3010 + i, channel, set=True, value=values[i]))
+        return values
+
+    def getPidParameter(self, channel):
+        values = []
+        for i in range(3):
+            answ = self.ask(self.buildFrame(3010 + i, channel))
+            values.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
+        return values
+
+    def getErrorStateDelay(self, channel, set=False, **kwargs):
+        if not set:
+            answ = self.ask(self.buildFrame(6310, channel))
+            return round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2)
+        elif set:
+            answ = self.ask(self.buildFrame(6310, channel, set=True, value=kwargs.get('value')))
+            pass
 
     def setTemperature(self, channel, fValue):
         self.ask(self.buildFrame(3000, channel, set=True, value=fValue))
@@ -127,12 +158,15 @@ class TEC1123(Device):
             values.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
             return values
 
-    def getVoltage(self, channel):
+    def getVoltage(self, channel=0):
         values = []
         for i in self.channels:
-            answ = self.ask(self.buildFrame(1021, channel))
+            answ = self.ask(self.buildFrame(1021, i))
             values.append(round(unpack('f', pack('I', int(answ[7:15], 16)))[0], 2))
-            return values
+            if channel == 0:
+                return values
+            else:
+                return values[channel]
 
     PARAMETERS = {
         # Device Identification
