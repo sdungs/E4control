@@ -247,7 +247,7 @@ def initialize_db(meas_type, args):
     elif meas_type == 'It':
         write_line(db_file, [args.voltage[0], args.delay, args.ndaqs, 1e-5])   # 'constant voltage', 'delay between steps (in s)', 'measurements per step', 'compliance (in A)'
     elif meas_type == 'CV':
-        write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, args.ndaqs, args.frequecy])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'frequecy (in Hz)'
+        write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, args.ndaqs, args.frequency])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'frequecy (in Hz)'
     write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
     if meas_type == 'IV' or meas_type == 'It':
         write_line(db_file, ['t/s', 'U/V', 'Iavg/uA', 'Istd/uA', 'T/C', 'RH/%']) # 'time', 'U', 'average of all I's', 'std deviation of all I's', temperature, relative humidity
