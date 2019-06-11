@@ -31,27 +31,20 @@ class LU114(Device):
         msg = self.ask('MODE?')
         if msg == 'STANDBY':
             return False
-        elif msg == 'CONSTANT'
+        elif msg == 'CONSTANT':
             return True
         else:
             return "Mode uncertain, please check."
         pass
 
     def initialize(self):
-        self.getAndSetParameter()
-        pass
+        msg = self.getAndSetParameter()
+        return msg
 
     def getAndSetParameter(self):
-        #self.write('MODE, CONSTANT')
-        #time.sleep(0.5)
-        self.write('TEMP, S20')
-        #self.Power = True
-        return self.read()
-
-    # def getAndSetParameter(self):
-    #     self.Power = self.getPowerStatus()
-    #     self.T_set = self.getSetTemperature()
-    #     pass
+        self.Power = self.getPowerStatus()
+        self.T_set = self.getSetTemperature()
+        pass
 
     def setTemperature(self, Temp):
         if self.Power:
