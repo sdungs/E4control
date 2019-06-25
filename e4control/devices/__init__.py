@@ -12,7 +12,6 @@ from .TSX3510P import TSX3510P
 from .LU114 import LU114
 from .SHT75 import SHT75
 from .HUBER import HUBER
-from .C804 import C804
 
 __all__ = [
     'Device'
