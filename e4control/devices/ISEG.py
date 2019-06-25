@@ -6,7 +6,7 @@ from .device import Device
 
 
 class ISEG(Device):
-    rampSpeed_step = 5
+    rampSpeed_step = 20
     rampSpeed_delay = 1  # s
 
     def __init__(self, connection_type, host, port):
