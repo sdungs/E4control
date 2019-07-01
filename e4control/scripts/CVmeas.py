@@ -292,7 +292,7 @@ def main():
                 remaining = d.getCurrent(ch) * 1E6
                 k += 1
             d.enableOutput(False)
-        except ValeError as e:
+        except ValueError as e:
             print('ValueError while ramping down...')
             raise e 
 

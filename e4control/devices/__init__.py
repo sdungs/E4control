@@ -27,5 +27,5 @@ __all__ = [
     'TSX3510P',
     'LU114',
     'SHT75',
-    'HUBER'
+    'HUBER',
 ]

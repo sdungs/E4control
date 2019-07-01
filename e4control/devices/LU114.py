@@ -21,35 +21,30 @@ class LU114(Device):
             print(msg)
             self.getAndSetParameter()
             self.Power = True
-        else:
+        elif not bEnable:
+            self.setTemperature(20)
             msg = self.ask('MODE, STANDBY')
             print(msg)
-            self.setTemperature(20)
             self.Power = False
 
     def getPowerStatus(self):
         msg = self.ask('MODE?')
-        if msg == 'STANDY':
+        if msg == 'STANDBY':
             return False
-        else:
+        elif msg == 'CONSTANT':
             return True
+        else:
+            return "Mode uncertain, please check."
         pass
 
     def initialize(self):
-        self.getAndSetParameter()
-        pass
+        msg = self.getAndSetParameter()
+        return msg
 
     def getAndSetParameter(self):
-        #self.write('MODE, CONSTANT')
-        #time.sleep(0.5)
-        self.write('TEMP, S20')
-        #self.Power = True
-        return self.read()
-
-    # def getAndSetParameter(self):
-    #     self.Power = self.getPowerStatus()
-    #     self.T_set = self.getSetTemperature()
-    #     pass
+        self.Power = self.getPowerStatus()
+        self.T_set = self.getSetTemperature()
+        pass
 
     def setTemperature(self, Temp):
         if self.Power:
