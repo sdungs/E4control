@@ -21,7 +21,7 @@ def read_sensors(sensors):
 
 # Set VDD and GND to the corresponding pins on the Pi. The standard for SHT is 3.3V.
 # Set the data pins according to the definition.
-# declare sensor on GPIO pins 14 and 4
+# declare sensor on GPIO pins 14 (SCK) and 4 (DATA)
 sens1 = Sht(14, 4)
 # declare sensor on GPIO pins 8 and 11
 sens2 = Sht(8, 11)
