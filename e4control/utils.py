@@ -20,6 +20,7 @@ from .devices import (
     SHT75,
     HUBER,
     TEC1123,
+    SHT31,
 )
 
 

@@ -17,7 +17,8 @@ setup(
         'numpy <=1.15.4',
         'matplotlib >=2.0.0, <3.0.0',
         'scipy',
-        'sht-sensor'
+        'sht-sensor',
+        'smbus', 
     ],
     entry_points={
         'console_scripts': [
