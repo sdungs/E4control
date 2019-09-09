@@ -7,6 +7,7 @@ class HMP4040(Device):
 
     def __init__(self, connection_type, host, port):
         super(HMP4040, self).__init__(connection_type=connection_type, host=host, port=port)
+        self.write('SYST:MIX')
 
     def userCmd(self, cmd):
         print('user cmd: {}'.format(cmd))
@@ -45,11 +46,11 @@ class HMP4040(Device):
         self.write('INST OUT{}'.format(iOutput))
         self.write('VOLT {}'.format(fValue))
 
-    def getVoltage(self, iOutput):
+    def getSetVoltage(self, iOutput):
         self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('VOLT?'))
 
-    def measVoltage(self, iOutput):
+    def getVoltage(self, iOutput):
         self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('MEAS:VOLT?'))
 
@@ -58,11 +59,11 @@ class HMP4040(Device):
         self.write('INST OUT{}'.format(iOutput))
         self.write('CURR {}'.format(fValue))
 
-    def getCurrent(self, iOutput):
+    def getSetCurrent(self, iOutput):
         self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('CURR?'))
 
-    def measCurrent(self, iOutput):
+    def getCurrent(self, iOutput):
         self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('MEAS:CURR?'))
 
@@ -77,8 +78,8 @@ class HMP4040(Device):
         i = 1
         while i <= 4:
             a = self.getEnableOutput(i)
-            b = self.measVoltage(i)
-            c = self.measCurrent(i)
+            b = self.getVoltage(i)
+            c = self.getCurrent(i)
             bPower.append(a)
             fVoltage.append(b)
             fCurrent.append(c)

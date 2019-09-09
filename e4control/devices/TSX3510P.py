@@ -32,7 +32,7 @@ class TSX3510P(Device):
         sV = self.ask('VO?')
         return float(sV[:sV.find('V')])
 
-    def getVoltageSet(self):
+    def getSetVoltage(self):
         sV = self.ask('V?')
         return float(sV[2:])
 
@@ -40,7 +40,7 @@ class TSX3510P(Device):
         sI = self.ask('IO?')
         return float(sI[:sI.find('A')])
 
-    def getCurrentSet(self):
+    def getSetCurrent(self):
         sI = self.ask('I?')
         return float(sI[2:])
 
@@ -55,7 +55,7 @@ class TSX3510P(Device):
             self.write('OP 0')
 
     def output(self, show=True):
-        #self.enableOutput(False)
+        # self.enableOutput(False)
         bOutput = None
         fVlim = self.getVoltageLimit()
         fVoltage = self.getVoltage()

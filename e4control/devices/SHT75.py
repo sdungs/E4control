@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from socket import socket
 from .device import Device
 from subprocess import call
 from time import sleep
@@ -17,7 +16,7 @@ class SHT75(Device):
         call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/StartServer.sh"])
         sleep(0.4) # This is to give the RasPi some time to start up properply
         self.trm = ''
-        
+
         # How to create a rsa-keypair to log on without password:
         # ssh-keygen
         # ssh-copy-id user@host
@@ -31,6 +30,7 @@ class SHT75(Device):
         return data.decode('utf-8')
 
     def getValues(self, channels=0):  # Each channel equals one sensor, thus touple of (Temperature, Humidity). 0 equals each channel
+        sleep(0.5)
         if channels == 0:
             data = self.ask('READ')
         else:
@@ -58,16 +58,13 @@ class SHT75(Device):
         self.write('CLOSE')
 
     def output(self, show=True):
-        header = ['T1[°C]','H1[%]','T2[°C]','H2[%]']
+        header = ['T1[°C]', 'H1[%]', 'T2[°C]', 'H2[%]']
         values = self.getValues()
         if show:
             self.printOutput('SHT75:')
             self.printOutput('Sensor 1:\tT: {} °C\tRH: {} %'.format(values[0],values[1]))
             self.printOutput('Sensor 2:\tT: {} °C\tRH: {} %'.format(values[2],values[3]))
-
         return([header, [str(i) for i in values]])
 
     def interaction(self):
         print('For this device there is nothing to do...')
-
-
