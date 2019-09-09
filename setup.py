@@ -14,8 +14,8 @@ setup(
     install_requires=[
         'pylink',
         'python-vxi11',
-        'numpy <=1.15.4',
-        'matplotlib >=2.0.0, <3.0.0',
+        'numpy',
+        'matplotlib',
         'scipy',
         'sht-sensor'
     ],
