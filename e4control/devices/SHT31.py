@@ -12,15 +12,15 @@ import time
 import smbus
 import numpy as np
 
-class SHT3x(Device):
+class SHT31(Device):
     ADDR = 0x44
     SS = 0x2C
-    HIGH = 0x06
+    HIGH = 0x01
     READ = 0x00
     bus = smbus.SMBus(1)
 
     def __init__(self):
-        super(SHT3x, self).__init__()
+        super(SHT31, self).__init__()
         self.initialize()
 
     def initialize(self):

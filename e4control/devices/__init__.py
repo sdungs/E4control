@@ -13,6 +13,7 @@ from .LU114 import LU114
 from .SHT75 import SHT75
 from .HUBER import HUBER
 from .TEC1123 import TEC1123
+from .SHT31 import SHT31
 
 __all__ = [
     'Device'
@@ -29,5 +30,6 @@ __all__ = [
     'LU114',
     'SHT75',
     'HUBER',
-    'TEC1123'
+    'TEC1123',
+    'SHT31',
 ]

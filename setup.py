@@ -18,7 +18,7 @@ setup(
         'matplotlib >=2.0.0, <3.0.0',
         'scipy',
         'sht-sensor',
-        'smbus', 
+        'pyCRC',
     ],
     entry_points={
         'console_scripts': [
