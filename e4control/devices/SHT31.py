@@ -34,7 +34,7 @@ class SHT31(Device):
         t_data = rawData[0] << 8 | rawData[1]
         h_data = rawData[3] << 8 | rawData[4]
         # returns array with [temperature, humidity]
-        return [-45.0 + 175.0 * np.float(t_data) / 65535.0, 100.0 * np.float(h_data) / 65535.0]
+        return [round(-45.0 + 175.0 * np.float(t_data) / 65535.0, 2), round(100.0 * np.float(h_data) / 65535.0, 2)]
 
     def getTemperature(self):
         return self.getValues()[0]
