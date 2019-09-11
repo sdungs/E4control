@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name='e4control',
     version='1.1.8',
-    author='Sascha Dungs, Andreas Gisen, Jonas Lönker', 
+    author='Sascha Dungs, Andreas Gisen, Jonas Lönker',
     author_email='sascha.dungs@tu-dortmund.de, andreas.gisen@tu-dortmund.de, jonas.loenker@tu-dortmund.de',
     packages=[
         'e4control',

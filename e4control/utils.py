@@ -20,7 +20,6 @@ from .devices import (
     LU114,
     SHT75,
     HUBER,
-    TEC1123,
     SHT31,
 )
 
@@ -29,11 +28,11 @@ from e4control import __version__
 
 # have an input with a prefilled text
 def rlinput(prompt, prefill=''):
-   readline.set_startup_hook(lambda: readline.insert_text(prefill))
-   try:
-      return input(prompt)
-   finally:
-      readline.set_startup_hook()
+    readline.set_startup_hook(lambda: readline.insert_text(prefill))
+    try:
+        return input(prompt)
+    finally:
+        readline.set_startup_hook()
 
 
 def print_welcome():
@@ -47,7 +46,7 @@ def print_welcome():
 def read_config(configfile):
     devices = {"S": [], "T": [], "H": [], "P": [], "L": [], "C": [], "V": [], "I": []}
     for line in open(configfile):
-        if line[0]=='#':
+        if line[0] == '#':
             continue
         m = line.replace("\n", "")
         n = m.split(" ")
@@ -119,12 +118,12 @@ def settings_query(device_list, **kwargs):
     print("------------------------------------------------")
     # Order is preserved only with Python >= 3.6 -> https://docs.python.org/3/whatsnew/3.6.html#whatsnew36-pep468
     for key, value in kwargs.items():
-        if any(x in key for x in ('v_min','v_max')):
+        if any(x in key for x in ('v_min', 'v_max')):
             print('{0}: {1:.1f} V'.format(key, value))
         elif 'I_lim' in key:
             print('{0}: {1:.1f} uA'.format(key, value))
-        else:            
-            print('{0}: {1}'.format(key, value)) 
+        else:
+            print('{0}: {1}'.format(key, value))
     print("------------------------------------------------")
     q = input("Settings correct? (y/n)")
     if q == "yes":
@@ -166,6 +165,8 @@ def device_connection(values):
             d.append(SHT75(k[1], k[2], int(k[3])))
         elif k[0] == 'HUBER':
             d.append(HUBER(k[1], k[2], int(k[3])))
+        elif k[0] == 'SHT31':
+            d.append(SHT31())  # works only if the dcs is running on a RasPi with the SHT31 connected via i2c
         else:
             sys.exit("Unknown Device: %s" % k[0])
         ch.append(int(k[4]))
@@ -214,7 +215,7 @@ def write_line(txtfile, values):
 def load_data_from_json(file, default_data):
     try:
         data = json.load(open(file, 'r'))
-        if data.keys()==default_data.keys():
+        if data.keys() == default_data.keys():
             return data
         else:
             print('Corrupted data loaded from file. Restoring default data.')
@@ -238,18 +239,18 @@ def initialize_db(meas_type, args):
     db_input['db_humidity'] = rlinput('operating humidity [%]: ', db_input['db_humidity'])
 
     db_date = time.localtime(time.time())
-    db_date = '{:4d}-{:02d}-{:02d}_{:02d}:{:02d}'.format(db_date[0],db_date[1],db_date[2],db_date[3],db_date[4])
+    db_date = '{:4d}-{:02d}-{:02d}_{:02d}:{:02d}'.format(db_date[0], db_date[1], db_date[2], db_date[3], db_date[4])
 
     db_file = new_txt_file('{}_{}_1'.format(db_input['db_sensorID'], meas_type))
-    write_line(db_file, [db_input['db_sensorID'], meas_type]) # 'serial number'
-    write_line(db_file, [db_input['db_sensorComment']])  # 'comment or local device name'
+    write_line(db_file, [db_input['db_sensorID'], meas_type])  # 'serial number'
+    write_line(db_file, [db_input['db_sensorComment']])   # 'comment or local device name'
     write_line(db_file, ['TUDO', db_input['db_operator'], db_date])   # 'group', 'operator', 'date + time'
     if meas_type == 'IV':
-        write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, args.ndaqs, args.I_lim/1e6])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'compliance (in A)'
+        write_line(db_file, [(args.v_max-args.v_min) / (args.v_steps-1), args.delay, args.ndaqs, args.I_lim/1e6])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'compliance (in A)'
     elif meas_type == 'It':
         write_line(db_file, [args.voltage[0], args.delay, args.ndaqs, 1e-5])   # 'constant voltage', 'delay between steps (in s)', 'measurements per step', 'compliance (in A)'
     elif meas_type == 'CV':
-        write_line(db_file, [(args.v_max-args.v_min)/(args.v_steps-1), args.delay, args.ndaqs, args.frequency])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'frequecy (in Hz)'
+        write_line(db_file, [(args.v_max-args.v_min) / (args.v_steps-1), args.delay, args.ndaqs, args.frequency])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'frequecy (in Hz)'
     write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
     if meas_type == 'IV' or meas_type == 'It':
         write_line(db_file, ['t/s', 'U/V', 'Iavg/uA', 'Istd/uA', 'T/C', 'RH/%']) # 'time', 'U', 'average of all I's', 'std deviation of all I's', temperature, relative humidity
@@ -258,8 +259,8 @@ def initialize_db(meas_type, args):
 
     json.dump(db_input, open(json_file, 'w'))
 
-    db_input['db_tempChannel'] = int(db_input['db_tempChannel'])-1
-    db_input['db_humChannel'] = int(db_input['db_humChannel'])-1
+    db_input['db_tempChannel'] = int(db_input['db_tempChannel']) - 1
+    db_input['db_humChannel'] = int(db_input['db_humChannel']) - 1
 
     return db_file, db_input
 
@@ -296,7 +297,7 @@ def check_outputname(output):
 def read_dcs_config(configfile):
     devices = []
     for line in open(configfile):
-        if line[0]=='#':
+        if line[0] == '#':
             continue
         m = line.replace("\n", "")
         n = m.split(" ")
