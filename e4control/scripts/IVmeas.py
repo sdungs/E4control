@@ -12,10 +12,10 @@ from .. import utils as sh
 
 # arg parser
 parser = argparse.ArgumentParser()
-parser.add_argument('v_min', help='min voltage (V)', type=float)
-parser.add_argument('v_max', help='max voltage (V)', type=float)
-parser.add_argument('output', help='output file')
-parser.add_argument('config', help='config file')
+parser.add_argument('v_min', help='starting voltage (V)', type=float)
+parser.add_argument('v_max', help='ending voltage (V)', type=float)
+parser.add_argument('output', help='name of output file')
+parser.add_argument('config', help='path to config file')
 parser.add_argument('-I', '--I_lim', help='current limit, in uA, default=3', type=float, default=3)
 parser.add_argument('-s', '--v_steps', help='number of voltage steps', type=int, default=2)
 parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=10', type=int, default=10)

@@ -13,9 +13,9 @@ from .. import utils as sh
 
 # arg parser
 parser = argparse.ArgumentParser()
-parser.add_argument('voltage', help='constant voltage', type=float, nargs='+')
-parser.add_argument('output', help='output file')
-parser.add_argument('config', help='config file')
+parser.add_argument('voltage', help='preset constant voltage', type=float, nargs='+')
+parser.add_argument('output', help='name of output file')
+parser.add_argument('config', help='path to config file')
 parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=3', type=int, default=3)
 parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=60', type=int, default=60)
 parser.add_argument('-p', '--noLivePlot', help='disables the livePlot', action='store_true')

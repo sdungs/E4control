@@ -7,7 +7,7 @@ from .device import Device
 
 class ISEG(Device):
     rampSpeed_step = 20
-    rampSpeed_delay = 1  # s
+    rampSpeed_delay = 1  # [s]
 
     def __init__(self, connection_type, host, port):
         super(ISEG, self).__init__(connection_type=connection_type, host=host, port=port)
@@ -103,7 +103,7 @@ class ISEG(Device):
 
     def getStatus(self, iChannel):
         s = self.ask('S%i' % iChannel)
-        s = s.replace('S%i=' % iChannel, '')
+        s = s.replace('S%i=' % iChannel, '=')
         return s
 
     def startRampU(self, iChannel):
