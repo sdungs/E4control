@@ -14,11 +14,12 @@ setup(
     install_requires=[
         'pylink',
         'python-vxi11',
-        'numpy <=1.15.4',
+        'numpy',
         'matplotlib >=2.0.0, <3.0.0',
         'scipy',
         'sht-sensor',
         'pyCRC',
+        'smbus2'
     ],
     entry_points={
         'console_scripts': [
