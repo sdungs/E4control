@@ -20,6 +20,7 @@ from .devices import (
     LU114,
     SHT75,
     HUBER,
+    TTI2,
 )
 
 from e4control import __version__
@@ -164,6 +165,8 @@ def device_connection(values):
             d.append(SHT75(k[1], k[2], int(k[3])))
         elif k[0] == 'HUBER':
             d.append(HUBER(k[1], k[2], int(k[3])))
+        elif k[0] == 'TTI2':
+            d.append(TTI2(k[1], k[2], int(k[3])))
         else:
             sys.exit("Unknown Device: %s" % k[0])
         ch.append(int(k[4]))
@@ -370,6 +373,10 @@ def connect_dcs_devices(devices):
             d.append(x)
         elif k[1] == "HUBER":
             x = HUBER(k[2], k[3], k[4])
+            x.initialize()
+            d.append(x)
+        elif k[1] == "TTI2":
+            x = TTI2(k[2], k[3], k[4])
             x.initialize()
             d.append(x)
         else:

@@ -12,6 +12,7 @@ from .TSX3510P import TSX3510P
 from .LU114 import LU114
 from .SHT75 import SHT75
 from .HUBER import HUBER
+from .TTI2 import TTI2
 
 __all__ = [
     'Device'
@@ -28,4 +29,5 @@ __all__ = [
     'LU114',
     'SHT75',
     'HUBER',
+    'TTI2',
 ]

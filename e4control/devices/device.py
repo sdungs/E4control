@@ -57,6 +57,7 @@ class Device(object):
         try:
             if self.connection_type == 'usb':
                 s = self.com.readline()
+                s = s.decode()
             else:
                 s = self.com.read()
         except:
@@ -76,11 +77,11 @@ class Device(object):
     def write(self, cmd):
         cmd = cmd + self.trm
         try:
-            self.com.write(cmd)
+            self.com.write(cmd.encode())
         except:
             self.reconnect()
             try:
-                self.com.write(cmd)
+                self.com.write(cmd.encode())
             except:
                 print('Timeout while writing to "{}"!'.format(type(self).__name__))
                 raise
