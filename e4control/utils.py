@@ -20,6 +20,7 @@ from .devices import (
     LU114,
     SHT75,
     HUBER,
+    TENMA72,
 )
 
 from e4control import __version__
@@ -164,6 +165,9 @@ def device_connection(values):
             d.append(SHT75(k[1], k[2], int(k[3])))
         elif k[0] == 'HUBER':
             d.append(HUBER(k[1], k[2], int(k[3])))
+        elif k[0] == 'TENMA72':
+            d.append(TENMA72(k[1], k[2], int(k[3])))
+
         else:
             sys.exit("Unknown Device: %s" % k[0])
         ch.append(int(k[4]))

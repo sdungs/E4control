@@ -83,9 +83,9 @@ class TSX3510P(Device):
             x = input('Possible Inputs: 1,2,3 or 4! \n')
         if x == '1':
             bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on':
+            if bO == 'ON' or bO == 'on' or bO == '1':
                 self.enableOutput(True)
-            elif bO == 'OFF' or bO == 'off':
+            elif bO == 'OFF' or bO == 'off' or bO == '0':
                 self.enableOutput(False)
             else:
                 pass
