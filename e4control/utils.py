@@ -373,8 +373,11 @@ def connect_dcs_devices(devices):
             x.initialize()
             d.append(x)
         elif k[1] == "HUBER":
-            x = HUBER(k[2], k[3], k[4])
+            x = HUBER(k[2], k[3], int(k[4]))
             x.initialize()
+            d.append(x)
+        elif k[1] == 'TENMA72':
+            x = TENMA72(k[2], k[3], int(k[4]))
             d.append(x)
         else:
             sys.exit("Unknown Device: %s" % k[1])
