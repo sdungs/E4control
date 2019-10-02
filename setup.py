@@ -15,7 +15,7 @@ setup(
         'pylink',
         'python-vxi11',
         'numpy',
-        'matplotlib >=2.0.0, <3.0.0',
+        'matplotlib',
         'scipy',
         'sht-sensor',
         'pyCRC',

@@ -375,6 +375,10 @@ def connect_dcs_devices(devices):
             x = HUBER(k[2], k[3], k[4])
             x.initialize()
             d.append(x)
+        elif k[1] == "SHT31":
+            x = SHT31()
+            x.initialize()
+            d.append(x)
         else:
             sys.exit("Unknown Device: %s" % k[1])
     return(d)

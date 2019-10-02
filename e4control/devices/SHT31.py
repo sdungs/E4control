@@ -23,7 +23,7 @@ class SHT31(Device):
     def __init__(self):
         self.initialize()
 
-    def initialize(self):
+    def initialize(self, sMode='TH'):
         self.bus.write_i2c_block_data(self.ADDR, self.SS, [self.HIGH])
         time.sleep(0.2)
 
@@ -52,3 +52,6 @@ class SHT31(Device):
 
     def interaction(self):
         print('For this device there is nothing to do...')
+
+    def close(self):
+        pass
