@@ -60,7 +60,7 @@ class TENMA72(Device):
     def reachedCurrentLimit(self):
         answ = self.ask('STATUS?')
         if not answ:
-            reachedCurrentLimit()
+            self.reachedCurrentLimit()
         elif answ == 'P':
             return True
         elif answ == 'Q' or '/x10':
