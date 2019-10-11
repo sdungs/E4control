@@ -25,7 +25,7 @@ class TENMA72(Device):
 
     def ask(self, cmd):
         self.write(cmd)
-        sleep(0.1)
+        sleep(0.3)
         return self.read()
 
     def userCmd(self, cmd):
@@ -39,20 +39,35 @@ class TENMA72(Device):
         self.outputEnabled = bValue
         pass
 
-    def getEnableOutput(self):
+    def getEnableOutput(self, secondAttempt=False):
         answ = self.ask('STATUS?')
         if answ == 'Q':
             self.outputEnabled = True
         elif answ == '\x10':
             self.outputEnabled = False
-        else:
-            self.output = None
-            print('Output-mode unknown!')
+        elif answ == 'P':
+            self.outputEnabled = True
+            sleep(0.2)
+            curr = self.getCurrent()
+            print('Current Limit reached! In constant current mode with I = {:.2f} A'.format(curr))
+        elif not answ:
+            if secondAttempt:
+                return None
+            print('Output-mode unknown! Asking again.') # known bug that the status query needs a second attempt. 
+            self.getEnableOutput(True)
         return self.outputEnabled
 
-    def setCurrentLimit(self, fValue, bOCP=False):
-        self.write('ISET1:{:.3f}'.format(fValue))
-        self.write('OCP{:d}'.format(bOCP))
+    def reachedCurrentLimit(self):
+        answ = self.ask('STATUS?')
+        if not answ:
+            reachedCurrentLimit()
+        elif answ == 'P':
+            return True
+        elif answ == 'Q' or '/x10':
+            return False
+
+    def enableOCP(self, bValue):
+        self.write('OCP{:d}'.format(bValue))
         # if OCP is active, the output will disabled in case the current limit is reached
         pass
 
@@ -85,24 +100,30 @@ class TENMA72(Device):
     def output(self, show=True):
         bOutput = bool(self.outputEnabled)
         fVoltage = self.measVoltage()
+        sleep(0.2)
         fCurrent = self.measCurrent()
         sValues = []
         if show:
             self.printOutput('TENMA72-xxxx:')
             if bOutput:
                 self.printOutput('Output: \t \033[32m ON \033[0m')
+                bReachedCurrLimit = self.reachedCurrentLimit()
             else:
                 self.printOutput('Output: \t \033[31m OFF \033[0m')
-            self.printOutput('Voltage = {:0.2f}V \t Current = {:0.3f}A'.format(fVoltage, fCurrent))
+                bReachedCurrLimit = False
+            if bReachedCurrLimit:
+                self.printOutput('Voltage = \033[31m{:0.2f} V\033[0m \t Current = \033[31m{:0.3f} A\033[0m'.format(fVoltage, fCurrent))
+            else:
+                self.printOutput('Voltage = {:0.32} V \t Current = {:0.3f} A'.format(fVoltage, fCurrent))
         sValues = [str(bOutput), str(fVoltage), str(fCurrent)]
         sHeader = ['Output', 'U[V]', 'I[A]']
         return([sHeader, sValues])
 
     def interaction(self):
         print('1: enable Output')
-        print('2: set OCP')
-        print('3: set Voltage')
-        print('4: set Current')
+        print('2: set Voltage')
+        print('3: set Current')
+        print('4: enable OCP')
         x = input('Number? \n')
         while x != '1' and x != '2' and x != '3' and x != '4':
             x = input('Possible Inputs: 1,2,3 or 4! \n')
@@ -115,11 +136,16 @@ class TENMA72(Device):
             else:
                 pass
         elif x == '2':
-            sOCP = input('Please enter new OCP in A\n')
-            self.setCurrentLimit(float(sOCP))
-        elif x == '3':
             sV = input('Please enter new Voltage in V\n')
             self.setVoltage(float(sV))
-        elif x == '4':
+        elif x == '3':
             sI = input('Please enter new Current in A\n')
             self.setCurrent(float(sI))
+        elif x == '4':
+            bOCP = input('Please enter ON or OFF! \n')
+            if bOCP == 'ON' or bOCP == 'on' or bOCP == '1':
+                self.enableOCP(True)
+            elif bOCP == 'OFF' or bOCP == 'off' or bOCP == '0':
+                self.enableOCP(False)
+            else:
+                pass
