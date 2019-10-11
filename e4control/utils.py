@@ -21,6 +21,7 @@ from .devices import (
     SHT75,
     HUBER,
     TENMA72,
+    TTI2,
 )
 
 from e4control import __version__
@@ -167,7 +168,8 @@ def device_connection(values):
             d.append(HUBER(k[1], k[2], int(k[3])))
         elif k[0] == 'TENMA72':
             d.append(TENMA72(k[1], k[2], int(k[3])))
-
+        elif k[0] == 'TTI2':
+            d.append(TTI2(k[1], k[2], int(k[3])))
         else:
             sys.exit("Unknown Device: %s" % k[0])
         ch.append(int(k[4]))
@@ -378,6 +380,9 @@ def connect_dcs_devices(devices):
             d.append(x)
         elif k[1] == 'TENMA72':
             x = TENMA72(k[2], k[3], int(k[4]))
+        elif k[1] == "TTI2":
+            x = TTI2(k[2], k[3], k[4])
+            x.initialize()
             d.append(x)
         else:
             sys.exit("Unknown Device: %s" % k[1])
