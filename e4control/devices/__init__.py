@@ -1,5 +1,6 @@
 from .device import Device
 from .HMP4040 import HMP4040
+from .HUBER import HUBER
 from .HP4284A import HP4284A
 from .ISEG import ISEG
 from .JULABO import JULABO
@@ -7,11 +8,11 @@ from .K196 import K196
 from .K487 import K487
 from .K2000 import K2000
 from .K2410 import K2410
-from .SB22 import SB22
-from .TSX3510P import TSX3510P
 from .LU114 import LU114
+from .SB22 import SB22
 from .SHT75 import SHT75
-from .HUBER import HUBER
+from .TENMA72 import TENMA72
+from .TSX3510P import TSX3510P
 from .TTI2 import TTI2
 
 __all__ = [
@@ -29,5 +30,6 @@ __all__ = [
     'LU114',
     'SHT75',
     'HUBER',
+    'TENMA72'
     'TTI2',
 ]

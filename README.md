@@ -1,4 +1,4 @@
-# E4control v1.1.10
+# E4control v1.2.0
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -20,6 +20,7 @@ Following devices are currently supported:
 - Espec LU-114 (Climate Chamber)
 - Huber Minichiller (Chiller)
 - Sensirion SHT75 (Temperature & Humidity Sensor, connected via a RasPi)
+- TENMA 72-2710 (Power Supply)
 
 ## Scripts
 - *e4control_measure_IV* , to perform a current vs voltage measurement
