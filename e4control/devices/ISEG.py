@@ -120,11 +120,11 @@ class ISEG(Device):
         f2Current = self.getCurrent(2) * 1E6
 
         if show:
-            print('ISEG:')
-            print('CH 1:' + '\t' + 'I_lim = %.2fuA' % f1Limit)
-            print('Voltage = %.1fV' % f1Voltage + '\t' + 'Current = %.3fuA' % f1Current)
-            print('CH 2:' + '\t' + 'I_lim = %.2fuA' % f2Limit)
-            print('Voltage = %.1fV' % f2Voltage + '\t' + 'Current = %.3fuA' % f2Current)
+            self.printOutput('ISEG:')
+            self.printOutput('CH 1:' + '\t' + 'I_lim = %.2fuA' % f1Limit)
+            self.printOutput('Voltage = %.1fV' % f1Voltage + '\t' + 'Current = %.3fuA' % f1Current)
+            self.printOutput('CH 2:' + '\t' + 'I_lim = %.2fuA' % f2Limit)
+            self.printOutput('Voltage = %.1fV' % f2Voltage + '\t' + 'Current = %.3fuA' % f2Current)
         return([['Ilim1[uA]', 'U1[V]', 'I1[uA]', 'Ilim2[uA]', 'U2[V]', 'I2[uA]'], [str(f1Limit), str(f1Voltage), str(f1Current), str(f2Limit), str(f2Voltage), str(f2Current)]])
 
     def interaction(self):
