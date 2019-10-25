@@ -77,11 +77,11 @@ class Device(object):
     def write(self, cmd):
         cmd = cmd + self.trm
         try:
-            self.com.write(cmd.encode())
+            self.com.write(cmd)
         except:
             self.reconnect()
             try:
-                self.com.write(cmd.encode())
+                self.com.write(cmd)
             except:
                 print('Timeout while writing to "{}"!'.format(type(self).__name__))
                 raise
