@@ -10,6 +10,7 @@ from .devices import (
     HMP4040,
     HP4284A,
     ISEG,
+    SHR,
     JULABO,
     K487,
     K196,
@@ -146,6 +147,8 @@ def device_connection(values):
             d.append(HP4284A(k[1], k[2], int(k[3])))
         elif k[0] == "ISEG":
             d.append(ISEG(k[1], k[2], int(k[3])))
+        elif k[0] == "ISEG_SHR":
+            d.append(SHR(k[1], k[2], int(k[3])))
         elif k[0] == "JULABO":
             d.append(JULABO(k[1], k[2], int(k[3])))
         elif k[0] == "K487":
@@ -336,6 +339,10 @@ def connect_dcs_devices(devices):
             d.append(x)
         elif k[1] == "ISEG":
             x = ISEG(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "ISEG_SHR":
+            x = SHR(k[2], k[3], int(k[4]))
             x.initialize()
             d.append(x)
         elif k[1] == "JULABO":

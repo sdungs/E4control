@@ -3,6 +3,7 @@ from .HMP4040 import HMP4040
 from .HUBER import HUBER
 from .HP4284A import HP4284A
 from .ISEG import ISEG
+from .ISEG_SHR import SHR
 from .JULABO import JULABO
 from .K196 import K196
 from .K487 import K487
@@ -20,6 +21,7 @@ __all__ = [
     'HMP4040',
     'HP4284A',
     'ISEG',
+    'SHR',
     'JULABO',
     'K196',
     'K487',

@@ -1,4 +1,4 @@
-# E4control v1.2.2
+# E4control v1.3.0
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -10,6 +10,7 @@ Following devices are currently supported:
 - Rohde&Schwarz HMP4040 (Power Supply)
 - HP 4284A (LCR Meter)
 - Iseg SHQ (Source Meter)
+- Iseg SHR (Source Meter)
 - Julabo FP88 (Chiller)
 - Keithley 196 (Multimeter)
 - Keithley 487 (Picoammeter/Voltage Source)
@@ -55,7 +56,7 @@ Running E4control directly on the Pi is possible. The config should read:
 If -h or --help is supplied at the command line, the basic usage of the script will be explained, printing a short explanation of each argument.
 
 #### config file
-A config file with all used devices is needed for every script. For an example see [exampleConfig](exampleConfig).
+A config file with all used devices is needed for every script. For an example see [exampleConfig](/examples/exampleConfig).
 In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. The columns are separated by a single space.
 
 A line is ignored if it has '#' as its first character.

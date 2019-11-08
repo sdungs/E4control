@@ -6,6 +6,8 @@ from pylink import TCPLink
 import serial
 from .prologix import Prologix
 
+from time import sleep
+
 
 class Device(object):
     com = None
@@ -78,10 +80,12 @@ class Device(object):
         cmd = cmd + self.trm
         try:
             self.com.write(cmd)
+            sleep(0.004)
         except:
             self.reconnect()
             try:
                 self.com.write(cmd)
+                sleep(0.004)
             except:
                 print('Timeout while writing to "{}"!'.format(type(self).__name__))
                 raise
