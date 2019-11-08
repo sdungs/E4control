@@ -65,6 +65,7 @@ class Device(object):
             try:
                 if self.connection_type == 'usb':
                     s = self.com.readline()
+                    s = s.decode()
                 else:
                     s = self.com.read()
             except:
@@ -76,6 +77,8 @@ class Device(object):
 
     def write(self, cmd):
         cmd = cmd + self.trm
+        if self.connection_type == 'usb':
+            cmd = cmd.encode()
         try:
             self.com.write(cmd)
         except:
