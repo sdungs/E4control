@@ -86,13 +86,13 @@ class K2000(Device):
         return self.ask('U0X')
 
     def getKind(self):
-        self.ask('U0X')
+        # self.ask('U0X')
         sKind = self.read()
         # return s[0:4]
         return(sKind)
 
     def getValue(self):
-        self.ask('U0X')
+        # self.ask('U0X')
         sValue = self.read()
         return float(sValue[4:])
 

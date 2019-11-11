@@ -1,4 +1,4 @@
-# E4control v1.3.0
+# E4control v1.4.0
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -14,6 +14,7 @@ Following devices are currently supported:
 - Julabo FP88 (Chiller)
 - Keithley 196 (Multimeter)
 - Keithley 487 (Picoammeter/Voltage Source)
+- Keithley 617 (Electrometer)
 - Keithley 2000 (Multimeter)
 - Keithley 2410 (Source Meter)
 - TTi TSX3510P (Power Supply)
