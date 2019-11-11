@@ -15,15 +15,16 @@ class K617(Device):
         if (sMode == 'V'):
             self.setMeasurementMode('V')
             self.setRange('RO')
-            print('Changing to auto range.')
+            self.performZeroCorrection()
         elif (sMode == 'A'):
             self.setMeasurementMode('A')
             self.setRange('R0')
-            print('Changing to auto range.')
+            self.performZeroCorrection()
         elif (sMode == 'R'):
             self.setMeasurementMode('R')
             self.setRange('R0')
-            print('Changing to auto range.')
+            self.performZeroCorrection()
+            
         else:
             print('Initializing not possible: Unknown measurement mode!')
 
@@ -52,6 +53,7 @@ class K617(Device):
     def setRange(self, sRange):
         if sRange in ('R0','auto'):
             self.write('R0X')
+            print('Changing to auto range.')
         elif (sRange == 'R1'):
             self.write('R1X')
         elif (sRange == 'R2'):
@@ -76,6 +78,13 @@ class K617(Device):
             self.write('R11X')
         elif sRange in ('R12','cancel'):
             self.write('R12X')
+
+    def performZeroCorrection(self):
+        self.write('Z0X')
+        self.write('C1X')
+        self.write('Z1X')
+        self.write('C0X')
+        print('Performed zero correction.')
 
 
     def getStatus(self):
