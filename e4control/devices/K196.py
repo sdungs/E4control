@@ -20,17 +20,13 @@ class K196(Device):
             self.setKind('DCV')
             self.setRange('RO')
             self.mode = 'H'
-        elif (sMode == 'T2W'):
-            self.setKind('OHM')
-            self.setRange('R2')
-            self.mode = 'T2W'
         elif (sMode == 'T'):
-            self.setKind('OHM4')
+            self.setKind('OHM')
             self.setRange('R2')
             self.mode = 'T'
         elif (sMode == 'V'):
             self.setKind('DCV')
-            self.setRange('R4')
+            self.setRange('R0')
             self.mode = 'V'
         elif (sMode == 'I'):
             self.setKind('DCI')
@@ -46,18 +42,14 @@ class K196(Device):
             self.write('F1X')
         elif (sKind == 'OHM'):
             self.write('F2X')
-        elif (sKind == 'OHM4'):
-            self.write('F9X')
         elif (sKind == 'DCI'):
             self.write('F3X')
         elif (sKind == 'ACI'):
             self.write('F4X')
         elif (sKind == 'dBV'):
             self.write('F5X')
-        elif (sKind == 'F'):
-            self.write('F7X')
-        elif (sKind == 'T'):
-            self.write('F8X')
+        elif (sKind == 'dbI'):
+            self.write('F6X')
         else:
             print('Unknown kind!')
 
