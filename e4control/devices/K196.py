@@ -20,13 +20,17 @@ class K196(Device):
             self.setKind('DCV')
             self.setRange('RO')
             self.mode = 'H'
-        elif (sMode == 'T'):
+        elif (sMode == 'T2W'):
             self.setKind('OHM')
+            self.setRange('R2')
+            self.mode = 'T2W'
+        elif (sMode == 'T'):
+            self.setKind('OHM4')
             self.setRange('R2')
             self.mode = 'T'
         elif (sMode == 'V'):
             self.setKind('DCV')
-            self.setRange('R0')
+            self.setRange('R4')
             self.mode = 'V'
         elif (sMode == 'I'):
             self.setKind('DCI')
@@ -42,16 +46,40 @@ class K196(Device):
             self.write('F1X')
         elif (sKind == 'OHM'):
             self.write('F2X')
-        elif (sKind == 'OCO'):
-            self.write('F7X')
+        elif (sKind == 'OHM4'):
+            self.write('F9X')
         elif (sKind == 'DCI'):
             self.write('F3X')
         elif (sKind == 'ACI'):
             self.write('F4X')
         elif (sKind == 'dBV'):
             self.write('F5X')
-        elif (sKind == 'dBI'):
-            self.write('F6X')
+        elif (sKind == 'F'):
+            self.write('F7X')
+        elif (sKind == 'T'):
+            self.write('F8X')
+        else:
+            print('Unknown kind!')
+
+    def setRange(self, sRange):
+        if (sRange == 'R0'):
+            self.write('R0X')
+        elif (sRange == 'R1'):
+            self.write('R1X')
+        elif (sRange == 'R2'):
+            self.write('R2X')
+        elif (sRange == 'R3'):
+            self.write('R3X')
+        elif (sRange == 'R4'):
+            self.write('R4X')
+        elif (sRange == 'R5'):
+            self.write('R5X')
+        elif (sRange == 'R6'):
+            self.write('R6X')
+        elif (sRange == 'R7'):
+            self.write('R7X')
+        else:
+            print('Unknown range!')
 
     def getStatus(self):
         return self.ask('U0X')
@@ -63,6 +91,12 @@ class K196(Device):
     def getValue(self, iChannel=-1):
         sValue = self.read()
         return float(sValue[4:16])
+
+    def getResistance(self, iChannel=-1):
+        fR = self.ask('N%iX' % iChannel)
+        # self.write('N%iX' % iChannel)
+        # fR = self.getValue()
+        return float(fR[4:])
 
     def getTempPT100(self, iChannel=-1):
         a = 3.90802E-3
@@ -124,18 +158,18 @@ class K196(Device):
     def restart(self):
         self.write('L0X')
 
-    def output(self, sMode=mode, show=True):
+    def output(self, show=True):
         if show:
             print('K196:')
         values = []
         header = []
-        if (sMode == 'H'):
+        if (self.mode == 'H'):
             fHumidity = self.getVoltage()
             if show:
                 print('Humidity = %0.4f V' % fHumidity)
             values.append(str(fHumidity))
             header.append('H[V]')
-        elif (sMode == 'T'):
+        elif (self.mode == 'T'):
             fResistance = self.getResistance()
             fTemperature = self.getTempPT1000()
             values.append(str(fResistance))
@@ -144,7 +178,7 @@ class K196(Device):
             header.append('T[C]')
             if show:
                 print('values:'+'\t'+'%.2f Ohm' % fResistance + '\t' + '%.1f °C' % fTemperature)
-        elif (sMode == 'V'):
+        elif (self.mode == 'V'):
             fVoltage = self.getVoltage()
             values.append(str(fVoltage))
             header.append('U[V]')
