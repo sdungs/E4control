@@ -29,7 +29,7 @@ class HP4284A(Device):
         self.write(':AMPL:ALC ON')
         self.setFrequency(10000)
         self.setVoltage(0.050)
-        self.setMeasurementMode('CPD')
+        self.setMeasurementMode('CPRP')
         self.setTriggerMode('BUS')
         self.setIntegrationTimeAndAveragingRate('LONG', 1)
 
