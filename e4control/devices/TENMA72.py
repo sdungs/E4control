@@ -32,14 +32,14 @@ class TENMA72(Device):
         return self.ask(cmd)
 
     def initialize(self):
-        self.outputEnabled = self.getEnableOutput()
+        self.outputEnabled = self.getOutput()
 
-    def enableOutput(self, bValue):
+    def setOutput(self, bValue):
         self.write('OUT{:d}'.format(bValue))
         self.outputEnabled = bValue
         pass
 
-    def getEnableOutput(self, secondAttempt=False):
+    def getOutput(self, secondAttempt=False):
         answ = self.ask('STATUS?')
         if answ == 'Q':
             self.outputEnabled = True
@@ -54,7 +54,7 @@ class TENMA72(Device):
             if secondAttempt:
                 return None
             print('Output-mode unknown! Asking again.') # known bug that the status query needs a second attempt. 
-            self.getEnableOutput(True)
+            self.getOutput(True)
         return self.outputEnabled
 
     def reachedCurrentLimit(self):
@@ -130,9 +130,9 @@ class TENMA72(Device):
         if x == '1':
             bO = input('Please enter ON or OFF! \n')
             if bO == 'ON' or bO == 'on' or bO == '1':
-                self.enableOutput(True)
+                self.setOutput(True)
             elif bO == 'OFF' or bO == 'off' or bO == '0':
-                self.enableOutput(False)
+                self.setOutput(False)
             else:
                 pass
         elif x == '2':

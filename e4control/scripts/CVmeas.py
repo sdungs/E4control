@@ -77,7 +77,7 @@ def main():
     # initialize
     d.initialize(ch)
     d.setVoltage(0, ch)
-    d.enableOutput(True, ch)
+    d.setOutput(True, ch)
     l.initialize()
     if args.frequency:
         l.setFrequency(args.frequency)
@@ -291,7 +291,7 @@ def main():
                 time.sleep(5)
                 remaining = d.getCurrent(ch) * 1E6
                 k += 1
-            d.enableOutput(False)
+            d.setOutput(False)
         except ValueError as e:
             print('ValueError while ramping down...')
             raise e 

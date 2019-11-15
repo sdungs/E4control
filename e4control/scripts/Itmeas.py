@@ -62,14 +62,14 @@ def main():
         if source_channel[d] == 12:
             source[d].initialize(source_channel[1])
             source[d].setVoltage(0, source_channel[1])
-            source[d].enableOutput(True, source_channel[1])
+            source[d].setOutput(True, source_channel[1])
             source[d].initialize(source_channel[2])
             source[d].setVoltage(0, source_channel[2])
-            source[d].enableOutput(True, source_channel[2])
+            source[d].setOutput(True, source_channel[2])
         else:
             source[d].initialize(source_channel[d])
             source[d].setVoltage(0, source_channel[d])
-            source[d].enableOutput(True, source_channel[d])
+            source[d].setOutput(True, source_channel[d])
     for t in temperature:
         t.initialize('T')
     for h in humidity:
@@ -228,7 +228,7 @@ def main():
         try:
             for d in range(len(source)):
                 source[d].rampVoltage(0, source_channel[d])
-                source[d].enableOutput(False)
+                source[d].setOutput(False)
         except ValueError as e:
             print('ValueError while ramping down...')
             raise e

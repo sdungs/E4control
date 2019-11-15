@@ -23,7 +23,7 @@ class K487(Device):
     def setVoltage(self, fsetValVolts, iChannel=-1):
         self.write('V%.3f,1,1X' % fsetValVolts)
 
-    def enableOutput(self, bEnable, iChannel=-1):
+    def setOutput(self, bEnable, iChannel=-1):
         if bEnable:
             self.write('O1X')
         else:
@@ -142,10 +142,10 @@ class K487(Device):
         if x == '1':
             bO = input('Please enter ON or OFF! \n')
             if bO == 'ON' or bO == 'on':
-                self.enableOutput(True)
+                self.setOutput(True)
             else:
                 self.rampVoltage(0)
-                self.enableOutput(False)
+                self.setOutput(False)
         elif x == '2':
             fV = input('Please enter new Voltage in V \n')
             self.rampVoltage(float(fV))

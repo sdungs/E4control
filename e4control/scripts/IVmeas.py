@@ -73,7 +73,7 @@ def main():
     # initialize
     d.initialize(ch)
     d.setVoltage(0, ch)
-    d.enableOutput(True, ch)
+    d.setOutput(True, ch)
     for t in temperature:
         t.initialize('T')
     for h in humidity:
@@ -269,7 +269,7 @@ def main():
         # ramp down voltage
         try:
             d.rampVoltage(0, ch)
-            d.enableOutput(False)
+            d.setOutput(False)
         except ValeError as e:
             print('ValueError while ramping down...')
             raise e        

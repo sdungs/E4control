@@ -51,14 +51,14 @@ class TTI2(Device):
         sI = self.ask('I%i?' % iOutput)
         return float(sI[3:])
 
-    def enableOutput(self, iOutput, bValue):
+    def setOutput(self, bEnable, iChannel):
         if bValue:
-            self.write('OP%i 1' % iOutput)
+            self.write('OP{:d} 1'.format(iChannel))
         else:
-            self.write('OP%i 0' % iOutput)
+            self.write('OP{:d} 0'.format(iChannel))
                
-    def getEnableOutput(self, iOutput):
-        iEO = self.ask('OP%i?' % iOutput)
+    def getOutput(self, iChannel):
+        iEO = self.ask('OP{}?'.format(iChannel))
         return int(iEO)
         
     def output(self, show=True):
@@ -70,7 +70,7 @@ class TTI2(Device):
             self.printOutput('TTI2:')
         i = 1
         while i <= 2:
-            a = self.getEnableOutput(i)
+            a = self.getOutput(i)
             b = self.getVoltage(i)
             c = self.getCurrent(i)
             d = self.getVoltageSet(i)
@@ -107,9 +107,9 @@ class TTI2(Device):
         if x == '1':
             bO = input('Please enter ON or OFF! \n')
             if bO == 'ON' or bO == 'on' or bO == '1':
-                self.enableOutput(iChannel, True)
+                self.setOutput(True, iChannel)
             elif bO == 'OFF' or bO == 'off' or bO == '0':
-                self.enableOutput(iChannel, False)
+                self.setOutput(False, iChannel)
             else:
                 pass
         elif x == '2':

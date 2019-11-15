@@ -23,13 +23,19 @@ class HMP4040(Device):
         return self.ask('OUTP:GEN?')
 
     #Output for individual channels
-    def enableOutput(self, iOutput, bValue):
-        self.write('INST OUT{}'.format(iOutput))
-        self.write('OUTP {0:d}'.format(bValue))
+    def setOutput(self, bEnable, iChannel):
+    	self.write('INST OUT{}'.format(iChannel))
+        self.write('OUTP {:d}'.format(bEnable))
 
-    def getEnableOutput(self, iOutput):
-        self.write('INST OUT{}'.format(iOutput))
+    def getOutput(self, iChannel):
+        self.write('INST OUT{}'.format(iChannel))
         return self.ask('OUTP?')
+
+    def enableOutput(self, iChannel):
+        self.setOutput(True, iChannel)
+
+    def disableOutput(self, iChannel):
+        self.setOutput(False, iChannel)
 
     #Over voltage protection
     def setVoltageLimit(self, iOutput, fValue):
@@ -109,9 +115,9 @@ class HMP4040(Device):
         if x == '1':
             bO = input('Please enter ON or OFF! \n')
             if bO == 'ON' or bO == 'on' or bO == '1':
-                self.enableOutput(iChannel, True)
+                self.setOutput(True, iChannel)
             elif bO == 'OFF' or bO == 'off' or bO == '0':
-                self.enableOutput(iChannel, False)
+                self.setOutput(False, iChannel)
             else:
                 pass
         elif x == '2':

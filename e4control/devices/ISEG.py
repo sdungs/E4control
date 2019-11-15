@@ -21,7 +21,7 @@ class ISEG(Device):
     def initialize(self, iChannel=-1):
         pass
 
-    def enableOutput(self, bEnable, iChannel=-1):
+    def setOutput(self, bEnable, iChannel=-1):
         pass
 
     def getVoltage(self, iChannel):

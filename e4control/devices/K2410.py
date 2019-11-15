@@ -56,13 +56,13 @@ class K2410(Device):
     def setVoltage(self, fVset, iChannel=-1):
         self.write(':SOUR:VOLT %f' % fVset)
 
-    def enableOutput(self, bEnable, iChannel=-1):
+    def setOutput(self, bEnable, iChannel=-1):
         if bEnable:
             self.write(':OUTPUT ON')
         else:
             self.write(':OUTPUT OFF')
 
-    def getEnableOutput(self, iChannel=-1):
+    def getOutput(self, iChannel=-1):
         return self.ask(':OUTPUT?')
 
     def getVoltage(self, iChannel=-1):
@@ -126,7 +126,7 @@ class K2410(Device):
         self.write('*RST')
 
     def output(self, show=True):
-        bPower = self.getEnableOutput()
+        bPower = self.getOutput()
         fLimit = self.getCurrentLimit() * 1E6
 
         if bPower == '1':
@@ -166,16 +166,16 @@ class K2410(Device):
         if x == '0':
             pass
         elif x == '1':
-            if self.getEnableOutput() == '1':
+            if self.getOutput() == '1':
                 self.rampVoltage(0)
-                self.enableOutput(False)
+                self.setOutput(False)
             else:
-                self.enableOutput(True)
+                self.setOutput(True)
         elif x == '2':
             fV = input('Please enter new Voltage in V \n')
-            if not self.getEnableOutput() == '1':
+            if not self.getOutput() == '1':
                 print('Enabled output. Now ramping...')
-                self.enableOutput(True)
+                self.setOutput(True)
             self.rampVoltage(float(fV))
         elif x == '3':
             fIlim = input('Please enter new current limit in uA \n')
