@@ -23,8 +23,7 @@ class K617(Device):
         elif (sMode == 'R'):
             self.setMeasurementMode('R')
             self.setRange('R0')
-            self.performZeroCorrection()
-            
+            self.performZeroCorrection()            
         else:
             print('Initializing not possible: Unknown measurement mode!')
 

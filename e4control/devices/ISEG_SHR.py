@@ -37,10 +37,10 @@ class SHR(Device):
             raise ValueError('Please use a valid polarity format (\'p\',\'+\',\'n\',\'-\').')
 
 
-    def initialize(self):
+    def initialize(self, channel='all'):
         return self.ask('*IDN?') # Query the module identification
 
-    def reset(self):
+    def reset(self, channel='all'):
         self.write('*RST') # Reset the device to save values: Set HV to 0V and turn HV off with ramp for all channels
 
 
@@ -210,7 +210,7 @@ class SHR(Device):
 
     def interaction(self):
         print(
-            'ISEG SHR selected.\n'
+            'ISEG SHR selected. Possible actions:\n'
             '0: Continue dcs mode without any changes\n'
             '1: Set voltage (enables the channel output)\n'
             '2: Disable channel output\n'
@@ -227,7 +227,7 @@ class SHR(Device):
         elif x == '5':
             self.reset()
         else:
-            sChannel = input('Choose channel! \n')
+            sChannel = input('Which channel? \n')
             while not (sChannel in ['0','1']):
                 sChannel = input('Possible Channels: 0 or 1! \n')
             
