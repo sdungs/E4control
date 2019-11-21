@@ -7,6 +7,8 @@ from .device import Device
 
 
 class SHR(Device):
+    __fVmaxCh0 = None
+    __fVmaxCh1 = None
 
     def __init__(self, connection_type, host, port):
         super(SHR, self).__init__(connection_type=connection_type, host=host, port=port)
@@ -38,7 +40,12 @@ class SHR(Device):
 
 
     def initialize(self, channel='all'):
-        return self.ask('*IDN?') # Query the module identification
+        # Query the channel voltage nominal value
+        self.__fVmaxCh0, self.__fVmaxCh1  = self.ask(':READ:VOLT:NOM? (@0,1)').split(',')
+        self.__fVmaxCh0 = float(self.__fVmaxCh0[:-1])
+        self.__fVmaxCh1 = float(self.__fVmaxCh1[:-1])
+        # Query the module identification
+        return self.ask('*IDN?')
 
     def reset(self, channel='all'):
         self.write('*RST') # Reset the device to save values: Set HV to 0V and turn HV off with ramp for all channels
@@ -72,15 +79,16 @@ class SHR(Device):
         return self.ask(':CONF:OUTP:POL? (@{})'.format(sChannel))
 
 
-    def setRampSpeed(self, iRampSpeed, channel='all'):
-        print('Sorry, implementation does not work yet :(')
+    def setRampSpeed(self, iRampSpeed, channel):
         if iRampSpeed < 1 or iRampSpeed > 400:
-            warnings.warn('RampSpeed exceeds ramp speed maximum.')
+            warnings.warn('RampSpeed exceeds ramp speed bounds. Please choose a value between 1 and 400 V/s')
         else:
             sChannel = self.__checkChannel(channel)
-            self.write(':CONF:RAMP:VOLT:UP {} (@{})'.format(iRampSpeed, sChannel))
+            self.write(':CONF:RAMP:VOLT {}'.format(iRampSpeed*100/2000))
+            self.write(':CONF:RAMP:VOLT:UP {}, (@{})'.format(iRampSpeed, sChannel))
+            self.write(':CONF:RAMP:VOLT:DO {}, (@{})'.format(iRampSpeed, sChannel))
 
-    def getRampSpeed(self, channel='all'):
+    def getRampSpeed(self, channel):
         sChannel = self.__checkChannel(channel)
         # return self.ask(':READ:RAMP:VOLT? (@{})'.format(sChannel))
         sRamp = self.ask(':READ:RAMP:VOLT? (@{})'.format(sChannel))
@@ -212,7 +220,7 @@ class SHR(Device):
         print(
             'ISEG SHR selected. Possible actions:\n'
             '0: Continue dcs mode without any changes\n'
-            '1: Set voltage (enables the channel output)\n'
+            '1: Set voltage (also enables the channel output)\n'
             '2: Disable channel output\n'
             '3: Toggle polarity (channel has to be off)\n'
             '4: Display and change ramp speed\n'
@@ -247,4 +255,6 @@ class SHR(Device):
                 else:
                     self.setPolarity('p',sChannel)
         elif x == '4':
-            print('Sorry, not yet implemented :(')
+            print('Current ramp speed for Channel {}: {} V/s'.format(sChannel, self.getRampSpeed(sChannel)))
+            sRampSpeed = input('Please enter new ramp speed (in V/s) for Channel {}.\n'.format(sChannel))
+            self.setRampSpeed(float(sRampSpeed),sChannel)
