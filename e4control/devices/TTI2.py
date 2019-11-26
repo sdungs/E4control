@@ -84,7 +84,7 @@ class TTI2(Device):
                 else:
                     self.printOutput('CH {}: \t \033[31m OFF \033[0m'.format(i))
                 self.printOutput('Voltage: {:0.2f}V \t Set = {:0.2f}V'.format(b,d))
-                self.printOutput('Current: {:0.3f}A \t Set = {:0.3f}A'.format(c,d))
+                self.printOutput('Current: {:0.3f}A \t Set = {:0.3f}A'.format(c,e))
             sValues.append(str(a))
             sValues.append(str(b))
             sValues.append(str(c))
