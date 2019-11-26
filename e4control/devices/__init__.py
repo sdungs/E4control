@@ -14,6 +14,7 @@ from .LU114 import LU114
 from .SB22 import SB22
 from .SHT75 import SHT75
 from .TENMA72 import TENMA72
+from .TENMA72_13330 import TENMA72_13330
 from .TSX3510P import TSX3510P
 from .TTI2 import TTI2
 
@@ -34,6 +35,7 @@ __all__ = [
     'LU114',
     'SHT75',
     'HUBER',
-    'TENMA72'
+    'TENMA72',
+    'TENMA72_13330',
     'TTI2',
 ]

@@ -63,7 +63,7 @@ class TENMA72(Device):
             self.reachedCurrentLimit()
         elif answ == 'P':
             return True
-        elif answ == 'Q' or '/x10':
+        elif answ == 'Q' or '\x10':
             return False
 
     def enableOCP(self, bValue):

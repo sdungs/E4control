@@ -1,4 +1,4 @@
-# E4control v1.5.3
+# E4control v1.6.0
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -7,8 +7,10 @@ The device classes can be used in any Python environment to establish a communic
 
 ## Devices
 Following devices are currently supported:
+- Espec LU-114 (Climate Chamber)
 - Rohde&Schwarz HMP4040 (Power Supply)
 - HP 4284A (LCR Meter)
+- Huber Minichiller (Chiller)
 - Iseg SHQ (Source Meter)
 - Iseg SHR (Source Meter)
 - Julabo FP88 (Chiller)
@@ -17,12 +19,11 @@ Following devices are currently supported:
 - Keithley 617 (Electrometer)
 - Keithley 2000 (Multimeter)
 - Keithley 2410 (Source Meter)
-- TTi TSX3510P (Power Supply)
-- Weiss SB22 (Climate Chamber)
-- Espec LU-114 (Climate Chamber)
-- Huber Minichiller (Chiller)
 - Sensirion SHT75 (Temperature & Humidity Sensor, connected via a RasPi)
 - TENMA 72-2710 (Power Supply)
+- TENMA 72-13330 (Power Supply)
+- TTi TSX3510P (Power Supply)
+- Weiss SB22 (Climate Chamber)
 
 ## Scripts
 - *e4control_measure_IV* , to perform a current vs voltage measurement

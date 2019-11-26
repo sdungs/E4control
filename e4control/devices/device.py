@@ -2,7 +2,7 @@
 
 import sys
 import vxi11
-from pylink import TCPLink
+from pylink import TCPLink, UDPLink
 import serial
 from .prologix import Prologix
 
@@ -25,6 +25,12 @@ class Device(object):
             self.com = TCPLink(host, port)
         elif (connection_type == 'lan'):
             self.com = TCPLink(host, port)
+        elif (connection_type == 'lan_udp'):
+            self.com = UDPLink(host, port)
+            self.com.open()
+            self.com._socket.bind(('',port))
+            self.com._socket.settimeout(0.1)
+            self.com.settimeout(0.1)
         elif (connection_type == 'gpib'):
             sPort = 'gpib0,%i' % port
             self.com = vxi11.Instrument(host, sPort)
@@ -60,6 +66,9 @@ class Device(object):
             if self.connection_type == 'usb':
                 s = self.com.readline()
                 s = s.decode()
+            # elif self.connection_type == 'lan_udp':
+            #     s = self.com.recv_from_socket(32)
+            #     s = s.decode()
             else:
                 s = self.com.read()
         except:
