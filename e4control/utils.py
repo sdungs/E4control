@@ -10,9 +10,11 @@ from .devices import (
     HMP4040,
     HP4284A,
     ISEG,
+    SHR,
     JULABO,
-    K487,
     K196,
+    K487,
+    K617,
     K2000,
     K2410,
     SB22,
@@ -21,6 +23,9 @@ from .devices import (
     SHT75,
     HUBER,
     SHT31,
+    TENMA72,
+    TENMA72_13330,
+    TTI2,
 )
 
 from e4control import __version__
@@ -145,12 +150,16 @@ def device_connection(values):
             d.append(HP4284A(k[1], k[2], int(k[3])))
         elif k[0] == "ISEG":
             d.append(ISEG(k[1], k[2], int(k[3])))
+        elif k[0] == "ISEG_SHR":
+            d.append(SHR(k[1], k[2], int(k[3])))
         elif k[0] == "JULABO":
             d.append(JULABO(k[1], k[2], int(k[3])))
         elif k[0] == "K487":
             d.append(K487(k[1], k[2], int(k[3])))
         elif k[0] == "K196":
             d.append(K196(k[1], k[2], int(k[3])))
+        elif k[0] == "K617":
+            d.append(K617(k[1], k[2], int(k[3])))
         elif k[0] == "K2000":
             d.append(K2000(k[1], k[2], int(k[3])))
         elif k[0] == "K2410":
@@ -165,6 +174,10 @@ def device_connection(values):
             d.append(SHT75(k[1], k[2], int(k[3])))
         elif k[0] == 'HUBER':
             d.append(HUBER(k[1], k[2], int(k[3])))
+        elif k[0] == 'TENMA72':
+            d.append(TENMA72(k[1], k[2], int(k[3])))
+        elif k[0] == 'TTI2':
+            d.append(TTI2(k[1], k[2], int(k[3])))
         elif k[0] == 'SHT31':
             d.append(SHT31())  # works only if the dcs is running on a RasPi with the SHT31 connected via i2c
         else:
@@ -335,6 +348,10 @@ def connect_dcs_devices(devices):
             x = ISEG(k[2], k[3], int(k[4]))
             x.initialize()
             d.append(x)
+        elif k[1] == "ISEG_SHR":
+            x = SHR(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
         elif k[1] == "JULABO":
             x = JULABO(k[2], k[3], int(k[4]))
             x.initialize()
@@ -345,6 +362,10 @@ def connect_dcs_devices(devices):
             d.append(x)
         elif k[1] == "K196":
             x = K196(k[2], k[3], int(k[4]))
+            x.initialize(k[0])
+            d.append(x)
+        elif k[1] == "K617":
+            x = K617(k[2], k[3], int(k[4]))
             x.initialize(k[0])
             d.append(x)
         elif k[1] == "K2000":
@@ -367,6 +388,10 @@ def connect_dcs_devices(devices):
             x = LU114(k[2], k[3], int(k[4]))
             x.initialize()
             d.append(x)
+        elif k[1] == "SHT31":
+            x = SHT31()
+            x.initialize()
+            d.append(x)
         elif k[1] == "SHT75":
             x = SHT75(k[2], k[3], int(k[4]))
             x.initialize()
@@ -375,8 +400,14 @@ def connect_dcs_devices(devices):
             x = HUBER(k[2], k[3], k[4])
             x.initialize()
             d.append(x)
-        elif k[1] == "SHT31":
-            x = SHT31()
+        elif k[1] == 'TENMA72':
+            x = TENMA72(k[2], k[3], int(k[4]))
+            d.append(x)
+        elif k[1] == 'TENMA72_13330':
+            x = TENMA72_13330(k[2], k[3], int(k[4]))
+            d.append(x)
+        elif k[1] == "TTI2":
+            x = TTI2(k[2], k[3], k[4])
             x.initialize()
             d.append(x)
         else:

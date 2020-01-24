@@ -12,10 +12,10 @@ from .. import utils as sh
 
 # arg parser
 parser = argparse.ArgumentParser()
-parser.add_argument('v_min', help='min voltage (V)', type=float)
-parser.add_argument('v_max', help='max voltage (V)', type=float)
-parser.add_argument('output', help='output file')
-parser.add_argument('config', help='config file')
+parser.add_argument('v_min', help='starting voltage (V)', type=float)
+parser.add_argument('v_max', help='ending voltage (V)', type=float)
+parser.add_argument('output', help='name of output file')
+parser.add_argument('config', help='path to config file')
 parser.add_argument('-I', '--I_lim', help='current limit, in uA, default=3', type=float, default=3)
 parser.add_argument('-s', '--v_steps', help='number of voltage steps', type=int, default=2)
 parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=10', type=int, default=10)
@@ -73,7 +73,7 @@ def main():
     # initialize
     d.initialize(ch)
     d.setVoltage(0, ch)
-    d.enableOutput(True, ch)
+    d.setOutput(True, ch)
     for t in temperature:
         t.initialize('T')
     for h in humidity:
@@ -189,10 +189,6 @@ def main():
                     Ts.append(ts[0])
                     Ts.append(ts[1])
                     print('Get temperatures: {}'.format(ts))
-                elif temperature_channel[n] == 1:
-                    ts = temperature[n].getTemperature()
-                    Ts.append(ts)
-                    print('Get temperature: {}'.format(ts))
                 else:
                     Ts.append(temperature[n].getTemperature(temperature_channel[n]))
                     print('Get temperature: {}'.format(Ts[-1]))
@@ -201,7 +197,7 @@ def main():
                 if h.connection_type == 'lan':
                     Hs.append(h.getHumidity(humidity_channel[idx]))
                 else:
-                    Hs.append(h.getHumidity())
+                    Hs.append(h.getVoltage(humidity_channel[idx]))
                 print('Get humidity: {} %'.format(Hs[-1]))
 
             for n in range(len(Vmeter)):
@@ -273,7 +269,7 @@ def main():
         # ramp down voltage
         try:
             d.rampVoltage(0, ch)
-            d.enableOutput(False)
+            d.setOutput(False)
         except ValeError as e:
             print('ValueError while ramping down...')
             raise e        

@@ -22,7 +22,7 @@ source, source_channel = sh.device_connection(devices['S'])
 for d in range(len(source)):
     if source_channel[d] == 12:
         source[d].initialize(source_channel[1])
-        source[d].enableOutput(True, source_channel[1])
+        source[d].setOutput(True, source_channel[1])
         source[d].rampVoltage(0, source_channel[1])
         remaining = source[d].getCurrent(source_channel[1]) * 1E6
         k = 0
@@ -31,9 +31,9 @@ for d in range(len(source)):
             time.sleep(5)
             remaining = source[d].getCurrent(source_channel[1]) * 1E6
             k += 1
-        source[d].enableOutput(False, source_channel[1])
+        source[d].setOutput(False, source_channel[1])
         source[d].initialize(source_channel[2])
-        source[d].enableOutput(True, source_channel[2])
+        source[d].setOutput(True, source_channel[2])
         source[d].rampVoltage(0, source_channel[2])
         remaining = source[d].getCurrent(source_channel[2]) * 1E6
         k = 0
@@ -42,10 +42,10 @@ for d in range(len(source)):
             time.sleep(5)
             remaining = source[d].getCurrent(source_channel[2]) * 1E6
             k += 1
-        source[d].enableOutput(False, source_channel[2])
+        source[d].setOutput(False, source_channel[2])
     else:
         source[d].initialize(source_channel[d])
-        source[d].enableOutput(True, source_channel[d])
+        source[d].setOutput(True, source_channel[d])
         source[d].rampVoltage(0, source_channel[d])
         remaining = source[d].getCurrent(source_channel[d]) * 1E6
         k = 0
@@ -54,7 +54,7 @@ for d in range(len(source)):
             time.sleep(5)
             remaining = source[d].getCurrent(source_channel[d]) * 1E6
             k += 1
-        source[d].enableOutput(False, source_channel[d])
+        source[d].setOutput(False, source_channel[d])
 
 # close files
 for s in source:

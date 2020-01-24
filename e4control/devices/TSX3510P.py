@@ -32,7 +32,7 @@ class TSX3510P(Device):
         sV = self.ask('VO?')
         return float(sV[:sV.find('V')])
 
-    def getSetVoltage(self):
+    def getVoltageSet(self):
         sV = self.ask('V?')
         return float(sV[2:])
 
@@ -40,7 +40,7 @@ class TSX3510P(Device):
         sI = self.ask('IO?')
         return float(sI[:sI.find('A')])
 
-    def getSetCurrent(self):
+    def getCurrentSet(self):
         sI = self.ask('I?')
         return float(sI[2:])
 
@@ -48,14 +48,14 @@ class TSX3510P(Device):
         sP = self.ask('POWER?')
         return float(sP[:sP.find('W')])
 
-    def enableOutput(self, bValue):
+    def setOutput(self, bValue, iChannel=-1):
         if bValue:
             self.write('OP 1')
         else:
             self.write('OP 0')
 
     def output(self, show=True):
-        # self.enableOutput(False)
+        #self.setOutput(False)
         bOutput = None
         fVlim = self.getVoltageLimit()
         fVoltage = self.getVoltage()
@@ -83,10 +83,10 @@ class TSX3510P(Device):
             x = input('Possible Inputs: 1,2,3 or 4! \n')
         if x == '1':
             bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on':
-                self.enableOutput(True)
-            elif bO == 'OFF' or bO == 'off':
-                self.enableOutput(False)
+            if bO == 'ON' or bO == 'on' or bO == '1':
+                self.setOutput(True)
+            elif bO == 'OFF' or bO == 'off' or bO == '0':
+                self.setOutput(False)
             else:
                 pass
         elif x == '2':

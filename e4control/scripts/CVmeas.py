@@ -12,14 +12,14 @@ from .. import utils as sh
 
 # arg parser
 parser = argparse.ArgumentParser()
-parser.add_argument('v_min', help='min voltage (V)', type=float)
-parser.add_argument('v_max', help='max voltage (V)', type=float)
-parser.add_argument('output', help='output file')
-parser.add_argument('config', help='config file')
+parser.add_argument('v_min', help='starting voltage (V)', type=float)
+parser.add_argument('v_max', help='ending voltage (V)', type=float)
+parser.add_argument('output', help='name of output file')
+parser.add_argument('config', help='path to config file')
 parser.add_argument('-s', '--v_steps', help='number of voltage steps', type=int, default=2)
 parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=5', type=int, default=5)
 parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=1', type=int, default=1)
-parser.add_argument('-f', '--frequency', help='measuring frequency of the LCR meter', type=float)
+parser.add_argument('-f', '--frequency', help='measuring frequency of the LCR meter, in Hz, default=10000', type=float, default=10000)
 parser.add_argument('-l', '--lvolt', help='signal amplitude, in V, default=0.050', type=float, default=0.05)
 parser.add_argument('-m', '--mode', type=str)
 parser.add_argument('-i', '--integration', type=str)
@@ -37,7 +37,7 @@ def main():
     devices = sh.read_config(args.config)
 
     # create setting query
-    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, ndaqs=args.ndaqs, lcr_freq=args.frequency, lcr_volt=args.lvolt, lcr_aper=args.integration, lcr_mode=args.mode)
+    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, ndaqs=args.ndaqs, delay=args.delay, lcr_freq=args.frequency, lcr_volt=args.lvolt, lcr_aper=args.integration, lcr_mode=args.mode)
 
     # connection
     source, source_channel = sh.device_connection(devices['S'])
@@ -77,7 +77,7 @@ def main():
     # initialize
     d.initialize(ch)
     d.setVoltage(0, ch)
-    d.enableOutput(True, ch)
+    d.setOutput(True, ch)
     l.initialize()
     if args.frequency:
         l.setFrequency(args.frequency)
@@ -282,7 +282,7 @@ def main():
         print('Measurement was terminated...')
     finally:
         # ramp down voltage
-        try:     
+        try:
             d.rampVoltage(0, ch)
             remaining = d.getCurrent(ch) * 1E6
             k = 0
@@ -291,10 +291,10 @@ def main():
                 time.sleep(5)
                 remaining = d.getCurrent(ch) * 1E6
                 k += 1
-            d.enableOutput(False)
+            d.setOutput(False)
         except ValueError as e:
             print('ValueError while ramping down...')
-            raise e 
+            raise e
 
         # show and save curve
         plt.close('all')
@@ -332,3 +332,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

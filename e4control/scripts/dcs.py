@@ -50,6 +50,16 @@ def main():
     # connection
     devices = sh.connect_dcs_devices(config_devices)
 
+    # check if SHT75 is used for T and H, remove one as T and H are always displayed
+    for idx_h,d_h in enumerate(config_devices):     
+        if d_h[0]=='H' and d_h[1]=='SHT75':
+            for idx_t,d_t in enumerate(config_devices):
+                if d_t[0]=='T' and d_t[1]=='SHT75':
+                    if d_h[3]==d_t[3]:
+                        # devices[idx_h]=devices[idx_t]
+                        devices.pop(idx_h)
+                        print('Linked H{} with T{}.'.format(idx_h+1,idx_t+1))
+
     # logfile
     if args.logfile:
         checktxtfile = (args.logfile + '.txt')

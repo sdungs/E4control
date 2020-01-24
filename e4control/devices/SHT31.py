@@ -23,7 +23,7 @@ class SHT31(Device):
     def __init__(self):
         self.initialize()
 
-    def initialize(self, sMode='TH'):
+    def initialize(self, sMode='T'):
         self.bus.write_i2c_block_data(self.ADDR, self.SS, [self.HIGH])
         time.sleep(0.2)
 

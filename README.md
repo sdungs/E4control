@@ -1,4 +1,4 @@
-# E4control v1.1.8
+# E4control v1.6.0 (dev)
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -7,19 +7,24 @@ The device classes can be used in any Python environment to establish a communic
 
 ## Devices
 Following devices are currently supported:
+- Espec LU-114 (Climate Chamber)
 - Rohde&Schwarz HMP4040 (Power Supply)
 - HP 4284A (LCR Meter)
+- Huber Minichiller (Chiller)
 - Iseg SHQ (Source Meter)
+- Iseg SHR (Source Meter)
 - Julabo FP88 (Chiller)
 - Keithley 196 (Multimeter)
 - Keithley 487 (Picoammeter/Voltage Source)
+- Keithley 617 (Electrometer)
 - Keithley 2000 (Multimeter)
 - Keithley 2410 (Source Meter)
+- Sensirion SHT75 (Temperature & Humidity Sensor, connected via a RasPi)
+- Sensirion SHT31
+- TENMA 72-2710 (Power Supply)
+- TENMA 72-13330 (Power Supply)
 - TTi TSX3510P (Power Supply)
 - Weiss SB22 (Climate Chamber)
-- Espec LU-114 (Climate Chamber)
-- Huber Minichiller (Chiller)
-- Sensirion SHT75 (Temperature & Humidity Sensor, connected via a RasPi)
 
 ## Scripts
 - *e4control_measure_IV* , to perform a current vs voltage measurement
@@ -54,7 +59,7 @@ Running E4control directly on the Pi is possible. The config should read:
 If -h or --help is supplied at the command line, the basic usage of the script will be explained, printing a short explanation of each argument.
 
 #### config file
-A config file with all used devices is needed for every script. For an example see [exampleConfig](exampleConfig).
+A config file with all used devices is needed for every script. For an example see [exampleConfig](/examples/exampleConfig).
 In the first column the purpose of the respective device is written (S = source meter, L = LCR meter, T = temperature device, H = humidity device, C = cooling device). The other columns contain device name, connection type, host and port. The columns are separated by a single space.
 
 A line is ignored if it has '#' as its first character.

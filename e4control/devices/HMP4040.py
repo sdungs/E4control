@@ -7,7 +7,6 @@ class HMP4040(Device):
 
     def __init__(self, connection_type, host, port):
         super(HMP4040, self).__init__(connection_type=connection_type, host=host, port=port)
-        self.write('SYST:MIX')
 
     def userCmd(self, cmd):
         print('user cmd: {}'.format(cmd))
@@ -24,13 +23,19 @@ class HMP4040(Device):
         return self.ask('OUTP:GEN?')
 
     #Output for individual channels
-    def enableOutput(self, iOutput, bValue):
-        self.write('INST OUT{}'.format(iOutput))
-        self.write('OUTP {0:d}'.format(bValue))
+    def setOutput(self, bEnable, iChannel):
+        self.write('INST OUT{}'.format(iChannel))
+        self.write('OUTP {:d}'.format(bEnable))
 
-    def getEnableOutput(self, iOutput):
-        self.write('INST OUT{}'.format(iOutput))
+    def getOutput(self, iChannel):
+        self.write('INST OUT{}'.format(iChannel))
         return self.ask('OUTP?')
+
+    def enableOutput(self, iChannel):
+        self.setOutput(True, iChannel)
+
+    def disableOutput(self, iChannel):
+        self.setOutput(False, iChannel)
 
     #Over voltage protection
     def setVoltageLimit(self, iOutput, fValue):
@@ -46,11 +51,11 @@ class HMP4040(Device):
         self.write('INST OUT{}'.format(iOutput))
         self.write('VOLT {}'.format(fValue))
 
-    def getSetVoltage(self, iOutput):
+    def getVoltage(self, iOutput):
         self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('VOLT?'))
 
-    def getVoltage(self, iOutput):
+    def measVoltage(self, iOutput):
         self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('MEAS:VOLT?'))
 
@@ -59,11 +64,11 @@ class HMP4040(Device):
         self.write('INST OUT{}'.format(iOutput))
         self.write('CURR {}'.format(fValue))
 
-    def getSetCurrent(self, iOutput):
+    def getCurrent(self, iOutput):
         self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('CURR?'))
 
-    def getCurrent(self, iOutput):
+    def measCurrent(self, iOutput):
         self.write('INST OUT{}'.format(iOutput))
         return float(self.ask('MEAS:CURR?'))
 
@@ -78,8 +83,8 @@ class HMP4040(Device):
         i = 1
         while i <= 4:
             a = self.getEnableOutput(i)
-            b = self.getVoltage(i)
-            c = self.getCurrent(i)
+            b = self.measVoltage(i)
+            c = self.measCurrent(i)
             bPower.append(a)
             fVoltage.append(b)
             fCurrent.append(c)
@@ -110,9 +115,9 @@ class HMP4040(Device):
         if x == '1':
             bO = input('Please enter ON or OFF! \n')
             if bO == 'ON' or bO == 'on' or bO == '1':
-                self.enableOutput(iChannel, True)
+                self.setOutput(True, iChannel)
             elif bO == 'OFF' or bO == 'off' or bO == '0':
-                self.enableOutput(iChannel, False)
+                self.setOutput(False, iChannel)
             else:
                 pass
         elif x == '2':
