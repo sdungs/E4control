@@ -2,6 +2,7 @@ from .device import Device
 from .HMP4040 import HMP4040
 from .HP4284A import HP4284A
 from .ISEG import ISEG
+from .ISEG_SHR import SHR
 from .JULABO import JULABO
 from .K196 import K196
 from .K487 import K487
