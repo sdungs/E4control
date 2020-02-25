@@ -52,7 +52,8 @@ class TTI2(Device):
         return float(sI[3:])
 
     def setOutput(self, bEnable, iChannel):
-        if bValue:
+        #if bValue:
+        if bEnable:
             self.write('OP{:d} 1'.format(iChannel))
         else:
             self.write('OP{:d} 0'.format(iChannel))

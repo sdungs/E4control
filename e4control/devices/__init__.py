@@ -17,6 +17,7 @@ from .TENMA72 import TENMA72
 from .TENMA72_13330 import TENMA72_13330
 from .TSX3510P import TSX3510P
 from .TTI2 import TTI2
+from .MOTH import MOTH
 
 __all__ = [
     'Device'
@@ -38,4 +39,5 @@ __all__ = [
     'TENMA72',
     'TENMA72_13330',
     'TTI2',
+    'MOTH',
 ]
