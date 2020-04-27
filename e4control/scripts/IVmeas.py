@@ -190,14 +190,14 @@ def main():
                     Ts.append(ts[1])
                     print('Get temperatures: {}'.format(ts))
                 else:
-                    Ts.append(temperature[n].getTemperature(temperature_channel[n]))
+                    Ts.append(temperature[n].getTemperature())
                     print('Get temperature: {}'.format(Ts[-1]))
 
             for idx,h in enumerate(humidity):
                 if h.connection_type == 'lan':
                     Hs.append(h.getHumidity(humidity_channel[idx]))
                 else:
-                    Hs.append(h.getVoltage(humidity_channel[idx]))
+                    Hs.append(h.getHumidity())
                 print('Get humidity: {} %'.format(Hs[-1]))
 
             for n in range(len(Vmeter)):

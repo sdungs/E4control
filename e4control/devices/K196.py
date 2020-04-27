@@ -107,6 +107,9 @@ class K196(Device):
         if R > 10000000:
             return(9999)
         return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+        
+    def getTemperature(self, iChannel=-1):
+        return self.getTempPT1000()
 
     def getHumidity(self, fTemp, iChannel=-1):
         a = 0.0315

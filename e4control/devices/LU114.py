@@ -37,7 +37,7 @@ class LU114(Device):
             return "Mode uncertain, please check."
         pass
 
-    def initialize(self):
+    def initialize(self, kind='T'):
         msg = self.getAndSetParameter()
         return msg
 
