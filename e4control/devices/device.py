@@ -2,10 +2,12 @@
 
 import sys
 import vxi11
-from pylink import TCPLink
+from pylink import TCPLink, UDPLink
 import serial
 from time import sleep
 from .prologix import Prologix
+
+from time import sleep
 
 
 class Device(object):
@@ -25,6 +27,12 @@ class Device(object):
             self.com = TCPLink(host, port)
         elif (connection_type == 'lan'):
             self.com = TCPLink(host, port)
+        elif (connection_type == 'lan_udp'):
+            self.com = UDPLink(host, port)
+            self.com.open()
+            self.com._socket.bind(('',port))
+            self.com._socket.settimeout(0.1)
+            self.com.settimeout(0.1)
         elif (connection_type == 'gpib'):
             sPort = 'gpib0,%i' % port
             self.com = vxi11.Instrument(host, sPort)
@@ -66,6 +74,10 @@ class Device(object):
         try:
             if self.connection_type == 'usb':
                 s = self.com.readline()
+                s = s.decode()
+            # elif self.connection_type == 'lan_udp':
+            #     s = self.com.recv_from_socket(32)
+            #     s = s.decode()
             else:
                 s = self.com.read()
         except:
@@ -73,6 +85,7 @@ class Device(object):
             try:
                 if self.connection_type == 'usb':
                     s = self.com.readline()
+                    s = s.decode()
                 else:
                     s = self.com.read()
             except:
@@ -84,12 +97,16 @@ class Device(object):
 
     def write(self, cmd):
         cmd = cmd + self.trm
+        if self.connection_type == 'usb':
+            cmd = cmd.encode()
         try:
             self.com.write(cmd)
+            sleep(0.004)
         except:
             self.reconnect()
             try:
                 self.com.write(cmd)
+                sleep(0.004)
             except:
                 print('Timeout while writing to "{}"!'.format(type(self).__name__))
                 raise

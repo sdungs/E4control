@@ -110,7 +110,7 @@ class SB22(Device):
         self.updateChanges()
 
     def getSetHumidity(self, iChannel=-1):
-        return int(self.H_set)
+        return float(self.H_set)
 
     def getHumidity(self):
         s = self.getStatus()
@@ -197,11 +197,11 @@ class SB22(Device):
                 self.printOutput('Power: \033[32m ON \033[0m')
             else:
                 self.printOutput('Power: \033[31m OFF \033[0m')
-            self.printOutput('Temperature:' + '\t' + 'set: %.1f °C' % fTset + '\t' + 'actual: %.1f °C' % fTac)
+            self.printOutput('Temperature:  \t set: {:.1f} °C \t actual: {:.1f} °C'.format(fTset,fTac))
             if (self.D2 == '0'):
-                self.printOutput('Humidity:' + '\t' + 'set: %.1f' % fHset + '\t' + 'actual: %.1f' % fHac)
+                self.printOutput('Humidity: \t set: {:.1f} %  \t actual: {:.1f} % '.format(fHset,fHac))
 
-        return([['Mode', 'Power', 'Hset', 'Hac', 'Tset[C]', 'Tac[C]'], [str(sMode), str(bPower), str(fHset), str(fHac), str(fTset), str(fTac)]])
+        return([['Mode', 'Power', 'Hset[%]', 'Hac[%]', 'Tset[C]', 'Tac[C]'], [str(sMode), str(bPower), str(fHset), str(fHac), str(fTset), str(fTac)]])
 
     def interaction(self):
         print(

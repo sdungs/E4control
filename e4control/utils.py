@@ -397,7 +397,17 @@ def connect_dcs_devices(devices):
             x.initialize()
             d.append(x)
         elif k[1] == "HUBER":
-            x = HUBER(k[2], k[3], k[4])
+            x = HUBER(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == 'TENMA72':
+            x = TENMA72(k[2], k[3], int(k[4]))
+            d.append(x)
+        elif k[1] == 'TENMA72_13330':
+            x = TENMA72_13330(k[2], k[3], int(k[4]))
+            d.append(x)
+        elif k[1] == "TTI2":
+            x = TTI2(k[2], k[3], k[4])
             x.initialize()
             d.append(x)
         elif k[1] == 'TENMA72':

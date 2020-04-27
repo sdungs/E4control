@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # E4control v1.6.0 (dev)
+=======
+# E4control v1.6.1
+>>>>>>> master
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -20,7 +24,10 @@ Following devices are currently supported:
 - Keithley 2000 (Multimeter)
 - Keithley 2410 (Source Meter)
 - Sensirion SHT75 (Temperature & Humidity Sensor, connected via a RasPi)
+<<<<<<< HEAD
 - Sensirion SHT31
+=======
+>>>>>>> master
 - TENMA 72-2710 (Power Supply)
 - TENMA 72-13330 (Power Supply)
 - TTi TSX3510P (Power Supply)
