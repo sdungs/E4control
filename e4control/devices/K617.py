@@ -23,7 +23,7 @@ class K617(Device):
         elif (sMode == 'R'):
             self.setMeasurementMode('R')
             self.setRange('R0')
-            self.performZeroCorrection()            
+            self.performZeroCorrection()
         else:
             print('Initializing not possible: Unknown measurement mode!')
 
@@ -31,9 +31,9 @@ class K617(Device):
         if sMode in ('V','volts'):
             self.write('F0X')
             self.mode = 'V'
-        elif sMode in ('I','amps','ampere'):
+        elif sMode in ('I', 'amps', 'ampere'):
             self.write('F1X')
-            self.mode = 'A'
+            self.mode = 'I'
         elif sMode in ('R','ohms'):
             self.write('F2X')
             self.mode = 'R'
