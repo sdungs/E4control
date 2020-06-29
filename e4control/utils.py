@@ -359,7 +359,7 @@ def connect_dcs_devices(devices):
             d.append(x)
         elif k[1] == "K617":
             x = K617(k[2], k[3], int(k[4]))
-            x.initialize()
+            x.initialize(k[0])
             d.append(x)
         elif k[1] == "K196":
             x = K196(k[2], k[3], int(k[4]))
