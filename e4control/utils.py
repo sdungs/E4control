@@ -14,6 +14,7 @@ from .devices import (
     JULABO,
     K196,
     K487,
+    K617,
     K2000,
     K2410,
     SB22,
@@ -154,6 +155,8 @@ def device_connection(values):
             d.append(JULABO(k[1], k[2], int(k[3])))
         elif k[0] == "K487":
             d.append(K487(k[1], k[2], int(k[3])))
+        elif k[0] == "K617":
+            d.append(K617(k[1], k[2], int(k[3])))
         elif k[0] == "K196":
             d.append(K196(k[1], k[2], int(k[3])))
         elif k[0] == "K2000":
@@ -352,6 +355,10 @@ def connect_dcs_devices(devices):
             d.append(x)
         elif k[1] == "K487":
             x = K487(k[2], k[3], int(k[4]))
+            x.initialize()
+            d.append(x)
+        elif k[1] == "K617":
+            x = K617(k[2], k[3], int(k[4]))
             x.initialize()
             d.append(x)
         elif k[1] == "K196":

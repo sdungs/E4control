@@ -16,8 +16,8 @@ class K617(Device):
             self.setMeasurementMode('V')
             self.setRange('RO')
             self.performZeroCorrection()
-        elif (sMode == 'A'):
-            self.setMeasurementMode('A')
+        elif (sMode == 'I'):
+            self.setMeasurementMode('I')
             self.setRange('R0')
             self.performZeroCorrection()
         elif (sMode == 'R'):
@@ -31,7 +31,7 @@ class K617(Device):
         if sMode in ('V','volts'):
             self.write('F0X')
             self.mode = 'V'
-        elif sMode in ('A','amps','ampere'):
+        elif sMode in ('I','amps','ampere'):
             self.write('F1X')
             self.mode = 'A'
         elif sMode in ('R','ohms'):
@@ -104,9 +104,9 @@ class K617(Device):
         return self.getValue()
 
     def getCurrent(self):
-        if not (self.mode == 'A'):
+        if not (self.mode == 'I'):
             warnings.warn('Current mode not properly initialized. I\'m doing this for you now.')
-            self.initialize('A')
+            self.initialize('I')
         return self.getValue()
 
     def getResistance(self):
