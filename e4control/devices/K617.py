@@ -28,16 +28,16 @@ class K617(Device):
             print('Initializing not possible: Unknown measurement mode!')
 
     def setMeasurementMode(self, sMode):
-        if sMode in ('V','volts'):
+        if sMode in ('V', 'volts'):
             self.write('F0X')
             self.mode = 'V'
-        elif sMode in ('I', 'amps', 'ampere'):
+        elif sMode in ('I', 'amps', 'ampere', 'A'):
             self.write('F1X')
             self.mode = 'I'
-        elif sMode in ('R','ohms'):
+        elif sMode in ('R', 'ohms'):
             self.write('F2X')
             self.mode = 'R'
-        elif sMode in ('C','coulombs'):
+        elif sMode in ('C', 'coulombs'):
             self.write('F3X')
         elif (sMode == 'external feedback'):
             self.write('F4X')
@@ -45,12 +45,12 @@ class K617(Device):
             self.write('F5X')
 
     def getMeasurementMode(self):
-        if self.mode == None:
-            warnings.warn('measurement mode not properly initialized. Please do this now.')
+        if self.mode is None:
+            warnings.warn('The measurement mode not properly initialized. Please do this now via setMeasurementMode()')
         return self.mode
 
     def setRange(self, sRange):
-        if sRange in ('R0','auto'):
+        if sRange in ('R0', 'auto'):
             self.write('R0X')
             print('Changing to auto range.')
         elif (sRange == 'R1'):
@@ -75,7 +75,7 @@ class K617(Device):
             self.write('R10X')
         elif (sRange == 'R11'):
             self.write('R11X')
-        elif sRange in ('R12','cancel'):
+        elif sRange in ('R12', 'cancel'):
             self.write('R12X')
 
     def performZeroCorrection(self):
@@ -85,40 +85,37 @@ class K617(Device):
         self.write('C0X')
         print('Performed zero correction.')
 
-
-    def getStatus(self):
+    def getStatus(self, iChannel=-1):
         return self.ask('U0X')
 
-    def getData(self):
+    def getData(self, iChannel=-1):
         return self.read()
 
-    def getValue(self):
+    def getValue(self, iChannel=-1):
         sValue = self.read()
         return float(sValue[4:])
 
-
-    def getVoltage(self):
+    def getVoltage(self, iChannel=-1):
         if not (self.mode == 'V'):
             warnings.warn('Voltage mode not properly initialized. I\'m doing this for you now.')
             self.initialize('V')
         return self.getValue()
 
-    def getCurrent(self):
+    def getCurrent(self, iChannel=-1):
         if not (self.mode == 'I'):
             warnings.warn('Current mode not properly initialized. I\'m doing this for you now.')
             self.initialize('I')
         return self.getValue()
 
-    def getResistance(self):
+    def getResistance(self, iChannel=-1):
         if not (self.mode == 'R'):
             warnings.warn('Resistance mode not properly initialized. I\'m doing this for you now.')
             self.initialize('R')
         return self.getValue()
 
-
     def output(self, sMode=mode, show=True):
         if show:
-            print('K196:')
+            print('K617:')
             print('Not yet implemeted...')
         values = []
         header = []
@@ -148,4 +145,4 @@ class K617(Device):
         return([header, values])
 
     def interaction(self):
-        print('Nothing to do...')
+        print('Not yet implemeted...')
