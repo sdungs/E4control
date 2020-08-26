@@ -16,17 +16,17 @@ class MOTH(Device):
     def initialize(self):
         pass
 
-    def getEnvTemperature(self):
-        return(self.ask('?T'))
+    def getEnvTemperature(self, iChannel):
+        return(float(self.ask('?T%i' %iChannel)))
 
-    def getEnvHumidity(self):
-        return(self.ask('?H'))
+    def getEnvHumidity(self, iChannel):
+        return(float(self.ask('?H%i' %iChannel)))
 
-    def getNtcTemperature(self):
-        return(self.ask('?N'))
+    def getNtcTemperature(self, iChannel):
+        return(float(self.ask('?N%i' %iChannel)))
 
-    def getDewPoint(self):
-        return(self.ask('?D'))
+    def getDewPoint(self, iChannel):
+        return(float(self.ask('?D%i' %iChannel)))
 
     def output(self, show=True):
         pass
