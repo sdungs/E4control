@@ -3,6 +3,7 @@
 from time import sleep
 
 from .device import Device
+import warnings
 
 
 class K487(Device):
@@ -38,6 +39,14 @@ class K487(Device):
         sI = self.ask('U6X')
         fI = float(sI[sI.find('=')+1:sI.find('E')])*10**float(sI[sI.find('E')+1:sI.find('E')+4])
         return fI
+
+    def getCurrentLimit(self, iChannel=-1):
+        warnings.warn('No remote setting of current limit possible. Has to be done manually.')
+        pass
+
+    def setCurrentLimit(self, fIlim, iChannel=-1):
+        warnings.warn('No remote setting of current limit possible. Has to be done manually.')
+        pass
 
     def setRange(self, sRange, iChannel=-1):
         if (sRange == 'R0'):
