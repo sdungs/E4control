@@ -42,7 +42,7 @@ class K487(Device):
 
     def getCurrentLimit(self, iChannel=-1):
         warnings.warn('No remote setting of current limit possible. Has to be done manually.')
-        pass
+        return 1
 
     def setCurrentLimit(self, fIlim, iChannel=-1):
         warnings.warn('No remote setting of current limit possible. Has to be done manually.')
