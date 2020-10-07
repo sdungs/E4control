@@ -18,7 +18,9 @@ class K487(Device):
         return self.ask(cmd)
 
     def initialize(self, iChannel=-1):
-        self.write('G0O0C1X')
+        self.write('G0X')
+        self.write('O0X')
+        self.write('C0X')
         # self.write('L4X')
 
     def setVoltage(self, fsetValVolts, iChannel=-1):
@@ -36,8 +38,8 @@ class K487(Device):
         return fV
 
     def getCurrent(self, iChannel=-1):
-        sI = self.ask('U6X')
-        fI = float(sI[sI.find('=')+1:sI.find('E')])*10**float(sI[sI.find('E')+1:sI.find('E')+4])
+        sI = self.read()
+        fI = float(sI[4:])
         return fI
 
     def getCurrentLimit(self, iChannel=-1):
