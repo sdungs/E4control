@@ -1,0 +1,12 @@
+129.217.166.109
+Save folder absolute path
+Measurement_Name
+1
+3
+2 mV
+2 nanosecond
+2800
+10000000000
+10000
+40 mV
+max
