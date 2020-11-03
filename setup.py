@@ -3,9 +3,9 @@ from setuptools import setup
 
 setup(
     name='e4control',
-    version='1.6.7',
-    author='Sascha Dungs, Andreas Gisen, Jonas Lönker',
-    author_email='sascha.dungs@tu-dortmund.de, andreas.gisen@tu-dortmund.de, jonas.loenker@tu-dortmund.de',
+    version='1.7.0',
+    author='Sascha Dungs, Andreas Gisen, Jonas Lönker, Sebastian Pape',
+    author_email='sascha.dungs@tu-dortmund.de, andreas.gisen@tu-dortmund.de, jonas.loenker@tu-dortmund.de, sebastian2.pape@tu-dortmund.de',
     packages=[
         'e4control',
         'e4control.devices',
@@ -14,10 +14,13 @@ setup(
     install_requires=[
         'pylink',
         'python-vxi11',
-        'numpy <1.17',
-        'matplotlib >=2.0.0, <3.0.0',
-        'scipy <1.3',
+        'numpy',
+        'matplotlib',
+        'scipy,
         'sht-sensor',
+        'pint',
+        'pyvisa',
+        'tqdm',
     ],
     entry_points={
         'console_scripts': [
@@ -25,6 +28,9 @@ setup(
             'e4control_measure_CV = e4control.scripts.CVmeas:main',
             'e4control_measure_It = e4control.scripts.Itmeas:main',
             'e4control_dcs = e4control.scripts.dcs:main',
+            'e4control_MSO5204_readout = e4control.scripts.MSO5204_readout:main',
+            'e4control_MSO5204_samplemode = e4control.scripts.MSO5204_samplemode:main',
+            'e4control_MSO5204_90sr = e4control.scripts.MSO5204_90sr:main',
         ]
     }
 )
