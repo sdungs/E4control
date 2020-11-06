@@ -8,7 +8,6 @@ The device classes can be used in any Python environment to establish a communic
 ## Devices
 Following devices are currently supported:
 - Espec LU-114 (Climate Chamber)
-- Rohde&Schwarz HMP4040 (Power Supply)
 - HP 4284A (LCR Meter)
 - Huber Minichiller (Chiller)
 - Iseg SHQ (Source Meter)
@@ -19,6 +18,8 @@ Following devices are currently supported:
 - Keithley 617 (Electrometer)
 - Keithley 2000 (Multimeter)
 - Keithley 2410 (Source Meter)
+- Physical Instruments C804 (xyz-stage controller)
+- Rohde&Schwarz HMP4040 (Power Supply)
 - Sensirion SHT75 (Temperature & Humidity Sensor, connected via a RasPi)
 - TENMA 72-2710 (Power Supply)
 - TENMA 72-13330 (Power Supply)
@@ -43,7 +44,7 @@ Please note that the software is only tested with Python 3 & pip3, although it m
 1. Download or clone this repository.
 2. Open a terminal and change directory to E4control.
 3. For installation enter: `pip install .` (Ensure python3/pip3 usage!)
-4. *(add PATH to .bashrc)* 
+4. *(add PATH to .bashrc)*
 
 ### How to use the SHT75 Temperature & Humidity Sensor
 0. A Raspberry Pi is required for read-out.
