@@ -64,7 +64,7 @@ def main():
         if d_h[0]=='SHT75':
             for idx_t,d_t in enumerate(devices['T']):
                 if d_t[0]=='SHT75':
-                    if d_h[1]==d_t[1] and d_h[2]==d_t[2] and d_h[3]==d_t[3]: 
+                    if d_h[1]==d_t[1] and d_h[2]==d_t[2] and d_h[3]==d_t[3]:
                         humidity[idx_h]=temperature[idx_t]
                         print('Linked H{} with T{}.'.format(idx_h+1,idx_t+1))
 
@@ -260,11 +260,11 @@ def main():
             Cmeans.append(np.mean(Cs))
             Cstd = np.std(Cs)
             Csem.append(sem(Cs))
-            if livePlot:   
+            if livePlot:
                 ax1.errorbar(Us, Cmeans, yerr=Csem, fmt='g--o')
                 plt.pause(0.0001)
 
-            # write to short and data base file            
+            # write to short and data base file
             sh.write_line(fwshort, [Us[i], Cmeans[i], Csem[i]])
             if args.database:
                 if Ts == []:
@@ -282,19 +282,19 @@ def main():
         print('Measurement was terminated...')
     finally:
         # ramp down voltage
-        try:     
+        try:
             d.rampVoltage(0, ch)
             remaining = d.getCurrent(ch) * 1E6
             k = 0
-            while k <= 10 and remaining > 0.01:
+            while k <= 10 and abs(remaining) > 0.01:
                 print('Please wait! Current still: {:0.6f} uA'.format(remaining))
-                time.sleep(5)
+                time.sleep(3)
                 remaining = d.getCurrent(ch) * 1E6
                 k += 1
             d.setOutput(False)
         except ValueError as e:
             print('ValueError while ramping down...')
-            raise e 
+            raise e
 
         # show and save curve
         plt.close('all')

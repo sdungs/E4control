@@ -7,6 +7,7 @@ import json
 import time
 
 from .devices import (
+    C804,
     HMP4040,
     HP4284A,
     ISEG,
@@ -29,6 +30,7 @@ from .devices import (
 
 from e4control import __version__
 
+yes = ['Yes', 'yes', 'Y', 'y', 'Ja', 'ja', 'J', 'j']
 
 # have an input with a prefilled text
 def rlinput(prompt, prefill=''):
@@ -60,24 +62,10 @@ def read_config(configfile):
         host = n[3]
         port = n[4]
         channel = n[5]
-        if (x == "S"):
-            devices["S"].append([model, connection_type, host, port, channel])
-        elif (x == "T"):
-            devices["T"].append([model, connection_type, host, port, channel])
-        elif (x == "H"):
-            devices["H"].append([model, connection_type, host, port, channel])
-        elif (x == "P"):
-            devices["P"].append([model, connection_type, host, port, channel])
-        elif (x == "L"):
-            devices["L"].append([model, connection_type, host, port, channel])
-        elif (x == "C"):
-            devices["C"].append([model, connection_type, host, port, channel])
-        elif (x == "V"):
-            devices["V"].append([model, connection_type, host, port, channel])
-        elif (x == "I"):
-            devices["I"].append([model, connection_type, host, port, channel])
 
-        else:
+        try:
+            devices[x].append([model, connection_type, host, port, channel])
+        except:
             sys.exit("Unknown parameter while reading configfile!")
     return(devices)
 
@@ -130,9 +118,7 @@ def settings_query(device_list, **kwargs):
             print('{0}: {1}'.format(key, value))
     print("------------------------------------------------")
     q = input("Settings correct? (y/n)")
-    if q == "yes":
-        pass
-    elif q == "y":
+    if q in yes:
         pass
     else:
         sys.exit("Measurement aborted!")
@@ -143,41 +129,10 @@ def device_connection(values):
     d = []
     ch = []
     for k in values:
-        if k[0] == "HMP4040":
-            d.append(HMP4040(k[1], k[2], int(k[3])))
-        elif k[0] == "HP4284A":
-            d.append(HP4284A(k[1], k[2], int(k[3])))
-        elif k[0] == "ISEG":
-            d.append(ISEG(k[1], k[2], int(k[3])))
-        elif k[0] == "ISEG_SHR":
-            d.append(SHR(k[1], k[2], int(k[3])))
-        elif k[0] == "JULABO":
-            d.append(JULABO(k[1], k[2], int(k[3])))
-        elif k[0] == "K487":
-            d.append(K487(k[1], k[2], int(k[3])))
-        elif k[0] == "K617":
-            d.append(K617(k[1], k[2], int(k[3])))
-        elif k[0] == "K196":
-            d.append(K196(k[1], k[2], int(k[3])))
-        elif k[0] == "K2000":
-            d.append(K2000(k[1], k[2], int(k[3])))
-        elif k[0] == "K2410":
-            d.append(K2410(k[1], k[2], int(k[3])))
-        elif k[0] == "SB22":
-            d.append(SB22(k[1], k[2], int(k[3])))
-        elif k[0] == "TSX3510P":
-            d.append(TSX3510P(k[1], k[2], int(k[3])))
-        elif k[0] == 'LU114':
-            d.append(LU114(k[1], k[2], int(k[3])))
-        elif k[0] == 'SHT75':
-            d.append(SHT75(k[1], k[2], int(k[3])))
-        elif k[0] == 'HUBER':
-            d.append(HUBER(k[1], k[2], int(k[3])))
-        elif k[0] == 'TENMA72':
-            d.append(TENMA72(k[1], k[2], int(k[3])))
-        elif k[0] == 'TTI2':
-            d.append(TTI2(k[1], k[2], int(k[3])))
-        else:
+        try:
+            x = eval(f'{k[0]}')(k[1], k[2], int(k[3]))
+            d.append(x)
+        except:
             sys.exit("Unknown Device: %s" % k[0])
         ch.append(int(k[4]))
     return(d, ch)
@@ -292,9 +247,7 @@ def check_outputname(output):
     if os.path.isfile(checktxtfile):
         print("Outputname: " + outputname)
         n = input("File already exists! Overwrite? (y/n)")
-        if n == "yes":
-            return(output)
-        elif n == "y":
+        if n in yes:
             return(output)
         else:
             newoutput = output + "_X"
@@ -324,7 +277,7 @@ def show_dcs_device_list(devices):
     for i in devices:
         print(i)
     q = input("Correct devices? (y/n)")
-    if q == "yes" or q == "y":
+    if q in yes:
         pass
     else:
         sys.exit("Aborted!")
@@ -333,76 +286,17 @@ def show_dcs_device_list(devices):
 def connect_dcs_devices(devices):
     d = []
     for k in devices:
-        if k[1] == "HMP4040":
-            x = HMP4040(k[2], k[3], int(k[4]))
-            x.initialize()
+        try:
+            x = eval(f'{k[1]}')(k[2], k[3], int(k[4]))
+            if k[1] == 'K2000' or k[1] == 'K196':
+                x.initialize(k[0])
+            elif 'TENMA' in k[1]:
+                pass
+            else:
+                x.initialize()
             d.append(x)
-        elif k[1] == "HP4284A":
-            x = HP4284A(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == "ISEG":
-            x = ISEG(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == "ISEG_SHR":
-            x = SHR(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == "JULABO":
-            x = JULABO(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == "K487":
-            x = K487(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == "K617":
-            x = K617(k[2], k[3], int(k[4]))
-            x.initialize(k[0])
-            d.append(x)
-        elif k[1] == "K196":
-            x = K196(k[2], k[3], int(k[4]))
-            x.initialize(k[0])
-            d.append(x)
-        elif k[1] == "K2000":
-            x = K2000(k[2], k[3], int(k[4]))
-            x.initialize(k[0])
-            d.append(x)
-        elif k[1] == "K2410":
-            x = K2410(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == "SB22":
-            x = SB22(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == "TSX3510P":
-            x = TSX3510P(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == "LU114":
-            x = LU114(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == "SHT75":
-            x = SHT75(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == "HUBER":
-            x = HUBER(k[2], k[3], int(k[4]))
-            x.initialize()
-            d.append(x)
-        elif k[1] == 'TENMA72':
-            x = TENMA72(k[2], k[3], int(k[4]))
-            d.append(x)
-        elif k[1] == 'TENMA72_13330':
-            x = TENMA72_13330(k[2], k[3], int(k[4]))
-            d.append(x)
-        elif k[1] == "TTI2":
-            x = TTI2(k[2], k[3], k[4])
-            x.initialize()
-            d.append(x)
-        else:
+        except Exception as e:
+            print(e)
+            sys.exc_info()[0]
             sys.exit("Unknown Device: %s" % k[1])
     return(d)

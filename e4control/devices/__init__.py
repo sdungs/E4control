@@ -1,4 +1,5 @@
 from .device import Device
+from .C804 import C804
 from .HMP4040 import HMP4040
 from .HUBER import HUBER
 from .HP4284A import HP4284A
@@ -19,7 +20,8 @@ from .TSX3510P import TSX3510P
 from .TTI2 import TTI2
 
 __all__ = [
-    'Device'
+    'Device',
+    'C804',
     'HMP4040',
     'HP4284A',
     'ISEG',
