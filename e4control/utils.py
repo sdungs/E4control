@@ -30,7 +30,7 @@ from .devices import (
 
 from e4control import __version__
 
-yes = ['Yes', 'yes', 'Y', 'y', 'Ja', 'ja', 'J', 'j
+yes = ['Yes', 'yes', 'Y', 'y', 'Ja', 'ja', 'J', 'j']
 
 # have an input with a prefilled text
 def rlinput(prompt, prefill=''):
