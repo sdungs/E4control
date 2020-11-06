@@ -7,6 +7,7 @@ import json
 import time
 
 from .devices import (
+    C804,
     HMP4040,
     HP4284A,
     ISEG,
