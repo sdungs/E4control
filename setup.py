@@ -18,9 +18,6 @@ setup(
         'matplotlib >=2.0.0, <3.0.0',
         'scipy <1.3',
         'sht-sensor',
-        'pint',
-        'pyvisa',
-        'tqdm',
     ],
     entry_points={
         'console_scripts': [
