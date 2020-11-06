@@ -7,6 +7,7 @@ import json
 import time
 
 from .devices import (
+    C804,
     HMP4040,
     HP4284A,
     ISEG,
@@ -29,6 +30,7 @@ from .devices import (
 
 from e4control import __version__
 
+yes = ['Yes', 'yes', 'Y', 'y', 'Ja', 'ja', 'J', 'j']
 
 # have an input with a prefilled text
 def rlinput(prompt, prefill=''):
@@ -116,9 +118,7 @@ def settings_query(device_list, **kwargs):
             print('{0}: {1}'.format(key, value))
     print("------------------------------------------------")
     q = input("Settings correct? (y/n)")
-    if q == "yes":
-        pass
-    elif q == "y":
+    if q in yes:
         pass
     else:
         sys.exit("Measurement aborted!")
@@ -247,9 +247,7 @@ def check_outputname(output):
     if os.path.isfile(checktxtfile):
         print("Outputname: " + outputname)
         n = input("File already exists! Overwrite? (y/n)")
-        if n == "yes":
-            return(output)
-        elif n == "y":
+        if n in yes:
             return(output)
         else:
             newoutput = output + "_X"
@@ -279,7 +277,7 @@ def show_dcs_device_list(devices):
     for i in devices:
         print(i)
     q = input("Correct devices? (y/n)")
-    if q == "yes" or q == "y":
+    if q in yes:
         pass
     else:
         sys.exit("Aborted!")
