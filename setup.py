@@ -14,9 +14,9 @@ setup(
     install_requires=[
         'pylink',
         'python-vxi11',
-        'numpy',
-        'matplotlib',
-        'scipy,
+        'numpy <1.17',
+        'matplotlib >=2.0.0, <3.0.0',
+        'scipy <1.3',
         'sht-sensor',
         'pint',
         'pyvisa',
@@ -28,9 +28,6 @@ setup(
             'e4control_measure_CV = e4control.scripts.CVmeas:main',
             'e4control_measure_It = e4control.scripts.Itmeas:main',
             'e4control_dcs = e4control.scripts.dcs:main',
-            'e4control_MSO5204_readout = e4control.scripts.MSO5204_readout:main',
-            'e4control_MSO5204_samplemode = e4control.scripts.MSO5204_samplemode:main',
-            'e4control_MSO5204_90sr = e4control.scripts.MSO5204_90sr:main',
         ]
     }
 )
