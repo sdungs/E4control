@@ -1,9 +1,0 @@
-129.217.166.109
-Save folder absolute path
-Measurement_Name
-2
-2
-20 mV
-10 ns
-10000
-10000000000
