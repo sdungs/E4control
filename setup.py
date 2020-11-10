@@ -24,7 +24,7 @@ setup(
             'e4control_measure_IV = e4control.scripts.IVmeas:main',
             'e4control_measure_CV = e4control.scripts.CVmeas:main',
             'e4control_measure_It = e4control.scripts.Itmeas:main',
-            'e4control_dcs = e4control.scripts.dcs:main',
+            'e4control_dcs = e4control.scripts.dcs_gui:main',
         ]
     }
 )
