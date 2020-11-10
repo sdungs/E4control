@@ -21,7 +21,7 @@ class TTI2(Device):
     def getVoltageLimit(self, iOutput):
         sOVP = self.ask('OVP%i?' % iOutput)
         return float(sOVP)
-        
+
     def setCurrentLimit(self, iOutput, fValue):
         self.write('OCP%i %f' % (iOutput, fValue))
 
@@ -56,11 +56,11 @@ class TTI2(Device):
             self.write('OP{:d} 1'.format(iChannel))
         else:
             self.write('OP{:d} 0'.format(iChannel))
-               
+
     def getOutput(self, iChannel):
         iEO = self.ask('OP{}?'.format(iChannel))
         return int(iEO)
-        
+
     def output(self, show=True):
         bPower = []
         fVoltage = []
@@ -91,8 +91,8 @@ class TTI2(Device):
             i += 1
         sHeader = ['CH1', 'U1[V]', 'I1[A]', 'CH2', 'U2[V]', 'I2[A]']
         return([sHeader, sValues])
-	    
- 
+
+
     def interaction(self):
         sChannel = input('Choose channel! \n')
         while sChannel != '1' and sChannel != '2':
