@@ -11,27 +11,36 @@ class Test_device(Device):
 		self.data_x = 0
 		self.data_y = 0
 		self.output_status = '1'
+		self.voltage = 0
+		self.current = 0
+		self.current_limit = 1
+		self.Power = '0'
+		self.setTemp = -20
+		self.InTemp = 21
+		self.sMode = 'int'
+		self.status = 'status'
+		self.voltage_limit = 100
 		pass
 
 	def initialize(self):
 		pass
 
-	def get_data(self):
+	def detData(self):
 		return normal(0, 10, 1)[0]
 
 
 	def output(self):
-		self.x_data = self.get_data()
-		self.y_data = self.get_data()
+		self.x_data = self.detData()
+		self.y_data = self.detData()
 		self.printOutput('Test_device')
 		self.printOutput(f'x_data: {self.x_data}')
 		self.printOutput(f'y_data: {self.y_data}')
 		return [['x_data', 'y_data'], [self.x_data, self.y_data]]
 
-	def getOutput(self):
+	def getOutput(self, iChannel=-1):
 		return self.output_status
 
-	def setOutput(self, value):
+	def setOutput(self, value, iChannel=-1):
 		if value:
 			self.output_status = '1'
 		else:
@@ -39,8 +48,81 @@ class Test_device(Device):
 		pass
 
 
-	def rampVoltage(self, voltage):
+	def getVoltage(self, iChannel=-1):
+		return self.voltage
+
+
+	def rampVoltage(self, new_voltage, iChannel=-1):
+		self.voltage = new_voltage
 		pass
+
+	def setVoltage(self, new_voltage, iChannel=-1):
+		self.voltage = new_voltage
+		pass
+
+	def getCurrent(self, iChannel=-1):
+		return self.current
+
+	def setCurrent(self, new_current, iChannel=-1):
+		self.current = new_current
+		pass
+
+	def getCurrentLimit(self, iChannel=-1):
+		return self.current_limit
+
+	def setCurrentLimit(self, new_current_limit, iChannel=-1):
+		self.current_limit = new_current_limit
+		pass
+
+	def getVoltageLimit(self, iChannel=-1):
+		return self.voltage_limit
+
+	def setVoltageLimit(self, new_voltage_limit, iChannel=-1):
+		self.voltage_limit = new_voltage_limit
+		pass
+
+	def getPowerStatus(self, iChannel=-1):
+		return self.Power
+
+	def enablePower(self, sBool, iChannel=-1):
+		self.Power = sBool
+
+	def getSetTemperature(self, iChannel=-1):
+		return float(self.setTemp)
+
+	def getInTemperature(self, iChannel=-1):
+		return float(self.InTemp)
+
+	def setTemperature(self, Tset, iChannel=-1):
+		self.setTemp = Tset
+		pass
+
+	def getTemperature(self, iChannel=-1):
+		return self.setTemp
+
+	def setOperationMode(self, sMode, iChannel=-1):
+		if (sMode == 'int'):
+			self.sMode = 'int'
+		elif (sMode == 'ext'):
+			self.sMode = 'ext'
+		elif (sMode == 'climate'):
+			self.sMode = 'climate'
+		elif (sMode == 'normal'):
+			self.sMode = 'normal'
+		pass
+
+	def getOperationMode(self, iChannel=-1):
+		if self.sMode == 'int':
+			return 'int'
+		elif (self.sMode == 'ext'):
+			return 'ext'
+		elif (self.sMode == 'climate'):
+			return 'climate'
+		elif (self.sMode == 'normal'):
+			return 'normal'
+
+	def getStatus(self, iChannel=-1):
+		return self.status
 
 	def close(self):
 		pass
@@ -50,7 +132,20 @@ class Test_device(Device):
 			device_dict = {
 			'pass': True,
 			'channel': 4,
-			'toogleOutput': True
+			'toogleOutput': True,
+			'rampVoltage': True,
+			'setVoltage': True,
+			'setCurrent': True,
+			'setCurrentLimit': True,
+			# 'getSetTemperature': True,
+			'setTemperature': True,
+			'setCurrentLimit': True,
+			'setCurrentLimit': True,
+			'enablePower': True,
+			'setMode': True,
+			'setOperationMode': True,
+			'getStatus': True,
+			'setOVP': True,
 			}
 			return device_dict
 		pass

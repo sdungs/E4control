@@ -27,7 +27,7 @@ class LU114(Device):
             print(msg)
             self.Power = False
 
-    def getPowerStatus(self):
+    def getPowerStatus(self, iChannel=-1):
         msg = self.ask('MODE?')
         if msg == 'STANDBY':
             return False
@@ -46,7 +46,7 @@ class LU114(Device):
         self.T_set = self.getSetTemperature()
         pass
 
-    def setTemperature(self, Temp):
+    def setTemperature(self, Temp, iChannel=-1):
         if self.Power:
             msg = self.ask('TEMP, S%s' % Temp)
             self.T_set = Temp
@@ -55,14 +55,14 @@ class LU114(Device):
             self.enablePower(True)
             self.setTemperature(Temp)
 
-    def getTemperature(self):
+    def getTemperature(self, iChannel=-1):
         msg = self.ask('TEMP?').split(',')
         return float(msg[0])
 
-    def getSetTemperature(self):
+    def getSetTemperature(self, iChannel=-1):
         msg = self.ask('TEMP?').split(',')
         return float(msg[1])
-    
+
     def userCmd(self, cmd):
         print("userCmd: %s" % cmd)
         return self.ask(cmd)
@@ -105,4 +105,3 @@ class LU114(Device):
         if show:
             print('Temperature:' + '\t' + 'set: %.1f °C' % fTset + '\t' + 'actual: %.1f °C' % fTac)
         return([['Power', 'Tset[C]', 'Tac[C]'], [str(bPower), str(fTset), str(fTac)]])
-

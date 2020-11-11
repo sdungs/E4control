@@ -34,12 +34,12 @@ class TENMA72(Device):
     def initialize(self):
         self.outputEnabled = self.getOutput()
 
-    def setOutput(self, bValue):
+    def setOutput(self, bValue, iChannel=-1):
         self.write('OUT{:d}'.format(bValue))
         self.outputEnabled = bValue
         pass
 
-    def getOutput(self, secondAttempt=False):
+    def getOutput(self, secondAttempt=False, iChannel=-1):
         answ = self.ask('STATUS?')
         if answ == 'Q':
             self.outputEnabled = True
@@ -53,11 +53,11 @@ class TENMA72(Device):
         elif not answ:
             if secondAttempt:
                 return None
-            print('Output-mode unknown! Asking again.') # known bug that the status query needs a second attempt. 
+            print('Output-mode unknown! Asking again.') # known bug that the status query needs a second attempt.
             self.getOutput(True)
         return self.outputEnabled
 
-    def reachedCurrentLimit(self):
+    def reachedCurrentLimit(self, iChannel=-1):
         answ = self.ask('STATUS?')
         if not answ:
             self.reachedCurrentLimit()
@@ -66,35 +66,35 @@ class TENMA72(Device):
         elif answ == 'Q' or '\x10':
             return False
 
-    def enableOCP(self, bValue):
+    def enableOCP(self, bValue, iChannel=-1):
         self.write('OCP{:d}'.format(bValue))
         # if OCP is active, the output will disabled in case the current limit is reached
         pass
 
-    def getSetCurrent(self):
+    def getSetCurrent(self, iChannel=-1):
         return float(self.ask('ISET1?'))
 
-    def getCurrent(self):
+    def getCurrent(self, iChannel=-1):
         return float(self.ask('IOUT1?'))
 
-    def measCurrent(self):
+    def measCurrent(self, iChannel=-1):
         return float(self.ask('IOUT1?'))
 
-    def setCurrent(self, fValue):
+    def setCurrent(self, fValue, iChannel=-1):
         self.write('ISET1:{:.3f}'.format(fValue))
         pass
 
-    def setVoltage(self, fValue):
+    def setVoltage(self, fValue, iChannel=-1):
         self.write('VSET1:{:.2f}'.format(fValue))
         pass
 
-    def getSetVoltage(self):
+    def getSetVoltage(self, iChannel=-1):
         return float(self.ask('VSET1?'))
 
-    def getVoltage(self):
+    def getVoltage(self, iChannel=-1):
         return float(self.ask('VOUT1?'))
 
-    def measVoltage(self):
+    def measVoltage(self, iChannel=-1):
         return float(self.ask('VOUT1?'))
 
     def output(self, show=True):

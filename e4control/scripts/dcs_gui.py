@@ -44,7 +44,7 @@ def get_timestamp(starttime):
     return int(np.round(h, 0)) , int(np.round(s * 60, 0))
 
 
-def change_channel(device_dict):
+def change_channel(device_dict, iChannel):
     number_channels = device_dict['channel']
     layout_device_channel = [
             [sg.Text('Which Channel?')]
@@ -54,6 +54,9 @@ def change_channel(device_dict):
         layout_device_channel.append([sg.Button(f'CH{int(i)}')])
         button_names_channel.append(f'CH{int(i)}')
 
+    if not iChannel == -1:
+        layout_device_channel.append([sg.Button('Back')])
+
     window_channel = sg.Window('Select Channel', layout_device_channel)
 
     while True:
@@ -62,25 +65,97 @@ def change_channel(device_dict):
             window_channel.close()
             abort('Error: No Channel assigned.')
             break
+        if event_channel == 'Back':
+            window_channel.close()
+            switch = False
+            break
         if event_channel in button_names_channel:
             iChannel = button_names_channel.index(event_channel)
             window_channel.close()
+            switch = True
             break
-    return iChannel + 1
-
-
-def toogle_output(device):
-    if device.getOutput() == '1':
-        device.rampVoltage(0)
-        device.setOutput(False)
-        return 'Off'
+    if switch == False:
+        return iChannel
     else:
-        device.setOutput(True)
-        return 'On'
+        return iChannel + 1
+
+
+def toogle_output(device, iChannel):
+    if device.getOutput(iChannel) == '1':
+        device.rampVoltage(0, iChannel)
+        device.setOutput(False, iChannel)
+    else:
+        device.setOutput(True, iChannel)
+pass
+
+
+def toogle_power(device):
+    if device.getPowerStatus():
+        device.enablePower(False)
+    else:
+        device.enablePower(True)
+pass
+
+
+def change_mode(device):
+    layout_mode = [
+            [sg.Text(f'Choose Mode:')],
+            [sg.Button('int'), sg.Button('ext')],
+            [sg.Button('Back')]
+    ]
+    window_mode = sg.Window(f'Set Mode', layout_mode)
+    while True:
+        event_mode, value_mode = window_mode.read()
+        if event_mode == sg.WIN_CLOSED or event_mode == 'Back':
+            window_mode.close()
+            break
+        if event_mode in ['int', 'ext']:
+            device.setOperationMode(event_mode)
+            window_mode.close()
+            break
+    pass
+
+def change_operation_mode(device):
+    layout_operation_mode = [
+            [sg.Text(f'Choose Operation Mode:')],
+            [sg.Button('climate'), sg.Button('normal')],
+            [sg.Button('Back')]
+    ]
+    window_operation_mode = sg.Window(f'Set Mode', layout_operation_mode)
+    while True:
+        event_operation_mode, value_operation_mode = window_operation_mode.read()
+        if event_operation_mode == sg.WIN_CLOSED or event_operation_mode == 'Back':
+            window_operation_mode.close()
+            break
+        if event_operation_mode in ['climate', 'normal']:
+            device.setOperationMode(event_operation_mode)
+            window_operation_mode.close()
+            break
+    pass
+
+def general_interaction(device, interaction_name, interaction_unit, interaction_function, channel):
+    key_str = 'new_value'
+    layout_general_interaction = [
+            [sg.Text(f'Type in new {interaction_name}:')],
+            [sg.Input(key=f'{key_str}'), sg.Text(f'{interaction_unit}'), sg.Button('Ok')],
+            [sg.Button('Back')]
+    ]
+    window_general_interaction = sg.Window(f'Set {interaction_name}', layout_general_interaction)
+    while True:
+        event_general_interaction, values_general_interaction = window_general_interaction.read()
+        if event_general_interaction == sg.WIN_CLOSED or event_general_interaction == 'Back':
+            window_general_interaction.close()
+            break
+        if event_general_interaction == 'Ok':
+            exec(f'device.{interaction_function}(float(values_general_interaction[key_str]), channel)')
+            window_general_interaction.close()
+            break
+    pass
 
 
 def control_window(devices):
     starttime = time.time()
+    iChannel = -1 # default value, if a device does not has any channels
     layout = [
             [sg.Text('CONTROL CENTER', size=(14,3))],
             [sg.Text('Runtime: '), sg.Text(size=(2,1), key=f'timestamp_min'), sg.Text('min'), sg.Text(size=(2,1), key=f'timestamp_sec'), sg.Text('s')],
@@ -132,7 +207,6 @@ def control_window(devices):
                     window_change.close()
                     break
                 if event_change in button_names_change:
-                    iChannel = 0 # default value, if a device does not has any channels
                     device_change = devices[button_names_change.index(event_change)]
                     device_interaction_dict = device_change.interaction(gui=True)
                     d_i_d_keys = list(device_interaction_dict.keys())
@@ -142,27 +216,88 @@ def control_window(devices):
                         layout_device_interaction.append([sg.Text('Nothing to do.')])
 
                     if 'channel' in d_i_d_keys:
-                        iChannel = change_channel(device_interaction_dict)
+                        iChannel = change_channel(device_interaction_dict, iChannel)
 
                         layout_device_interaction.append(
                                 [sg.Text(f'Current Channel: ', size=(18, 2)), sg.Text(size=(3, 2), key='CH'), sg.Button('Switch Channel')]
                         )
-                        button_names_interaction.append('Switch Channel')
+                        # button_names_interaction.append('Switch Channel')
 
                     if 'toogleOutput' in d_i_d_keys:
                         layout_device_interaction.append(
                                 [sg.Text(f'Output: ', size=(18, 2)), sg.Text(size=(3, 2), key='Output_status'), sg.Button('Toogle Output')]
                         )
-                        # layout_device_interaction.append([sg.Button('Toogle Output')])
-                        button_names_interaction.append('Toogle Output')
+                        # button_names_interaction.append('Toogle Output')
+
+                    if 'enablePower' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Power: ', size=(18, 2)), sg.Text(size=(3, 2), key='power_status'), sg.Button('Toogle Power')]
+                        )
+                        # button_names_interaction.append('Change Current')
+
+                    if 'setMode' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Mode: ', size=(18, 2)), sg.Text(size=(3, 2), key='mode_status'), sg.Button('Change Mode')]
+                        )
+                        # button_names_interaction.append('Change Current')
+
+                    if 'setOperationMode' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Operation Mode: ', size=(18, 2)), sg.Text(size=(8, 2), key='operation_mode_status'), sg.Button('Change Operation Mode')]
+                        )
+                        # button_names_interaction.append('Change Current')
+
+                    if 'getStatus' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Status: ', size=(18, 2)), sg.Text(size=(15, 2), key='status_status')]
+                        )
+
+                    if 'rampVoltage' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_voltage_status'), sg.Text('V', size=(2,2)), sg.Button('Change Voltage')]
+                        )
+                        # button_names_interaction.append('Change Voltage')
 
                     if 'setVoltage' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(10, 2), key='voltage_status'), sg.Text('V', size=(2,2)), sg.Button('Change Voltage')]
+                                [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_voltage_status'), sg.Text('V', size=(2,2)), sg.Button('Set Voltage')]
                         )
-                        # layout_device_interaction.append([sg.Button('Change Voltage')])
-                        button_names_interaction.append('Toogle Output')
+                        # button_names_interaction.append('Change Current')
 
+                    if 'setCurrent' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Current: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_status'), sg.Text('uA', size=(2,2)), sg.Button('Set Current')]
+                        )
+                        # button_names_interaction.append('Change Current')
+
+                    if 'setCurrentLimit' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Current Limit: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_limit_status'), sg.Text('uA', size=(2,2)), sg.Button('Set Current Limit')]
+                        )
+                        # button_names_interaction.append('Change Current')
+
+                    if 'getSetTemperature' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getset_temperature_status'), sg.Text('C', size=(2,2)), sg.Button('Set Temperature')]
+                        )
+                        layout_device_interaction.append(
+                                [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getin_temperature_status'), sg.Text('C', size=(2,2))]
+                        )
+
+                    if 'setHumidity' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Set Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_humidity_status'), sg.Text('C', size=(2,2)), sg.Button('Set Humidity')]
+                        )
+
+                    if 'setTemperature' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_temperature_status'), sg.Text('C', size=(2,2)), sg.Button('Set Temperature')]
+                        )
+
+                    if 'setOVP' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'OVP: ', size=(18, 2)), sg.Text(size=(15, 2), key='ovp_status'), sg.Text('V', size=(2,2)), sg.Button('Set OVP')]
+                        )
 
 
                     layout_device_interaction.append([sg.Button('Back')])
@@ -177,26 +312,96 @@ def control_window(devices):
                         if 'channel' in d_i_d_keys:
                             window_device_interaction['CH'].update(iChannel)
                         if event_interaction == 'Switch Channel':
-                            iChannel = change_channel(device_interaction_dict)
+                            iChannel = change_channel(device_interaction_dict, iChannel)
                         if 'toogleOutput' in d_i_d_keys:
-                            if device_change.getOutput() == '1':
+                            if bool(int(device_change.getOutput(iChannel))):
                                 output_status = 'On'
                             else:
                                 output_status = 'Off'
                             window_device_interaction['Output_status'].update(output_status)
                         if event_interaction == 'Toogle Output':
-                            output_status = toogle_output(device_change)
+                            toogle_output(device_change, iChannel)
+                        if 'enablePower' in d_i_d_keys:
+                            if bool(int(device_change.getPowerStatus())):
+                                power_status = 'On'
+                            else:
+                                power_status = 'Off'
+                            window_device_interaction['power_status'].update(power_status)
+                        if event_interaction == 'Toogle Power':
+                            toogle_power(device_change)
+                        if 'setMode' in d_i_d_keys:
+                            mode_status = device_change.getOperationMode()
+                            window_device_interaction['mode_status'].update(mode_status)
+                        if 'setOperationMode' in d_i_d_keys:
+                            operation_mode_status = device_change.getOperationMode()
+                            window_device_interaction['operation_mode_status'].update(operation_mode_status)
+                        if 'getStatus' in d_i_d_keys:
+                            status_status = device_change.getStatus()
+                            window_device_interaction['status_status'].update(status_status)
+                        if event_interaction == 'Change Mode':
+                            change_mode(device_change)
+                        if event_interaction == 'Change Operation Mode':
+                            change_operation_mode(device_change)
+                        if 'rampVoltage' in d_i_d_keys:
+                            ramp_voltage_status = device_change.getVoltage(iChannel)
+                            window_device_interaction['ramp_voltage_status'].update(ramp_voltage_status)
+                        if event_interaction == 'Change Voltage':
+                            general_interaction(device_change, 'voltage', 'V', 'rampVoltage', iChannel)
+                        if 'setVoltage' in d_i_d_keys:
+                            set_voltage_status = device_change.getVoltage(iChannel)
+                            window_device_interaction['set_voltage_status'].update(set_voltage_status)
+                        if event_interaction == 'Set Voltage':
+                            general_interaction(device_change, 'voltage', 'V', 'setVoltage', iChannel)
+                        if 'setCurrent' in d_i_d_keys:
+                            current_status = device_change.getCurrent(iChannel)
+                            window_device_interaction['current_status'].update(current_status)
+                        if event_interaction == 'Set Current':
+                            general_interaction(device_change, 'current', 'uA', 'setCurrent', iChannel)
+                        if 'setCurrentLimit' in d_i_d_keys:
+                            current_limit_status = device_change.getCurrentLimit(iChannel)
+                            window_device_interaction['current_limit_status'].update(current_limit_status)
+                        if event_interaction == 'Set Current Limit':
+                            general_interaction(device_change, 'current limit', 'uA', 'setCurrentLimit', iChannel)
+                        if 'getSetTemperature' in d_i_d_keys:
+                            getset_temperature_status = device_change.getSetTemperature()
+                            getin_temperature_status = device_change.getInTemperature()
+                            window_device_interaction['getset_temperature_status'].update(getset_temperature_status)
+                            window_device_interaction['getin_temperature_status'].update(getin_temperature_status)
+                        if 'setTemperature' in d_i_d_keys:
+                            set_temperature_status = device_change.getTemperature()
+                            window_device_interaction['set_temperature_status'].update(set_temperature_status)
+                        if event_interaction == 'Set Temperature':
+                            general_interaction(device_change, 'temperature', 'C', 'setTemperature', iChannel)
+                        if 'setHumidity' in d_i_d_keys:
+                            set_humidity_status = device_change.getHumidity()
+                            window_device_interaction['set_humidity_status'].update(set_humidity_status)
+                        if event_interaction == 'Set Humidity':
+                            general_interaction(device_change, 'humidity', 'C', 'setHumidity', iChannel)
+                        if 'setOVP' in d_i_d_keys:
+                            ovp_status = device_change.getVoltageLimit()
+                            window_device_interaction['ovp_status'].update(ovp_status)
+                        if event_interaction == 'Set OVP':
+                            general_interaction(device_change, 'OVP', 'V', 'setVoltageLimit', iChannel)
+                    iChannel = -1 # reset iChannel to its default value -1 after the change window is closed
 
             # {
             # 'pass': ,
             # 'channel': ,
             # 'enableOutput': ,
             # 'toogleOutput'
+            # 'rampVoltage': ,
             # 'setVoltage': ,
             # 'setCurrent': ,
-            # 'serCurrentLimit': ,
+            # 'setCurrentLimit': ,
             # 'setTemperature': ,
+            # 'setHumidity': ,
+            # 'enablePower': ,
             # 'getStatus': ,
+            # 'enableOCP': ,
+            # 'setOVP': ,
+            # 'setMode': ,
+            # 'setPowerMode': ,
+            # 'setOperationMode': ,
             # }
             # x = int(input('Choose the number of a Device:'))
             # if (x-1) in range(len(config_devices)):
@@ -207,7 +412,7 @@ def control_window(devices):
         for d in devices:
             header, values = d.output()
             for h, v in zip(header, values):
-                window[f'{h}{device_counter}'].update(v)
+                window[f'{h}{device_counter}'].update(float(v))
             device_counter += 1
 
         h, s = get_timestamp(starttime)
@@ -334,18 +539,18 @@ def abort(err_msg=False):
             sys.exit()
     pass
 
+
 # Disable printing
 def blockPrint():
     sys.stdout = open(os.devnull, 'w')
-    # pass
+    pass
+
 
 # Restore printing
 def enablePrint():
     sys.stdout = sys.__stdout__
+    pass
 
-
-# def print(string):
-#     sys.stdout.write(string+'\r\n')
 
 def main():
     args = parser.parse_args()

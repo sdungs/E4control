@@ -21,7 +21,7 @@ class JULABO(Device):
     def initialize(self, iChannel=-1):
         self.getAndSetParameter()
 
-    def enablePower(self, bEnable):
+    def enablePower(self, bEnable, iChannel=-1):
         if bEnable:
             self.write('out_mode_05 1')
             self.Power = '1'
@@ -29,10 +29,10 @@ class JULABO(Device):
             self.write('out_mode_05 0')
             self.Power = '0'
 
-    def getPowerStatus(self):
+    def getPowerStatus(self, iChannel=-1):
         return self.ask('in_mode_05')
 
-    def getStatus(self):
+    def getStatus(self, iChannel=-1):
         return self.ask('status')
 
     def getAndSetParameter(self):
@@ -41,23 +41,23 @@ class JULABO(Device):
         self.Mode = self.getOperationMode()
         pass
 
-    def setTemperature(self, fValue):
+    def setTemperature(self, fValue, iChannel=-1):
         self.write('out_sp_00 {:2.1f}'.format(fValue))
         pass
 
-    def getSetTemperature(self):
+    def getSetTemperature(self, iChannel=-1):
         return float(self.ask('in_sp_00'))
 
-    def getInTemperature(self):
+    def getInTemperature(self, iChannel=-1):
         return float(self.ask('in_pv_00'))
 
-    def getExTemperature(self):
+    def getExTemperature(self, iChannel=-1):
         return float(self.ask('in_pv_02'))
 
-    def getHeaterPower(self):
+    def getHeaterPower(self, iChannel=-1):
         return float(self.ask('in_pv_01'))
 
-    def setOperationMode(self, sMode):
+    def setOperationMode(self, sMode, iChannel=-1):
         if (sMode == 'int'):
             self.write('out_mode_04 0')
             self.Mode = 'int'
@@ -67,7 +67,7 @@ class JULABO(Device):
         else:
             print('Unknown mode:{:s}'.format(sMode))
 
-    def getOperationMode(self):
+    def getOperationMode(self, iChannel=-1):
         if (self.ask('in_mode_04') == '0'):
             return('int')
         else:

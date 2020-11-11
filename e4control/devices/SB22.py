@@ -61,7 +61,7 @@ class SB22(Device):
         cmd = '%s%s' % (line, pn) + chr(3)
         self.write(cmd)
 
-    def enablePower(self, bEnable):
+    def enablePower(self, bEnable, iChannel=-1):
         if bEnable:
             self.Power = '1'
         else:
@@ -88,11 +88,11 @@ class SB22(Device):
         self.T_set = p[p.find('T') + 1:p.find('F')]
         self.H_set = p[p.find('F') + 1:p.find('R')]
 
-    def setTemperature(self, fValue):
+    def setTemperature(self, fValue, iChannel=-1):
         self.T_set = '%.1f' % fValue
         self.updateChanges()
 
-    def getSetTemperature(self):
+    def getSetTemperature(self, iChannel=-1):
         return float(self.T_set)
 
     def getTemperature(self, iChannel=-1):
@@ -105,14 +105,14 @@ class SB22(Device):
         v = v.replace('&', '.')
         return float(v)
 
-    def setHumidity(self, fValue):
+    def setHumidity(self, fValue, iChannel=-1):
         self.H_set = '%.1f' % fValue
         self.updateChanges()
 
     def getSetHumidity(self, iChannel=-1):
         return float(self.H_set)
 
-    def getHumidity(self):
+    def getHumidity(self, iChannel=-1):
         s = self.getStatus()
         if (s.find('#') >= 0):
             p = s.split('#')[0]
@@ -121,7 +121,7 @@ class SB22(Device):
         v = p[p.find('F') + 1:p.find('P')]
         return int(v)
 
-    def getError(self):
+    def getError(self, iChannel=-1):
         sStatus = self.getStatus()
         if (sStatus.find('#') >= 0):
             sError = sStatus[sStatus.find('#') + 1:sStatus.find('T')]
@@ -129,7 +129,7 @@ class SB22(Device):
             sError = sStatus[sStatus.find('$') + 1:sStatus.find('T')]
         return sError
 
-    def setOperationMode(self, sMode):
+    def setOperationMode(self, sMode, iChannel=-1):
         if (sMode == 'climate'):
             self.D2 = '0'
         elif (sMode == 'normal'):
@@ -138,7 +138,7 @@ class SB22(Device):
             print('Unknown mode: %s' % sMode)
         self.updateChanges()
 
-    def getOperationMode(self):
+    def getOperationMode(self, iChannel=-1):
         if (self.D2 == '0'):
             sMode = 'climate'
         else:
@@ -212,7 +212,7 @@ class SB22(Device):
             '4: set new Humidity\n'
             '5: set power Mode'
             )
-        
+
         x = input('Number? \n')
         while not (x in ['0','1','2','3','4','5']):
             x = input('Possible Inputs: 0, 1, 2, 3, 4 or 5! \n')

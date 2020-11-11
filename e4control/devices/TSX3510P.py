@@ -15,36 +15,36 @@ class TSX3510P(Device):
     def initialize(self):
         pass
 
-    def setVoltageLimit(self, fValue):
+    def setVoltageLimit(self, fValue, iChannel=-1):
         self.write('OVP %f' % fValue)
 
-    def getVoltageLimit(self):
+    def getVoltageLimit(self, iChannel=-1):
         sOVP = self.ask('OVP?')
         return float(sOVP[4:])
 
-    def setVoltage(self, fValue):
+    def setVoltage(self, fValue, iChannel=-1):
         self.write('V %0.2f' % fValue)
 
-    def setCurrent(self, fValue):
+    def setCurrent(self, fValue, iChannel=-1):
         self.write('I %0.2f' % fValue)
 
-    def getVoltage(self):
+    def getVoltage(self, iChannel=-1):
         sV = self.ask('VO?')
         return float(sV[:sV.find('V')])
 
-    def getVoltageSet(self):
+    def getVoltageSet(self, iChannel=-1):
         sV = self.ask('V?')
         return float(sV[2:])
 
-    def getCurrent(self):
+    def getCurrent(self, iChannel=-1):
         sI = self.ask('IO?')
         return float(sI[:sI.find('A')])
 
-    def getCurrentSet(self):
+    def getCurrentSet(self, iChannel=-1):
         sI = self.ask('I?')
         return float(sI[2:])
 
-    def getPower(self):
+    def getPower(self, iChannel=-1):
         sP = self.ask('POWER?')
         return float(sP[:sP.find('W')])
 
