@@ -14,7 +14,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 
 from threading import Thread
 
-import e4control.utils as sh
+from .. import utils as sh
 
 
 # arg parser
@@ -22,26 +22,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument('config', help='config file')
 parser.add_argument('-l', '--logfile', help='potential logfile')
 
-class pressedKeyThread(Thread):
-    pressed_key = ''
-
-    def run(self):
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        self.pressed_key = ch
-        print('"{}" has been pressed.'.format(self.pressed_key))
-
-
 def get_timestamp(starttime):
-    timestamp = (time.time() - starttime) / 60
+    time_now = time.time()
+    timestamp = (time_now - starttime) / 60
     h, s = divmod(timestamp, 1)
-    return int(np.round(h, 0)) , int(np.round(s * 60, 0))
+    return int(np.round(h, 0)) , int(np.round(s * 60, 0)), time_now
 
 
 def change_channel(device_dict, iChannel):
@@ -81,7 +66,7 @@ def change_channel(device_dict, iChannel):
 
 
 def toogle_output(device, iChannel):
-    if device.getOutput(iChannel) == '1':
+    if bool(int(device.getOutput(iChannel))):
         device.rampVoltage(0, iChannel)
         device.setOutput(False, iChannel)
     else:
@@ -90,11 +75,33 @@ pass
 
 
 def toogle_power(device):
-    if device.getPowerStatus():
+    if int(bool(device.getPowerStatus())):
         device.enablePower(False)
     else:
         device.enablePower(True)
 pass
+
+
+def enable_OCP(device, iChannel):
+    layout_OCP = [
+            [sg.Text(f'Enable OCP:')],
+            [sg.Button('Yes'), sg.Button('No')],
+            [sg.Button('Back')]
+    ]
+    window_OCP = sg.Window(f'Set Mode', layout_OCP)
+    while True:
+        event_OCP, value_OCP = window_OCP.read()
+        if event_OCP == sg.WIN_CLOSED or event_OCP == 'Back':
+            window_OCP.close()
+            break
+        if event_OCP in ['Yes', 'No']:
+            if event_OCP == 'Yes':
+                device.enableOCP(True)
+            elif event_OCP == 'No':
+                device.enableOCP(False)
+            window_OCP.close()
+            break
+    pass
 
 
 def change_mode(device):
@@ -137,7 +144,7 @@ def general_interaction(device, interaction_name, interaction_unit, interaction_
     key_str = 'new_value'
     layout_general_interaction = [
             [sg.Text(f'Type in new {interaction_name}:')],
-            [sg.Input(key=f'{key_str}'), sg.Text(f'{interaction_unit}'), sg.Button('Ok')],
+            [sg.Input(key=key_str), sg.Text(interaction_unit), sg.Button('Ok')],
             [sg.Button('Back')]
     ]
     window_general_interaction = sg.Window(f'Set {interaction_name}', layout_general_interaction)
@@ -153,7 +160,8 @@ def general_interaction(device, interaction_name, interaction_unit, interaction_
     pass
 
 
-def control_window(devices):
+def control_window(devices, fw):
+    blockPrint()
     starttime = time.time()
     iChannel = -1 # default value, if a device does not has any channels
     layout = [
@@ -167,7 +175,6 @@ def control_window(devices):
         device_name = d.__class__.__name__
         device_names.append(f'{device_name}')
         layout.append([sg.Text(f'\n{device_name}', size=(len(device_name), 2))])
-        blockPrint()
         header, values = d.output()
         for h, v in zip(header, values):
             layout.append([sg.Text(f'{h}:\t'), sg.Text(size=(12,1), key=f'{h}{device_counter}')])
@@ -210,7 +217,6 @@ def control_window(devices):
                     device_change = devices[button_names_change.index(event_change)]
                     device_interaction_dict = device_change.interaction(gui=True)
                     d_i_d_keys = list(device_interaction_dict.keys())
-                    button_names_interaction = []
                     layout_device_interaction = []
                     if 'pass' in d_i_d_keys:
                         layout_device_interaction.append([sg.Text('Nothing to do.')])
@@ -221,31 +227,26 @@ def control_window(devices):
                         layout_device_interaction.append(
                                 [sg.Text(f'Current Channel: ', size=(18, 2)), sg.Text(size=(3, 2), key='CH'), sg.Button('Switch Channel')]
                         )
-                        # button_names_interaction.append('Switch Channel')
 
                     if 'toogleOutput' in d_i_d_keys:
                         layout_device_interaction.append(
                                 [sg.Text(f'Output: ', size=(18, 2)), sg.Text(size=(3, 2), key='Output_status'), sg.Button('Toogle Output')]
                         )
-                        # button_names_interaction.append('Toogle Output')
 
                     if 'enablePower' in d_i_d_keys:
                         layout_device_interaction.append(
                                 [sg.Text(f'Power: ', size=(18, 2)), sg.Text(size=(3, 2), key='power_status'), sg.Button('Toogle Power')]
                         )
-                        # button_names_interaction.append('Change Current')
 
                     if 'setMode' in d_i_d_keys:
                         layout_device_interaction.append(
                                 [sg.Text(f'Mode: ', size=(18, 2)), sg.Text(size=(3, 2), key='mode_status'), sg.Button('Change Mode')]
                         )
-                        # button_names_interaction.append('Change Current')
 
                     if 'setOperationMode' in d_i_d_keys:
                         layout_device_interaction.append(
                                 [sg.Text(f'Operation Mode: ', size=(18, 2)), sg.Text(size=(8, 2), key='operation_mode_status'), sg.Button('Change Operation Mode')]
                         )
-                        # button_names_interaction.append('Change Current')
 
                     if 'getStatus' in d_i_d_keys:
                         layout_device_interaction.append(
@@ -256,40 +257,42 @@ def control_window(devices):
                         layout_device_interaction.append(
                                 [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_voltage_status'), sg.Text('V', size=(2,2)), sg.Button('Change Voltage')]
                         )
-                        # button_names_interaction.append('Change Voltage')
 
                     if 'setVoltage' in d_i_d_keys:
                         layout_device_interaction.append(
                                 [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_voltage_status'), sg.Text('V', size=(2,2)), sg.Button('Set Voltage')]
                         )
-                        # button_names_interaction.append('Change Current')
 
                     if 'setCurrent' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Current: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_status'), sg.Text('uA', size=(2,2)), sg.Button('Set Current')]
+                                [sg.Text(f'Current: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_status'), sg.Text('A', size=(2,2)), sg.Button('Set Current')]
                         )
-                        # button_names_interaction.append('Change Current')
 
                     if 'setCurrentLimit' in d_i_d_keys:
                         layout_device_interaction.append(
                                 [sg.Text(f'Current Limit: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_limit_status'), sg.Text('uA', size=(2,2)), sg.Button('Set Current Limit')]
                         )
-                        # button_names_interaction.append('Change Current')
 
                     if 'getSetTemperature' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getset_temperature_status'), sg.Text('C', size=(2,2)), sg.Button('Set Temperature')]
+                                [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getin_temperature_status'), sg.Text('C', size=(2,2))]
                         )
                         layout_device_interaction.append(
-                                [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getin_temperature_status'), sg.Text('C', size=(2,2))]
+                                [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getset_temperature_status'), sg.Text('C', size=(2,2)), sg.Button('Set Temperature')]
                         )
 
                     if 'setHumidity' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Set Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_humidity_status'), sg.Text('C', size=(2,2)), sg.Button('Set Humidity')]
+                                [sg.Text(f'Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='humidity_status'), sg.Text('%', size=(2,2))]
+                        )
+                        layout_device_interaction.append(
+                                [sg.Text(f'Set Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_humidity_status'), sg.Text('%', size=(2,2)), sg.Button('Change Set Humidity')]
                         )
 
                     if 'setTemperature' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='temperature_status'), sg.Text('C', size=(2,2))]
+                        )
                         layout_device_interaction.append(
                                 [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_temperature_status'), sg.Text('C', size=(2,2)), sg.Button('Set Temperature')]
                         )
@@ -297,6 +300,11 @@ def control_window(devices):
                     if 'setOVP' in d_i_d_keys:
                         layout_device_interaction.append(
                                 [sg.Text(f'OVP: ', size=(18, 2)), sg.Text(size=(15, 2), key='ovp_status'), sg.Text('V', size=(2,2)), sg.Button('Set OVP')]
+                        )
+
+                    if 'enableOCP' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Button('Enable OCP')]
                         )
 
 
@@ -356,7 +364,7 @@ def control_window(devices):
                             current_status = device_change.getCurrent(iChannel)
                             window_device_interaction['current_status'].update(current_status)
                         if event_interaction == 'Set Current':
-                            general_interaction(device_change, 'current', 'uA', 'setCurrent', iChannel)
+                            general_interaction(device_change, 'current', 'A', 'setCurrent', iChannel)
                         if 'setCurrentLimit' in d_i_d_keys:
                             current_limit_status = device_change.getCurrentLimit(iChannel)
                             window_device_interaction['current_limit_status'].update(current_limit_status)
@@ -368,20 +376,27 @@ def control_window(devices):
                             window_device_interaction['getset_temperature_status'].update(getset_temperature_status)
                             window_device_interaction['getin_temperature_status'].update(getin_temperature_status)
                         if 'setTemperature' in d_i_d_keys:
-                            set_temperature_status = device_change.getTemperature()
+                            temperature_status = device_change.getTemperature()
+                            set_temperature_status = device_change.getSetTemperature()
+                            window_device_interaction['temperature_status'].update(temperature_status)
                             window_device_interaction['set_temperature_status'].update(set_temperature_status)
                         if event_interaction == 'Set Temperature':
                             general_interaction(device_change, 'temperature', 'C', 'setTemperature', iChannel)
                         if 'setHumidity' in d_i_d_keys:
-                            set_humidity_status = device_change.getHumidity()
+                            humidity_status = device_change.getHumidity()
+                            set_humidity_status = device_change.getSetHumidity()
+                            window_device_interaction['humidity_status'].update(humidity_status)
                             window_device_interaction['set_humidity_status'].update(set_humidity_status)
-                        if event_interaction == 'Set Humidity':
-                            general_interaction(device_change, 'humidity', 'C', 'setHumidity', iChannel)
+                        if event_interaction == 'Change Set Humidity':
+                            general_interaction(device_change, 'humidity', '%', 'setHumidity', iChannel)
                         if 'setOVP' in d_i_d_keys:
                             ovp_status = device_change.getVoltageLimit()
                             window_device_interaction['ovp_status'].update(ovp_status)
                         if event_interaction == 'Set OVP':
                             general_interaction(device_change, 'OVP', 'V', 'setVoltageLimit', iChannel)
+                        if event_interaction == 'Enable OCP':
+                            enable_OCP(device_change, iChannel)
+                        time.sleep(0.5)
                     iChannel = -1 # reset iChannel to its default value -1 after the change window is closed
 
             # {
@@ -409,71 +424,23 @@ def control_window(devices):
             # else:
             #     continue
         device_counter = 0
+        h, s, time_now = get_timestamp(starttime)
+        all_values = [time_now]
+        window['timestamp_min'].update(h)
+        window['timestamp_sec'].update(s)
+
         for d in devices:
             header, values = d.output()
             for h, v in zip(header, values):
                 window[f'{h}{device_counter}'].update(float(v))
+                all_values.append(float(v))
             device_counter += 1
 
-        h, s = get_timestamp(starttime)
-        window['timestamp_min'].update(h)
-        window['timestamp_sec'].update(s)
+        if not fw == -1:
+            sh.write_line(fw, all_values)
         time.sleep(1)
     enablePrint()
-
-
-    while True:
-        key_thread = pressedKeyThread()
-        key_thread.start()
-        while key_thread.is_alive():
-            values = [str(time.time())]
-            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-            timestamp = (time.time()-starttime) / 60
-            h, s = divmod(timestamp, 1)
-            # timestamp = time.strftime('%a, %d %b %Y %H:%M:%S ', time.localtime())
-            print(' \033[35m CONTROL CENTER \t ' + 'runtime: %.0f min %.0f s \033[0m' % (h, s*60))
-            print('-----------------------------------------------------')
-            for d in devices:
-                try:
-                    h, v = d.output()
-                    values += v
-                    print('-----------------------------------------------------')
-                except:
-                    h = []
-                    v = []
-                    h, v = d.output()
-                    values += v
-                    print('-----------------------------------------------------')
-            # if args.logfile:
-                # sh.write_line(fw, values)
-            time.sleep(1)
-            print('press c (=CHANGE PARAMETER) or q (=QUIT)')
-            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-            if key_thread.is_alive():
-                time.sleep(5)
-            print('')
-
-        key_thread.join()
-        key = key_thread.pressed_key
-        print('Interpreting "{}" key...'.format(key_thread.pressed_key))
-
-        if key == 'q':
-            print('Quitting...')
-            break
-
-        if key == 'c':
-            print('List of active Devices:')
-            print('0: Continue dcs mode without changes')
-            for i in range(len(config_devices)):
-                print('%i: %s' % (i+1, config_devices[i][1]))
-            x = int(input('Choose the number of a Device:'))
-            if (x-1) in range(len(config_devices)):
-                devices[x-1].interaction()
-            else:
-                continue
-        else:
-            print('Cannot handle this key. Continuing.')
-            time.sleep(1)
+    pass
 
 
 def show_dcs_device_list_gui(devices):
@@ -577,6 +544,7 @@ def main():
 
     # logfile
     if args.logfile:
+        blockPrint()
         checktxtfile = (args.logfile + '.txt')
         if os.path.isfile(checktxtfile):
             sys.exit('logfile ' + args.logfile + ' already exists!')
@@ -592,8 +560,11 @@ def main():
             header = header + (i.output(show=False)[0])
         sh.write_line(fw, d_names)
         sh.write_line(fw, header)
+        enablePrint()
+    else:
+        fw = -1
 
-    control_window(devices)
+    control_window(devices, fw)
 
     # print(threadKey.is_alive())
     for d in devices:
