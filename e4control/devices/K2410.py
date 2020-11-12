@@ -20,6 +20,7 @@ class K2410(Device):
     def initialize(self, iChannel=-1):
         self.setCurrentAutoRange(True)
         self.setVoltageRange('MAX')
+        self.write(':SENS:FUNC "VOLT", "CURR"')
         pass
 
     def setCurrentAutoRange(self, bsetCurrentAutoRange):
