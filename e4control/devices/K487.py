@@ -152,18 +152,25 @@ class K487(Device):
         return([['Output', 'U[V]', 'I[uA]'], [str(bPower), str(fVoltage), str(fCurrent)]])
 
     def interaction(self):
-        print('1: enable output')
-        print('2: set voltage')
-        x = input('Number? \n')
-        while x != '1' and x != '2':
-            x = input('Possible Inputs: 1 or 2! \n')
-        if x == '1':
-            bO = input('Please enter ON or OFF! \n')
-            if bO in ['On', 'on', 'ON', '1']:
-                self.setOutput(True)
-            else:
-                self.rampVoltage(0)
-                self.setOutput(False)
-        elif x == '2':
-            fV = input('Please enter new Voltage in V \n')
-            self.rampVoltage(float(fV))
+        if gui:
+            device_dict = {
+			'toogleOutput': True,
+			'rampVoltage': True,
+			}
+            return device_dict
+        else:
+            print('1: enable output')
+            print('2: set voltage')
+            x = input('Number? \n')
+            while x != '1' and x != '2':
+                x = input('Possible Inputs: 1 or 2! \n')
+            if x == '1':
+                bO = input('Please enter ON or OFF! \n')
+                if bO in ['On', 'on', 'ON', '1']:
+                    self.setOutput(True)
+                else:
+                    self.rampVoltage(0)
+                    self.setOutput(False)
+            elif x == '2':
+                fV = input('Please enter new Voltage in V \n')
+                self.rampVoltage(float(fV))

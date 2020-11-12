@@ -180,5 +180,11 @@ class K196(Device):
             print('Error!')
         return([header, values])
 
-    def interaction(self):
-        print('Nothing to do...')
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+            'pass': True,
+            }
+            return device_dict
+        else:
+            print('Nothing to do...')
