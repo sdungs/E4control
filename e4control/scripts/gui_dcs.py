@@ -4,15 +4,9 @@ import os
 import sys
 import argparse
 import time
-import termios, tty
 import PySimpleGUI as sg
 import numpy as np
 from e4control import __version__ as version
-
-# This is to include a matplotlib figure in a Tkinter canvas
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-
-from threading import Thread
 
 from .. import utils as sh
 
@@ -558,9 +552,9 @@ def main():
     else:
         fw = -1
 
+    # controll window, where the data from the hardware is presented and changes in the hardware settings can be performed
     control_window(devices, fw)
 
-    # print(threadKey.is_alive())
     for d in devices:
         d.close()
     if args.logfile:
