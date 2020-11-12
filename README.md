@@ -32,6 +32,7 @@ Following devices are currently supported:
 - *e4control_measure_It* , to perform a current vs time measurement
 <!-- - *e4control_measure_Cint*, to perform a capcity vs. voltage measurement with hold for 'hold_t' at 'hold_v' for 'times' times -->
 - *e4control_dcs* , for manual real time device controlling
+- *e4control_dcs_gui* , for manual real time device controlling using a gui
 
 
 ## Installation
