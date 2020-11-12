@@ -119,33 +119,43 @@ class TENMA72(Device):
         sHeader = ['Output', 'U[V]', 'I[A]']
         return([sHeader, sValues])
 
-    def interaction(self):
-        print('1: enable Output')
-        print('2: set Voltage')
-        print('3: set Current')
-        print('4: enable OCP')
-        x = input('Number? \n')
-        while x != '1' and x != '2' and x != '3' and x != '4':
-            x = input('Possible Inputs: 1,2,3 or 4! \n')
-        if x == '1':
-            bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on' or bO == '1':
-                self.setOutput(True)
-            elif bO == 'OFF' or bO == 'off' or bO == '0':
-                self.setOutput(False)
-            else:
-                pass
-        elif x == '2':
-            sV = input('Please enter new Voltage in V\n')
-            self.setVoltage(float(sV))
-        elif x == '3':
-            sI = input('Please enter new Current in A\n')
-            self.setCurrent(float(sI))
-        elif x == '4':
-            bOCP = input('Please enter ON or OFF! \n')
-            if bOCP == 'ON' or bOCP == 'on' or bOCP == '1':
-                self.enableOCP(True)
-            elif bOCP == 'OFF' or bOCP == 'off' or bOCP == '0':
-                self.enableOCP(False)
-            else:
-                pass
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+			'channel': 4,
+			'toogleOutput': True,
+			'setVoltage': True,
+			'setCurrent': True,
+			'enableOCP': True,
+			}
+            return device_dict
+        else:
+            print('1: enable Output')
+            print('2: set Voltage')
+            print('3: set Current')
+            print('4: enable OCP')
+            x = input('Number? \n')
+            while x != '1' and x != '2' and x != '3' and x != '4':
+                x = input('Possible Inputs: 1,2,3 or 4! \n')
+            if x == '1':
+                bO = input('Please enter ON or OFF! \n')
+                if bO == 'ON' or bO == 'on' or bO == '1':
+                    self.setOutput(True)
+                elif bO == 'OFF' or bO == 'off' or bO == '0':
+                    self.setOutput(False)
+                else:
+                    pass
+            elif x == '2':
+                sV = input('Please enter new Voltage in V\n')
+                self.setVoltage(float(sV))
+            elif x == '3':
+                sI = input('Please enter new Current in A\n')
+                self.setCurrent(float(sI))
+            elif x == '4':
+                bOCP = input('Please enter ON or OFF! \n')
+                if bOCP == 'ON' or bOCP == 'on' or bOCP == '1':
+                    self.enableOCP(True)
+                elif bOCP == 'OFF' or bOCP == 'off' or bOCP == '0':
+                    self.enableOCP(False)
+                else:
+                    pass

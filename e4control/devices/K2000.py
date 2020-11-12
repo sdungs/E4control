@@ -82,7 +82,7 @@ class K2000(Device):
         else:
             print('Unknown range!')
 
-    def getStatus(self):
+    def getStatus(self, iChannel=-1):
         return self.ask('U0X')
 
     def getKind(self):
@@ -195,5 +195,11 @@ class K2000(Device):
             self.printOutput('Error!')
         return([header, values])
 
-    def interaction(self):
-        print('Nothing to do...')
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+            'pass': True,
+            }
+            return device_dict
+        else:
+            print('Nothing to do...')

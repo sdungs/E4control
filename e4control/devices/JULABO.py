@@ -96,25 +96,33 @@ class JULABO(Device):
 
         return([['Mode', 'Power', 'Tset[C]', 'Tin[C]', 'Tex[C]', 'Pheat[]'], [str(sMode), str(bPower), str(fTset), str(fTin), str(fTex), str(fHeat)]])
 
-    def interaction(self):
-        print('1: enable Power')
-        print('2: change Mode')
-        print('3: set new Temperature')
-        x = input('Number? \n')
-        while x != '1' and x != '2' and x != '3':
-            x = input('Possible Inputs: 1,2 or 3! \n')
-        if x == '1':
-            bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on':
-                self.enablePower(1)
-            elif bO == 'OFF' or bO == 'off':
-                self.enablePower(0)
-            else:
-                pass
-        elif x == '2':
-            sM = input('choose: int or ext \n')
-            self.setOperationMode(sM)
-        elif x == '3':
-            fT = input('Please enter new Temperature in °C \n')
-            self.setTemperature(float(fT))
-            time.sleep(0.5)
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+			'getSetTemperature': True,
+			'enablePower': True,
+			'setMode': True,
+			}
+            return device_dict
+        else:
+            print('1: enable Power')
+            print('2: change Mode')
+            print('3: set new Temperature')
+            x = input('Number? \n')
+            while x != '1' and x != '2' and x != '3':
+                x = input('Possible Inputs: 1,2 or 3! \n')
+            if x == '1':
+                bO = input('Please enter ON or OFF! \n')
+                if bO == 'ON' or bO == 'on':
+                    self.enablePower(1)
+                elif bO == 'OFF' or bO == 'off':
+                    self.enablePower(0)
+                else:
+                    pass
+            elif x == '2':
+                sM = input('choose: int or ext \n')
+                self.setOperationMode(sM)
+            elif x == '3':
+                fT = input('Please enter new Temperature in °C \n')
+                self.setTemperature(float(fT))
+                time.sleep(0.5)

@@ -140,27 +140,35 @@ class ISEG(Device):
             self.printOutput('Limit (range mA): {:5.0f} uA \t {:6.0f} uA'.format(fLimit1,fLimit2))
         return([['Ilim1[uA]', 'U1[V]', 'I1[uA]', 'Ilim2[uA]', 'U2[V]', 'I2[uA]'], [str(fLimit1), str(fVoltage1), str(fCurrent1), str(fLimit2), str(fVoltage2), str(fCurrent2)]])
 
-    def interaction(self):
-        print(
-            'ISEG selected.'
-            )
-        sChannel = input('Which channel? \n')
-        while not (sChannel in ['1','2']):
-            sChannel = input('Possible Channels: 1 or 2! \n')
-        iChannel = int(sChannel)
-        print(
-            'Possible actions:\n'
-            '0: Continue dcs mode without any changes\n'
-            '1: Set voltage\n'
-            '2: Get status (try this if you have fixed your limit issues and still get "S{}=ERR" when ramping voltages)'.format(sChannel)
-            )
-        x = input('Number? \n')
-        while not (x in ['0','1','2']):
-            x = input('Possible Inputs: 0, 1, 2! \n')
-        if x == '0':
-            pass
-        elif x == '1':
-            fV = input('Please enter new Voltage (in V) for Channel {}.\n'.format(sChannel))
-            self.rampVoltage(float(fV), iChannel)
-        elif x == '2':
-            print('ISEG status: "{}"'.format(self.getStatus(iChannel)))
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+            'channel': 2,
+            'rampVoltage': True,
+            'getStatus': True,
+            }
+            return device_dict
+        else:
+            print(
+                'ISEG selected.'
+                )
+            sChannel = input('Which channel? \n')
+            while not (sChannel in ['1','2']):
+                sChannel = input('Possible Channels: 1 or 2! \n')
+            iChannel = int(sChannel)
+            print(
+                'Possible actions:\n'
+                '0: Continue dcs mode without any changes\n'
+                '1: Set voltage\n'
+                '2: Get status (try this if you have fixed your limit issues and still get "S{}=ERR" when ramping voltages)'.format(sChannel)
+                )
+            x = input('Number? \n')
+            while not (x in ['0','1','2']):
+                x = input('Possible Inputs: 0, 1, 2! \n')
+            if x == '0':
+                pass
+            elif x == '1':
+                fV = input('Please enter new Voltage (in V) for Channel {}.\n'.format(sChannel))
+                self.rampVoltage(float(fV), iChannel)
+            elif x == '2':
+                print('ISEG status: "{}"'.format(self.getStatus(iChannel)))

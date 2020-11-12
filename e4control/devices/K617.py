@@ -144,5 +144,11 @@ class K617(Device):
         #     print('Error!')
         return([header, values])
 
-    def interaction(self):
-        print('Not yet implemeted...')
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+			'pass': True,
+			}
+            return device_dict
+        else:
+            print('Not yet implemeted...')

@@ -10,16 +10,18 @@ class Test_device(Device):
 	def __init__(self, connection_type, host, port):
 		self.data_x = 0
 		self.data_y = 0
-		self.output_status = '1'
+		self.output_status = '0'
 		self.voltage = 0
 		self.current = 0
 		self.current_limit = 1
-		self.Power = '0'
+		self.Power = False
 		self.setTemp = -20
 		self.InTemp = 21
 		self.sMode = 'int'
 		self.status = 'status'
 		self.voltage_limit = 100
+		self.sHumidity = 40
+		self.Humidity = 20
 		pass
 
 	def initialize(self):
@@ -29,7 +31,7 @@ class Test_device(Device):
 		return normal(0, 10, 1)[0]
 
 
-	def output(self):
+	def output(self, show=False):
 		self.x_data = self.detData()
 		self.y_data = self.detData()
 		self.printOutput('Test_device')
@@ -86,6 +88,7 @@ class Test_device(Device):
 
 	def enablePower(self, sBool, iChannel=-1):
 		self.Power = sBool
+		pass
 
 	def getSetTemperature(self, iChannel=-1):
 		return float(self.setTemp)
@@ -98,7 +101,17 @@ class Test_device(Device):
 		pass
 
 	def getTemperature(self, iChannel=-1):
-		return self.setTemp
+		return float(self.setTemp)
+
+	def getHumidity(self, iChannel=-1):
+		return float(self.Humidity)
+
+	def getSetHumidity(self, iChannel=-1):
+		return float(self.sHumidity)
+
+	def setHumidity(self, value, iChannel=-1):
+		self.sHumidity = value
+		pass
 
 	def setOperationMode(self, sMode, iChannel=-1):
 		if (sMode == 'int'):
@@ -124,11 +137,14 @@ class Test_device(Device):
 	def getStatus(self, iChannel=-1):
 		return self.status
 
+	def enableOCP(self, bool, iChannel=-1):
+		pass
+
 	def close(self):
 		pass
 
 	def interaction(self, gui=False):
-		if gui == True:
+		if gui:
 			device_dict = {
 			'pass': True,
 			'channel': 4,
@@ -137,15 +153,15 @@ class Test_device(Device):
 			'setVoltage': True,
 			'setCurrent': True,
 			'setCurrentLimit': True,
-			# 'getSetTemperature': True,
+			'getSetTemperature': True,
 			'setTemperature': True,
-			'setCurrentLimit': True,
-			'setCurrentLimit': True,
+			'setHumidity': True,
 			'enablePower': True,
 			'setMode': True,
 			'setOperationMode': True,
 			'getStatus': True,
 			'setOVP': True,
+			'enableOCP': True,
 			}
 			return device_dict
 		pass

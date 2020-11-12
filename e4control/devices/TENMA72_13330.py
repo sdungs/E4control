@@ -13,11 +13,11 @@ class TENMA72_13330(Device):
         self.trm = '\n'
         self.initialize()
 
-    def __checkChannel(self, channel):
-        sChannel = str(channel)
+    def __checkChannel(self, iChannel):
+        sChannel = str(iChannel)
         if sChannel in ('1','2'):
             return sChannel
-        else:                
+        else:
             raise ValueError('Please use a valid channel format (\'1\' or \'2\').')
 
     def initialize(self):
@@ -38,16 +38,16 @@ class TENMA72_13330(Device):
         sStatus = self.com.recv_from_socket(32)
         return '{:08b}'.format(sStatus[0])
 
-    def setOutput(self, bEnable, channel):
-        sChannel = self.__checkChannel(channel)
+    def setOutput(self, bEnable, iChannel):
+        sChannel = self.__checkChannel(iChannel)
         self.write('OUT{}:{:d}'.format(sChannel, bEnable))
         if sChannel == '1':
             self.__bOutputCh1 = bEnable
         elif sChannel == '2':
             self.__bOutputCh2 = bEnable
 
-    def getOutput(self, channel):
-        sChannel = self.__checkChannel(channel)
+    def getOutput(self, iChannel):
+        sChannel = self.__checkChannel(iChannel)
         sStatus = self.getStatus()
         if sChannel == '1':
             return sStatus[1]
@@ -55,30 +55,30 @@ class TENMA72_13330(Device):
             return sStatus[0]
 
 
-    def setVoltage(self, fValue, channel):
-        sChannel = self.__checkChannel(channel)
+    def setVoltage(self, fValue, iChannel):
+        sChannel = self.__checkChannel(iChannel)
         self.write('VSET{}:{:.2f}'.format(sChannel, fValue))
 
-    def getSetVoltage(self, channel):
-        sChannel = self.__checkChannel(channel)
+    def getSetVoltage(self, iChannel):
+        sChannel = self.__checkChannel(iChannel)
         sSetVoltage = self.ask('VSET{}?'.format(sChannel))
         return float(sSetVoltage)
 
-    def getVoltage(self, channel):
-        sChannel = self.__checkChannel(channel)
+    def getVoltage(self, iChannel):
+        sChannel = self.__checkChannel(iChannel)
         sVoltage = self.ask('VOUT{}?'.format(sChannel))
         return float(sVoltage)
 
-    def setCurrent(self, fValue, channel):
-        self.write('ISET{}:{:.3f}'.format(channel, fValue))
+    def setCurrent(self, fValue, iChannel):
+        self.write('ISET{}:{:.3f}'.format(iChannel, fValue))
         pass
 
-    def getSetCurrent(self, channel):
-        sChannel = self.__checkChannel(channel)
+    def getSetCurrent(self, iChannel):
+        sChannel = self.__checkChannel(iChannel)
         return float(self.ask('ISET{}?'.format(sChannel)))
 
-    def getCurrent(self, channel):
-        sChannel = self.__checkChannel(channel)
+    def getCurrent(self, iChannel):
+        sChannel = self.__checkChannel(iChannel)
         sCurrent = self.ask('IOUT{}?'.format(sChannel))
         return float(sCurrent)
 
@@ -148,37 +148,46 @@ class TENMA72_13330(Device):
         sHeader = ['U1[V]', 'I1[A]', 'U2[V]', 'I2[A]']
         return([sHeader, sValues])
 
-    def interaction(self):
-        print(
-            'TENMA72-13330 selected. Possible actions:\n'
-            '0: Continue dcs mode without any changes\n'
-            '1: Set voltage\n'
-            '2: Set current limit\n'
-            '3: Toggle channel output\n'
-            )
-
-        x = input('Number? \n')
-        while not (x in ['0','1','2','3','4','5']):
-            x = input('Possible Inputs: 0, 1, 2, 3, 5! \n')
-        if x == '0':
-            return
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+			'channel': 5,
+			'toogleOutput': True,
+			'setVoltage': True,
+			'setCurrentLimit': True,
+			}
+            return device_dict
         else:
-            sChannel = input('Which channel? \n')
-            while not (sChannel in ['1','2']):
-                sChannel = input('Possible Channels: 1 or 2! \n')
+            print(
+                'TENMA72-13330 selected. Possible actions:\n'
+                '0: Continue dcs mode without any changes\n'
+                '1: Set voltage\n'
+                '2: Set current limit\n'
+                '3: Toggle channel output\n'
+                )
 
-        if x == '1':
-            sV = input('Please enter new voltage (in V) for channel {}.\n'.format(sChannel))
-            self.setVoltage(float(sV), sChannel)
-        elif x == '2':
-            sI = input('Please enter new current limit (in A) for channel {}.\n'.format(sChannel))
-            self.setCurrent(float(sI), sChannel)
-        elif x == '3':
-            if sChannel == '1':
-                bOutput = self.__bOutputCh1
-            elif sChannel == '2':
-                bOutput = self.__bOutputCh2
-            if bOutput:
-                self.setOutput(False, sChannel)
+            x = input('Number? \n')
+            while not (x in ['0','1','2','3','4','5']):
+                x = input('Possible Inputs: 0, 1, 2, 3, 5! \n')
+            if x == '0':
+                return
             else:
-                self.setOutput(True, sChannel)
+                sChannel = input('Which channel? \n')
+                while not (sChannel in ['1','2']):
+                    sChannel = input('Possible Channels: 1 or 2! \n')
+
+            if x == '1':
+                sV = input('Please enter new voltage (in V) for channel {}.\n'.format(sChannel))
+                self.setVoltage(float(sV), sChannel)
+            elif x == '2':
+                sI = input('Please enter new current limit (in A) for channel {}.\n'.format(sChannel))
+                self.setCurrent(float(sI), sChannel)
+            elif x == '3':
+                if sChannel == '1':
+                    bOutput = self.__bOutputCh1
+                elif sChannel == '2':
+                    bOutput = self.__bOutputCh2
+                if bOutput:
+                    self.setOutput(False, sChannel)
+                else:
+                    self.setOutput(True, sChannel)
