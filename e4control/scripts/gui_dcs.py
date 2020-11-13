@@ -439,8 +439,18 @@ def control_window(devices, config_devices, fw):
         for d in devices:
             header, values = d.output()
             for h, v in zip(header, values):
-                window[f'{h}{device_counter}'].update(float(v))
-                all_values.append(float(v))
+                try:
+                    window[f'{h}{device_counter}'].update(float(v))
+                    all_values.append(float(v))
+                except ValueError:
+                    if v == 'False':
+                        v = 'Off'
+                    elif v == 'True':
+                        v = 'On'
+                    else:
+                        pass
+                    window[f'{h}{device_counter}'].update(v)
+                    all_values.append(v)
             device_counter += 1
 
         if not fw == -1:

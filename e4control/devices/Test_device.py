@@ -34,10 +34,12 @@ class Test_device(Device):
 	def output(self, show=False):
 		self.x_data = self.detData()
 		self.y_data = self.detData()
+		self.Power = self.getPowerStatus()
 		self.printOutput('Test_device')
+		self.printOutput(f'Power: {self.Power}')
 		self.printOutput(f'x_data: {self.x_data}')
 		self.printOutput(f'y_data: {self.y_data}')
-		return [['x_data', 'y_data'], [self.x_data, self.y_data]]
+		return [['Power', 'x_data', 'y_data'], [str(self.Power) ,self.x_data, self.y_data]]
 
 	def getOutput(self, iChannel=-1):
 		return self.output_status
