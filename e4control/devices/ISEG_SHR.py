@@ -17,7 +17,7 @@ class SHR(Device):
         sChannel = str(channel)
         if sChannel in ('0','1'):
             return sChannel
-        else:                
+        else:
             raise ValueError('Please use a valid channel format (\'0\' or \'1\').')
 
     def __checkChannels(self, channel):
@@ -27,7 +27,7 @@ class SHR(Device):
             sChannel = str(channel)
             if sChannel in ('0','1','0,1','0-1'):
                 return sChannel
-            else:                
+            else:
                 raise ValueError('Please use a valid channel format (\'0\',\'1\',\'0,1\',\'0-1\').')
 
     def __checkPolarity(self, polarity):
@@ -214,7 +214,7 @@ class SHR(Device):
             self.printOutput('Voltage:  \t {:6.5} V  \t {:6.5} V '.format(fVoltageCh0,fVoltageCh1))
             self.printOutput('Current:  \t {:6.5} uA \t {:6.5} uA'.format(fCurrentCh0,fCurrentCh1))
             self.printOutput('Limit:    \t {:6.5} uA \t {:6.5} uA'.format(fLimitCh0,fLimitCh1))
-        return([['Ilim1[uA]', 'U1[V]', 'I1[uA]', 'Ilim2[uA]', 'U2[V]', 'I2[uA]'], [str(fLimitCh0), str(fVoltageCh0), str(fCurrentCh0), str(fLimitCh1), str(fVoltageCh1), str(fCurrentCh1)]])
+        return([['Output1', 'Polarity1', 'Ilim1[uA]', 'U1[V]', 'I1[uA]', 'Output2', 'Polarity2', 'Ilim2[uA]', 'U2[V]', 'I2[uA]'], [str(sStatusCh0), str(sPolarityCh0), str(fLimitCh0), str(fVoltageCh0), str(fCurrentCh0), str(sStatusCh1), str(sPolarityCh1), str(fLimitCh1), str(fVoltageCh1), str(fCurrentCh1)]])
 
     def interaction(self):
         print(
@@ -238,7 +238,7 @@ class SHR(Device):
             sChannel = input('Which channel? \n')
             while not (sChannel in ['0','1']):
                 sChannel = input('Possible Channels: 0 or 1! \n')
-            
+
         if x == '1':
             fV = input('Please enter new Voltage (in V) for Channel {}.\n'.format(sChannel))
             self.setVoltage(float(fV), sChannel)

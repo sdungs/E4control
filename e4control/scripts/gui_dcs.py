@@ -441,7 +441,7 @@ def control_window(devices, config_devices, fw):
             for h, v in zip(header, values):
                 try:
                     window[f'{h}{device_counter}'].update(float(v))
-                    all_values.append(float(v))
+                    all_values.append(np.round(float(v), 2))
                 except ValueError:
                     if v == 'False':
                         v = 'Off'
