@@ -22,6 +22,7 @@ class Test_device(Device):
 		self.voltage_limit = 100
 		self.sHumidity = 40
 		self.Humidity = 20
+		self.rampSpeed = 5
 		pass
 
 	def initialize(self):
@@ -55,13 +56,19 @@ class Test_device(Device):
 	def getVoltage(self, iChannel=-1):
 		return self.voltage
 
-
 	def rampVoltage(self, new_voltage, iChannel=-1):
 		self.voltage = new_voltage
 		pass
 
 	def setVoltage(self, new_voltage, iChannel=-1):
 		self.voltage = new_voltage
+		pass
+
+	def getRampSpeed(self, iChannel=-1):
+		return self.rampSpeed
+
+	def setRampSpeed(self, new_rampSpeed, iChannel=-1):
+		self.rampSpeed = new_rampSpeed
 		pass
 
 	def getCurrent(self, iChannel=-1):
@@ -142,6 +149,13 @@ class Test_device(Device):
 	def enableOCP(self, bool, iChannel=-1):
 		pass
 
+	def reset(self):
+		self.voltage = 0
+		self.current = 0
+		self.Power = False
+		self.output_status = False
+		pass
+
 	def close(self):
 		pass
 
@@ -164,6 +178,8 @@ class Test_device(Device):
 			'getStatus': True,
 			'setOVP': True,
 			'enableOCP': True,
+			'setRampSpeed': True,
+			'rampDeviceDown': True,
 			}
 			return device_dict
 		pass

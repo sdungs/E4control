@@ -102,6 +102,20 @@ def toogle_power(device):
 pass
 
 
+def toogle_polarity(device, iChannel):
+    if device.getPolarity() == 'p':
+        device.setPolarity('n', iChannel)
+    else:
+        device.setPolarity('p', iChannel)
+
+pass
+
+
+def reset(device):
+    device.reset()
+    pass
+
+
 def enable_OCP(device, iChannel):
     layout_OCP = [
             [sg.Text(f'Enable OCP:')],
@@ -164,7 +178,7 @@ def general_interaction(device, interaction_name, interaction_unit, interaction_
     key_str = 'new_value'
     layout_general_interaction = [
             [sg.Text(f'Type in new {interaction_name}:')],
-            [sg.Input(key=key_str), sg.Text(interaction_unit), sg.Button('Ok')],
+            [sg.Input(key=key_str), sg.Text(interaction_unit, size=(5, 2)), sg.Button('Ok')],
             [sg.Button('Back')]
     ]
     window_general_interaction = sg.Window(f'Set {interaction_name}', layout_general_interaction)
@@ -269,6 +283,11 @@ def control_window(devices, config_devices, fw):
                                 [sg.Text(f'Power: ', size=(18, 2)), sg.Text(size=(3, 2), key='power_status'), sg.Button('Toogle Power')]
                         )
 
+                    if 'tooglePolarity' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Polarity: ', size=(18, 2)), sg.Text(size=(10, 2), key='polarity_status'), sg.Button('Toogle Polarity')]
+                        )
+
                     if 'setMode' in d_i_d_keys:
                         layout_device_interaction.append(
                                 [sg.Text(f'Mode: ', size=(18, 2)), sg.Text(size=(3, 2), key='mode_status'), sg.Button('Change Mode')]
@@ -292,6 +311,16 @@ def control_window(devices, config_devices, fw):
                     if 'setVoltage' in d_i_d_keys:
                         layout_device_interaction.append(
                                 [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_voltage_status'), sg.Text('V', size=(2,2)), sg.Button('Set Voltage')]
+                        )
+
+                    if 'rampDeviceDown' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Set HV to 0V and turn HV off with ramp for all channels', size=(65, 2)), sg.Button('Ramp Down')]
+                        )
+
+                    if 'setRampSpeed' in d_i_d_keys:
+                        layout_device_interaction.append(
+                                [sg.Text(f'Ramp Speed: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_speed_status'), sg.Text('V/s', size=(2,2)), sg.Button('Set Ramp Speed')]
                         )
 
                     if 'setCurrent' in d_i_d_keys:
@@ -368,6 +397,14 @@ def control_window(devices, config_devices, fw):
                             window_device_interaction['power_status'].update(power_status)
                         if event_interaction == 'Toogle Power':
                             toogle_power(device_change)
+                        if 'tooglePolarity' in d_i_d_keys:
+                            if device_change.getPolarity() == 'p':
+                                polarity_status = 'positive+'
+                            else:
+                                polarity_status = 'negative-'
+                            window_device_interaction['polarity_status'].update(polarity_status)
+                        if event_interaction == 'Toogle Polarity':
+                            toogle_polarity(device_change, iChannel)
                         if 'setMode' in d_i_d_keys:
                             mode_status = device_change.getOperationMode()
                             window_device_interaction['mode_status'].update(mode_status)
@@ -391,6 +428,13 @@ def control_window(devices, config_devices, fw):
                             window_device_interaction['set_voltage_status'].update(set_voltage_status)
                         if event_interaction == 'Set Voltage':
                             general_interaction(device_change, 'voltage', 'V', 'setVoltage', iChannel)
+                        if 'setRampSpeed' in d_i_d_keys:
+                            ramp_speed_status = device_change.getRampSpeed(iChannel)
+                            window_device_interaction['ramp_speed_status'].update(ramp_speed_status)
+                        if event_interaction == 'Set Ramp Speed':
+                            general_interaction(device_change, 'ramp speed', 'V/s', 'setRampSpeed', iChannel)
+                        if event_interaction == 'Ramp Down':
+                            reset(device_change)
                         if 'setCurrent' in d_i_d_keys:
                             current_status = device_change.getCurrent(iChannel)
                             window_device_interaction['current_status'].update(current_status)
@@ -440,8 +484,9 @@ def control_window(devices, config_devices, fw):
             header, values = d.output()
             for h, v in zip(header, values):
                 try:
-                    window[f'{h}{device_counter}'].update(float(v))
-                    all_values.append(np.round(float(v), 2))
+                    window[f'{h}{device_counter}'].update(np.round(float(v), 2))
+                    enablePrint()
+                    all_values.append(float(v))
                 except ValueError:
                     if v == 'False':
                         v = 'Off'

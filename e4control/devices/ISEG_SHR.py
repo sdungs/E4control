@@ -216,45 +216,55 @@ class SHR(Device):
             self.printOutput('Limit:    \t {:6.5} uA \t {:6.5} uA'.format(fLimitCh0,fLimitCh1))
         return([['Output1', 'Polarity1', 'Ilim1[uA]', 'U1[V]', 'I1[uA]', 'Output2', 'Polarity2', 'Ilim2[uA]', 'U2[V]', 'I2[uA]'], [str(sStatusCh0), str(sPolarityCh0), str(fLimitCh0), str(fVoltageCh0), str(fCurrentCh0), str(sStatusCh1), str(sPolarityCh1), str(fLimitCh1), str(fVoltageCh1), str(fCurrentCh1)]])
 
-    def interaction(self):
-        print(
-            'ISEG SHR selected. Possible actions:\n'
-            '0: Continue dcs mode without any changes\n'
-            '1: Set voltage (also enables the channel output)\n'
-            '2: Disable channel output\n'
-            '3: Toggle polarity (channel has to be off)\n'
-            '4: Display and change ramp speed\n'
-            '5: Set HV to 0V and turn HV off with ramp for all channels'
-            )
-
-        x = input('Number? \n')
-        while not (x in ['0','1','2','3','4','5']):
-            x = input('Possible Inputs: 0, 1, 2, 3, 5! \n')
-        if x == '0':
-            pass
-        elif x == '5':
-            self.reset()
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+            'channel': 2,
+            'toogleOutput': True,
+            'setVoltage': True,
+            'getStatus': True,
+            'rampDeviceDown': True,
+            }
+            return device_dict
         else:
-            sChannel = input('Which channel? \n')
-            while not (sChannel in ['0','1']):
-                sChannel = input('Possible Channels: 0 or 1! \n')
+            print(
+                'ISEG SHR selected. Possible actions:\n'
+                '0: Continue dcs mode without any changes\n'
+                '1: Set voltage (also enables the channel output)\n'
+                '2: Disable channel output\n'
+                '3: Toggle polarity (channel has to be off)\n'
+                '4: Display and change ramp speed\n'
+                '5: Set HV to 0V and turn HV off with ramp for all channels'
+                )
 
-        if x == '1':
-            fV = input('Please enter new Voltage (in V) for Channel {}.\n'.format(sChannel))
-            self.setVoltage(float(fV), sChannel)
-            self.enableOutput(sChannel)
-        elif x == '2':
-            self.disableOutput(sChannel)
-        elif x == '3':
-            if int(self.getOutput(sChannel)):
-                warnings.warn('Channel has to be off!')
+            x = input('Number? \n')
+            while not (x in ['0','1','2','3','4','5']):
+                x = input('Possible Inputs: 0, 1, 2, 3, 5! \n')
+            if x == '0':
+                pass
+            elif x == '5':
+                self.reset()
             else:
-                sPolarity = self.getPolarity(sChannel)
-                if sPolarity=='p':
-                    self.setPolarity('n',sChannel)
+                sChannel = input('Which channel? \n')
+                while not (sChannel in ['0','1']):
+                    sChannel = input('Possible Channels: 0 or 1! \n')
+
+            if x == '1':
+                fV = input('Please enter new Voltage (in V) for Channel {}.\n'.format(sChannel))
+                self.setVoltage(float(fV), sChannel)
+                self.enableOutput(sChannel)
+            elif x == '2':
+                self.disableOutput(sChannel)
+            elif x == '3':
+                if int(self.getOutput(sChannel)):
+                    warnings.warn('Channel has to be off!')
                 else:
-                    self.setPolarity('p',sChannel)
-        elif x == '4':
-            print('Current ramp speed for Channel {}: {} V/s'.format(sChannel, self.getRampSpeed(sChannel)))
-            sRampSpeed = input('Please enter new ramp speed (in V/s) for Channel {}.\n'.format(sChannel))
-            self.setRampSpeed(float(sRampSpeed),sChannel)
+                    sPolarity = self.getPolarity(sChannel)
+                    if sPolarity=='p':
+                        self.setPolarity('n',sChannel)
+                    else:
+                        self.setPolarity('p',sChannel)
+            elif x == '4':
+                print('Current ramp speed for Channel {}: {} V/s'.format(sChannel, self.getRampSpeed(sChannel)))
+                sRampSpeed = input('Please enter new ramp speed (in V/s) for Channel {}.\n'.format(sChannel))
+                self.setRampSpeed(float(sRampSpeed),sChannel)
