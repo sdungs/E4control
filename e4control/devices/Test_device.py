@@ -30,7 +30,7 @@ class Test_device(Device):
 		pass
 
 	def detData(self):
-		return normal(0, 10, 1)[0]
+		return normal(0, 0.1, 1)[0]
 
 
 	def output(self, show=False):
@@ -41,7 +41,7 @@ class Test_device(Device):
 		self.printOutput(f'Power: {self.Power}')
 		self.printOutput(f'x_data: {self.x_data}')
 		self.printOutput(f'y_data: {self.y_data}')
-		return [['Power', 'x_data', 'y_data'], [str(self.Power) ,self.x_data, self.y_data]]
+		return [['Power', 'x_data[C]', 'y_data[µA]'], [str(self.Power) ,self.x_data, self.y_data]]
 
 	def getOutput(self, iChannel=-1):
 		return self.output_status

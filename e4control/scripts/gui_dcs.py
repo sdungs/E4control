@@ -4,11 +4,22 @@ import os
 import sys
 import argparse
 import time
-import PySimpleGUI as sg
+import PySimpleGUI.PySimpleGUI as sg
 import numpy as np
 from e4control import __version__ as version
 
 from .. import utils as sh
+
+# Define the theme, default font and color for the GUI.
+sg.DEFAULT_FONT = ('Arial', 13)
+sg.DEFAULT_MARGINS = (12, 10)
+global red
+global green
+global blue
+red = 'red'
+green = '#40C982'
+blue = '#35a7ff'
+sg.theme('DarkGrey2')
 
 
 # arg parser
@@ -16,13 +27,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument('config', help='config file')
 parser.add_argument('-l', '--logfile', help='potential logfile')
 
+
+#  Returns the minuts and seconds until the starttime, and the current time.
 def get_timestamp(starttime):
     time_now = time.time()
     timestamp = (time_now - starttime) / 60
-    h, s = divmod(timestamp, 1)
-    return int(np.round(h, 0)) , int(np.round(s * 60, 0)), time_now
+    min, s = divmod(timestamp, 1)
+    return int(np.round(min, 0)) , int(np.round(s * 60, 0)), time_now
 
 
+# Opens a GUI window, which asks for the name of a logfile, which is returned.
 def get_file_name():
     layout_file_name = [
             [sg.Text('Type in a name for the logfile:')],
@@ -49,6 +63,9 @@ def get_file_name():
     else:
         pass
 
+
+# Interactive window which asks for the device channel, where the changes should
+# be performed. The window is only triggered, when the device has multiple channels.
 def change_channel(device_dict, iChannel):
     number_channels = device_dict['channel']
     layout_device_channel = [
@@ -85,6 +102,7 @@ def change_channel(device_dict, iChannel):
         return iChannel + 1
 
 
+# Toggle the Output of a given device channel, if available for the device.
 def toogle_output(device, iChannel):
     if bool(int(device.getOutput(iChannel))):
         device.rampVoltage(0, iChannel)
@@ -94,6 +112,7 @@ def toogle_output(device, iChannel):
 pass
 
 
+# Toggle the device power, if available for the device.
 def toogle_power(device):
     if int(bool(device.getPowerStatus())):
         device.enablePower(False)
@@ -102,6 +121,7 @@ def toogle_power(device):
 pass
 
 
+# Toggle the device polarity, if available for the device.
 def toogle_polarity(device, iChannel):
     if device.getPolarity() == 'p':
         device.setPolarity('n', iChannel)
@@ -110,12 +130,13 @@ def toogle_polarity(device, iChannel):
 
 pass
 
-
+# Reset/Ramp down if available for the device.
 def reset(device):
     device.reset()
     pass
 
 
+# Interactive window, where the OCP can be enabled, if available for the device.
 def enable_OCP(device, iChannel):
     layout_OCP = [
             [sg.Text(f'Enable OCP:')],
@@ -138,6 +159,7 @@ def enable_OCP(device, iChannel):
     pass
 
 
+# Change the runnig mode of a device. Only available for the JULABO.
 def change_mode(device):
     layout_mode = [
             [sg.Text(f'Choose Mode:')],
@@ -156,6 +178,8 @@ def change_mode(device):
             break
     pass
 
+
+# Change the operation mode. only Only available for the SB22 climate chamber.
 def change_operation_mode(device):
     layout_operation_mode = [
             [sg.Text(f'Choose Operation Mode:')],
@@ -174,6 +198,9 @@ def change_operation_mode(device):
             break
     pass
 
+
+# General interaction, to change a given parameter of a device.
+# For example, the device coltage, current, temperature and many more can be changed this way.
 def general_interaction(device, interaction_name, interaction_unit, interaction_function, channel):
     key_str = 'new_value'
     layout_general_interaction = [
@@ -199,9 +226,13 @@ def general_interaction(device, interaction_name, interaction_unit, interaction_
     pass
 
 
+# General control window for the DCS GUI.
+# The main part of this function handels the various
+# possible setting changes for the implemented devices.
 def control_window(devices, config_devices, fw):
     blockPrint()
     starttime = time.time()
+    v_prior = []
     iChannel = -1 # default value, if a device does not has any channels
     layout = [
             [sg.Text('CONTROL CENTER', size=(14,3))],
@@ -218,6 +249,7 @@ def control_window(devices, config_devices, fw):
         for h, v in zip(header, values):
             layout.append([sg.Text(f'{h}:\t'), sg.Text(size=(12,1), key=f'{h}{device_counter}')])
         device_counter += 1
+    layout.append([sg.Text(size=(1,1))])
     layout.append([sg.Button('Change'), sg.Button('Start New Logfile'), sg.Button('Quit')])
 
     window = sg.Window(f'E4control v{version}: Device control script', layout)
@@ -233,7 +265,8 @@ def control_window(devices, config_devices, fw):
             new_fw = create_logfile(str(file_name), config_devices, devices)
             if not new_fw == None:
                 fw = new_fw
-
+            else:
+                pass
 
         if event == 'Change':
             layout_change = []
@@ -247,8 +280,6 @@ def control_window(devices, config_devices, fw):
                 else:
                     button_names_change.append(f'{d}')
                     layout_change.append([sg.Button(f'{d}')])
-
-
 
             layout_change.append([sg.Button('Back')])
 
@@ -367,7 +398,6 @@ def control_window(devices, config_devices, fw):
                                 [sg.Button('Enable OCP')]
                         )
 
-
                     layout_device_interaction.append([sg.Button('Back')])
 
                     window_device_interaction = sg.Window(f'{device_change.__class__.__name__}', layout_device_interaction)
@@ -384,25 +414,28 @@ def control_window(devices, config_devices, fw):
                         if 'toogleOutput' in d_i_d_keys:
                             if bool(int(device_change.getOutput(iChannel))):
                                 output_status = 'On'
+                                window_device_interaction['Output_status'].update(output_status, text_color=green)
                             else:
                                 output_status = 'Off'
-                            window_device_interaction['Output_status'].update(output_status)
+                                window_device_interaction['Output_status'].update(output_status, text_color=red)
                         if event_interaction == 'Toogle Output':
                             toogle_output(device_change, iChannel)
                         if 'enablePower' in d_i_d_keys:
                             if bool(int(device_change.getPowerStatus())):
                                 power_status = 'On'
+                                window_device_interaction['power_status'].update(power_status, text_color=green)
                             else:
                                 power_status = 'Off'
-                            window_device_interaction['power_status'].update(power_status)
+                                window_device_interaction['power_status'].update(power_status, text_color=red)
                         if event_interaction == 'Toogle Power':
                             toogle_power(device_change)
                         if 'tooglePolarity' in d_i_d_keys:
                             if device_change.getPolarity() == 'p':
                                 polarity_status = 'positive+'
+                                window_device_interaction['polarity_status'].update(polarity_status, text_color=red)
                             else:
                                 polarity_status = 'negative-'
-                            window_device_interaction['polarity_status'].update(polarity_status)
+                                window_device_interaction['polarity_status'].update(polarity_status, text_color=blue)
                         if event_interaction == 'Toogle Polarity':
                             toogle_polarity(device_change, iChannel)
                         if 'setMode' in d_i_d_keys:
@@ -471,31 +504,44 @@ def control_window(devices, config_devices, fw):
                             general_interaction(device_change, 'OVP', 'V', 'setVoltageLimit', iChannel)
                         if event_interaction == 'Enable OCP':
                             enable_OCP(device_change, iChannel)
-                        time.sleep(0.5)
                     iChannel = -1 # reset iChannel to its default value -1 after the change window is closed
 
         device_counter = 0
-        h, s, time_now = get_timestamp(starttime)
+        min, s, time_now = get_timestamp(starttime)
         all_values = [time_now]
-        window['timestamp_min'].update(h)
+        window['timestamp_min'].update(min)
         window['timestamp_sec'].update(s)
-
         for d in devices:
             header, values = d.output()
             for h, v in zip(header, values):
                 try:
-                    window[f'{h}{device_counter}'].update(np.round(float(v), 2))
+                    # color the current and temperature values
+                    if ('A]' in h or 'C]' in h) and bool(len(v_prior)) and v_prior[-1] - v > 0.1 and abs(v_prior[-1] - v) > 0.1:
+                        window[f'{h}{device_counter}'].update(np.round(float(v), 2), text_color=blue)
+                    elif ('A]' in h or 'C]' in h) and bool(len(v_prior)) and v_prior[-1] - v < 0.1 and abs(v_prior[-1] - v) > 0.1:
+                        window[f'{h}{device_counter}'].update(np.round(float(v), 2), text_color=red)
+                    else:
+                        window[f'{h}{device_counter}'].update(np.round(float(v), 2), text_color=sg.DEFAULT_TEXT_COLOR)
                     all_values.append(float(v))
+                    if bool(len(v_prior)):
+                        v_prior.pop()
                 except ValueError:
-                    if v == 'False':
+                    if v in 'False':
                         v = 'Off'
+                        window[f'{h}{device_counter}'].update(v, text_color=red)
                     elif v == 'True':
                         v = 'On'
+                        window[f'{h}{device_counter}'].update(v, text_color=green)
                     else:
-                        pass
-                    window[f'{h}{device_counter}'].update(v)
+                        window[f'{h}{device_counter}'].update(v)
                     all_values.append(v)
+                    if len(v_prior):
+                        v_prior.pop()
             device_counter += 1
+        v_prior = all_values[::-1]
+        if len(v_prior):
+            v_prior.pop()
+
 
         if not fw == -1:
             try:
@@ -532,7 +578,7 @@ def show_dcs_device_list_gui(devices):
 
 def welcome_dcs_gui(config):
     layout = [
-            [sg.Text(f'This is e4control, v{version}.')],
+            [sg.Text(f'This is e4control'), sg.Text(f'v{version}.', text_color=red)],
             [sg.Text(f'If you are not familiar with this version, please check the log (via \"git log\") for recent changes.')],
             [sg.Text('')],
             [sg.Text(f'Selected configfile: {config}')],
@@ -560,7 +606,7 @@ def abort(err_msg=False):
         ]
     else:
         layout = [
-                [sg.Text(f'Aborted!')],
+                [sg.Text(f'Aborted!', text_color=red)],
                 [sg.Button('Quit')]
         ]
     window = sg.Window(f'E4control v{version}: Device control script', layout)
@@ -574,7 +620,7 @@ def abort(err_msg=False):
 
 def error_msg(err_msg):
     layout = [
-            [sg.Text(f'{err_msg}')],
+            [sg.Text(f'{err_msg}', text_color=red)],
             [sg.Button('Close')]
     ]
     window = sg.Window(f'Error', layout)
@@ -591,6 +637,8 @@ def create_logfile(file_name, config_devices, devices):
     if os.path.isfile(checktxtfile):
         error_msg(file_name + '.txt already exists!\nContinue without a logfile.')
         return None
+    if file_name == 'None':
+        return None
     else:
         fw = sh.new_txt_file(file_name)
         header = ['time']
@@ -606,13 +654,13 @@ def create_logfile(file_name, config_devices, devices):
         sh.write_line(fw, header)
         return fw
 
-# Disable printing
+# Suppress output to the console.
 def blockPrint():
     sys.stdout = open(os.devnull, 'w')
     pass
 
 
-# Restore printing
+# Restore output to the console.
 def enablePrint():
     sys.stdout = sys.__stdout__
     pass
@@ -620,18 +668,22 @@ def enablePrint():
 
 def main():
     args = parser.parse_args()
+
     welcome_dcs_gui(args.config)
 
-    # read configfile
-    config_devices = sh.read_dcs_config(args.config)
+    # Read config file.
+    try:
+        config_devices = sh.read_dcs_config(args.config)
+    except:
+        abort('The given config file can not be processed.\nPlease check it.')
 
-    # create setting query
+    # Create a setting query.
     show_dcs_device_list_gui(config_devices)
 
-    # connection
+    # Connect to the devices in the args.config.
     devices = sh.connect_dcs_devices(config_devices)
 
-    # check if SHT75 is used for T and H, remove one as T and H are always displayed
+    # Check if SHT75 is used for T and H, remove one as T and H are always displayed.
     for idx_h,d_h in enumerate(config_devices):
         if d_h[0]=='H' and d_h[1]=='SHT75':
             for idx_t,d_t in enumerate(config_devices):
@@ -641,13 +693,14 @@ def main():
                         devices.pop(idx_h)
                         print('Linked H{} with T{}.'.format(idx_h+1,idx_t+1))
 
-    # logfile
+    # Create a logfile. A logfile can as well be created later
     if args.logfile:
         fw = create_logfile(args.logfile, config_devices, devices)
     else:
         fw = -1
 
-    # controll window, where the data from the hardware is presented and changes in the hardware settings can be performed
+    # Controll window, where the data from the hardware is presented and changes
+    # in the hardware settings can be performed.
     control_window(devices, config_devices, fw)
 
     for d in devices:
