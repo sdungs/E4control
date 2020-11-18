@@ -305,12 +305,12 @@ def control_window(devices, config_devices, fw):
 
                     if 'rampVoltage' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_voltage_status'), sg.Text('V', size=(2,2)), sg.Button('Change Voltage')]
+                                [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_voltage_status'), sg.Text('V', size=(5,2)), sg.Button('Change Voltage')]
                         )
 
                     if 'setVoltage' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_voltage_status'), sg.Text('V', size=(2,2)), sg.Button('Set Voltage')]
+                                [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_voltage_status'), sg.Text('V', size=(5,2)), sg.Button('Set Voltage')]
                         )
 
                     if 'rampDeviceDown' in d_i_d_keys:
@@ -320,46 +320,46 @@ def control_window(devices, config_devices, fw):
 
                     if 'setRampSpeed' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Ramp Speed: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_speed_status'), sg.Text('V/s', size=(2,2)), sg.Button('Set Ramp Speed')]
+                                [sg.Text(f'Ramp Speed: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_speed_status'), sg.Text('V/s', size=(5,2)), sg.Button('Set Ramp Speed')]
                         )
 
                     if 'setCurrent' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Current: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_status'), sg.Text('A', size=(2,2)), sg.Button('Set Current')]
+                                [sg.Text(f'Current: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_status'), sg.Text('A', size=(5,2)), sg.Button('Set Current')]
                         )
 
                     if 'setCurrentLimit' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Current Limit: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_limit_status'), sg.Text('uA', size=(2,2)), sg.Button('Set Current Limit')]
+                                [sg.Text(f'Current Limit: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_limit_status'), sg.Text('uA', size=(5,2)), sg.Button('Set Current Limit')]
                         )
 
                     if 'getSetTemperature' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getin_temperature_status'), sg.Text('C', size=(2,2))]
+                                [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getin_temperature_status'), sg.Text('C', size=(5,2))]
                         )
                         layout_device_interaction.append(
-                                [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getset_temperature_status'), sg.Text('C', size=(2,2)), sg.Button('Set Temperature')]
+                                [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getset_temperature_status'), sg.Text('C', size=(5,2)), sg.Button('Set Temperature')]
                         )
 
                     if 'setHumidity' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='humidity_status'), sg.Text('%', size=(2,2))]
+                                [sg.Text(f'Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='humidity_status'), sg.Text('%', size=(5,2))]
                         )
                         layout_device_interaction.append(
-                                [sg.Text(f'Set Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_humidity_status'), sg.Text('%', size=(2,2)), sg.Button('Change Set Humidity')]
+                                [sg.Text(f'Set Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_humidity_status'), sg.Text('%', size=(5,2)), sg.Button('Change Set Humidity')]
                         )
 
                     if 'setTemperature' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='temperature_status'), sg.Text('C', size=(2,2))]
+                                [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='temperature_status'), sg.Text('C', size=(5,2))]
                         )
                         layout_device_interaction.append(
-                                [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_temperature_status'), sg.Text('C', size=(2,2)), sg.Button('Set Temperature')]
+                                [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_temperature_status'), sg.Text('C', size=(5,2)), sg.Button('Set Temperature')]
                         )
 
                     if 'setOVP' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'OVP: ', size=(18, 2)), sg.Text(size=(15, 2), key='ovp_status'), sg.Text('V', size=(2,2)), sg.Button('Set OVP')]
+                                [sg.Text(f'OVP: ', size=(18, 2)), sg.Text(size=(15, 2), key='ovp_status'), sg.Text('V', size=(5,2)), sg.Button('Set OVP')]
                         )
 
                     if 'enableOCP' in d_i_d_keys:
@@ -485,7 +485,6 @@ def control_window(devices, config_devices, fw):
             for h, v in zip(header, values):
                 try:
                     window[f'{h}{device_counter}'].update(np.round(float(v), 2))
-                    enablePrint()
                     all_values.append(float(v))
                 except ValueError:
                     if v == 'False':

@@ -223,6 +223,7 @@ class SHR(Device):
             'toogleOutput': True,
             'setVoltage': True,
             'getStatus': True,
+            'tooglePolarity': True,
             'rampDeviceDown': True,
             }
             return device_dict

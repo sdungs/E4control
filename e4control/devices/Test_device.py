@@ -23,6 +23,7 @@ class Test_device(Device):
 		self.sHumidity = 40
 		self.Humidity = 20
 		self.rampSpeed = 5
+		self. polarity = 'n'
 		pass
 
 	def initialize(self):
@@ -52,6 +53,12 @@ class Test_device(Device):
 			self.output_status = '0'
 		pass
 
+	def getPolarity(self, iChannel=-1):
+		return self.polarity
+
+	def setPolarity(self, new_polarity, iChannel=-1):
+		self.polarity = new_polarity
+		pass
 
 	def getVoltage(self, iChannel=-1):
 		return self.voltage
@@ -180,6 +187,7 @@ class Test_device(Device):
 			'enableOCP': True,
 			'setRampSpeed': True,
 			'rampDeviceDown': True,
+			'tooglePolarity': True,
 			}
 			return device_dict
 		pass
