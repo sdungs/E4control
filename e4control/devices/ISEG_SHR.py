@@ -222,7 +222,6 @@ class SHR(Device):
             'channel': 2,
             'toogleOutput': True,
             'setVoltage': True,
-            'getStatus': True,
             'tooglePolarity': True,
             'rampDeviceDown': True,
             }
