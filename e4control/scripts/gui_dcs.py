@@ -237,7 +237,7 @@ def control_window(devices, config_devices, fw):
     v_prior = [] # to later compare to the new values, neccessary for coloured values
     iChannel = -1 # default value, if a device does not has any channels
     layout = [
-            [sg.Text('CONTROL CENTER', size=(14,1), text_color=purple, font=('Arial', 17))],
+            [sg.Text('CONTROL CENTER', size=(20,1), text_color=purple, font=('Arial', 17))],
             [sg.Text('Runtime: ', text_color=purple), sg.Text(size=(2,1), key=f'timestamp_min'), sg.Text('min', text_color=purple), sg.Text(size=(2,1), key=f'timestamp_sec'), sg.Text('s', text_color=purple)],
     ]
 
