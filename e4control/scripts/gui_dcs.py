@@ -123,7 +123,7 @@ pass
 
 # Toggle the device polarity, if available for the device.
 def toogle_polarity(device, iChannel):
-    if device.getPolarity() in ('p', '+'):
+    if device.getPolarity(iChannel) in ('p', '+'):
         device.setPolarity('n', iChannel)
     else:
         device.setPolarity('p', iChannel)
