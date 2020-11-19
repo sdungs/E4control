@@ -242,7 +242,7 @@ def control_window(devices, config_devices, fw):
     ]
 
     # Add devices and their outputs to the control window.
-    device_counter = 0
+    same_device_counter = 0
     device_names = []
     for d in devices:
         device_name = d.__class__.__name__
@@ -250,8 +250,8 @@ def control_window(devices, config_devices, fw):
         layout.append([sg.Text(f'\n{device_name}', size=(len(device_name), 2))])
         header, values = d.output()
         for h, v in zip(header, values):
-            layout.append([sg.Text(f'{h}:\t'), sg.Text(size=(15,1), key=f'{h}{device_counter}')])
-        device_counter += 1
+            layout.append([sg.Text(f'{h}:\t'), sg.Text(size=(15,1), key=f'{h}{same_device_counter}')])
+        same_device_counter += 1
     layout.append([sg.Text(size=(1,1))])
     layout.append([sg.Button('Change'), sg.Button('Start New Logfile'), sg.Button('Quit')])
 
@@ -274,13 +274,13 @@ def control_window(devices, config_devices, fw):
         # check all possible changes the devices have
         if event == 'Change':
             layout_change = []
-            device_counter = 0
+            same_device_counter = 0
             button_names_change = []
             for d in device_names:
                 if device_names.count(d) > 1:
-                    button_names_change.append(f'{d} {device_counter}')
-                    layout_change.append([sg.Button(f'{d} {device_counter}')])
-                    device_counter += 1
+                    button_names_change.append(f'{d} {same_device_counter}')
+                    layout_change.append([sg.Button(f'{d} {same_device_counter}')])
+                    same_device_counter += 1
                 else:
                     button_names_change.append(f'{d}')
                     layout_change.append([sg.Button(f'{d}')])
@@ -516,7 +516,7 @@ def control_window(devices, config_devices, fw):
                     iChannel = -1 # reset iChannel to its default value -1 after the change window is closed
 
         # update the output values
-        device_counter = 0
+        same_device_counter = 0
         min, s, time_now = get_timestamp(starttime)
         all_values = [time_now]
         window['timestamp_min'].update(min, text_color=purple)
@@ -527,33 +527,33 @@ def control_window(devices, config_devices, fw):
                 try:
                     # color the current and temperature values
                     if ('A]' in h or 'C]' in h) and bool(len(v_prior)) and float(v_prior[-1]) - float(v) > 0.1 and abs(float(v_prior[-1]) - float(v)) > 0.1:
-                        window[f'{h}{device_counter}'].update(np.round(float(v), 2), text_color=blue)
+                        window[f'{h}{same_device_counter}'].update(np.round(float(v), 2), text_color=blue)
                     elif ('A]' in h or 'C]' in h) and bool(len(v_prior)) and float(v_prior[-1]) - float(v) < 0.1 and abs(float(v_prior[-1]) - float(v)) > 0.1:
-                        window[f'{h}{device_counter}'].update(np.round(float(v), 2), text_color=red)
+                        window[f'{h}{same_device_counter}'].update(np.round(float(v), 2), text_color=red)
                     else:
-                        window[f'{h}{device_counter}'].update(np.round(float(v), 2), text_color=sg.DEFAULT_TEXT_COLOR)
+                        window[f'{h}{same_device_counter}'].update(np.round(float(v), 2), text_color=sg.DEFAULT_TEXT_COLOR)
                     all_values.append(float(v))
                     if bool(len(v_prior)):
                         v_prior.pop()
                 except ValueError:
-                    if v == 'False':
+                    if v == 'False' or 'Off' in v:
                         v = 'Off'
-                        window[f'{h}{device_counter}'].update(v, text_color=red)
-                    elif v == 'True':
+                        window[f'{h}{same_device_counter}'].update(v, text_color=red)
+                    elif v == 'True' or 'On' in v:
                         v = 'On'
-                        window[f'{h}{device_counter}'].update(v, text_color=green)
-                    elif v in ('p', '+'):
+                        window[f'{h}{same_device_counter}'].update(v, text_color=green)
+                    elif v in ('p', '+') or 'positive' in v:
                         v = 'positive+'
-                        window[f'{h}{device_counter}'].update(v, text_color=red)
-                    elif v in ('n', '-'):
+                        window[f'{h}{same_device_counter}'].update(v, text_color=red)
+                    elif v in ('n', '-') or 'negative' in v:
                         v = 'negative-'
-                        window[f'{h}{device_counter}'].update(v, text_color=blue)
+                        window[f'{h}{same_device_counter}'].update(v, text_color=blue)
                     else:
-                        window[f'{h}{device_counter}'].update(v)
+                        window[f'{h}{same_device_counter}'].update(v)
                     all_values.append(v)
                     if len(v_prior):
                         v_prior.pop()
-            device_counter += 1
+            same_device_counter += 1
         v_prior = all_values[::-1]
         if len(v_prior):
             v_prior.pop()
