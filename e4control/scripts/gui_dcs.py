@@ -536,10 +536,10 @@ def control_window(devices, config_devices, fw):
                     if bool(len(v_prior)):
                         v_prior.pop()
                 except ValueError:
-                    if v == 'False' or 'Off' in v:
+                    if v == 'False' or 'Off' in v or 'OFF' in v:
                         v = 'Off'
                         window[f'{h}{same_device_counter}'].update(v, text_color=red)
-                    elif v == 'True' or 'On' in v:
+                    elif v == 'True' or 'On' in v or 'ON' in v:
                         v = 'On'
                         window[f'{h}{same_device_counter}'].update(v, text_color=green)
                     elif v in ('p', '+') or 'positive' in v:
