@@ -92,7 +92,7 @@ def change_channel(device_dict, iChannel):
             switch = False
             break
         if event_channel in button_names_channel:
-            iChannel = int(button_names_channel.index(event_channel)) - 1
+            iChannel = button_names_channel.index(event_channel)
             window_channel.close()
             switch = True
             break

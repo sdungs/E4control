@@ -212,7 +212,7 @@ class SHR(Device):
             # self.printOutput('Voltage = %.1fV' % f1Voltage + '\t' + 'Current = %.3fuA' % f1Current)
             # self.printOutput('CH 1:' + '\t' + 'I_lim = %.2fuA' % f2Limit)
             # self.printOutput('Voltage = %.1fV' % f2Voltage + '\t' + 'Current = %.3fuA' % f2Current)
-            self.printOutput('          \t {:10} \t {:10}'.format('Channel 0','Channel 1'))
+            self.printOutput('          \t {:10} \t {:10}'.format('Channel 1','Channel 2'))
             self.printOutput('Output:   \t {:18} \t {:18}'.format(sStatusCh0,sStatusCh1))
             self.printOutput('Polarity: \t {:10} \t {:10}'.format(sPolarityCh0,sPolarityCh1))
             self.printOutput('Voltage:  \t {:6.5} V  \t {:6.5} V '.format(fVoltageCh0,fVoltageCh1))
