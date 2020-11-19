@@ -433,17 +433,17 @@ def control_window(devices, config_devices, fw):
                         if event_interaction == 'Toogle Power':
                             toogle_power(device_change)
                         if 'tooglePolarity' in d_i_d_keys:
+                            if device_change.getPolarity(iChannel) in ('p', '+'):
+                                polarity_status = 'positive+'
+                                window_device_interaction['polarity_status'].update(polarity_status, text_color=red)
+                            else:
+                                polarity_status = 'negative-'
+                                window_device_interaction['polarity_status'].update(polarity_status, text_color=blue)
+                        if event_interaction == 'Toogle Polarity':
                             if bool(int(device_change.getOutput(iChannel))):
                                 error_msg('Output has to be turned off!')
                             else:
-                                if device_change.getPolarity(iChannel) in ('p', '+'):
-                                polarity_status = 'positive+'
-                                window_device_interaction['polarity_status'].update(polarity_status, text_color=red)
-                                else:
-                                    polarity_status = 'negative-'
-                                    window_device_interaction['polarity_status'].update(polarity_status, text_color=blue)
-                        if event_interaction == 'Toogle Polarity':
-                            toogle_polarity(device_change, iChannel)
+                                toogle_polarity(device_change, iChannel)
                         if 'setMode' in d_i_d_keys:
                             mode_status = device_change.getOperationMode()
                             window_device_interaction['mode_status'].update(mode_status)
@@ -543,7 +543,7 @@ def control_window(devices, config_devices, fw):
                     elif v in ('p', '+'):
                         v = 'positive+'
                         window[f'{h}{device_counter}'].update(v, text_color=red)
-                    elif v == ('n', '-'):
+                    elif v in ('n', '-'):
                         v = 'negative-'
                         window[f'{h}{device_counter}'].update(v, text_color=blue)
                     else:
