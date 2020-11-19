@@ -232,13 +232,14 @@ def general_interaction(device, interaction_name, interaction_unit, interaction_
 def control_window(devices, config_devices, fw):
     blockPrint()
     starttime = time.time()
-    v_prior = []
+    v_prior = [] # to later compare to the new values, neccessary for coloured values
     iChannel = -1 # default value, if a device does not has any channels
     layout = [
             [sg.Text('CONTROL CENTER', size=(14,3))],
             [sg.Text('Runtime: '), sg.Text(size=(2,1), key=f'timestamp_min'), sg.Text('min'), sg.Text(size=(2,1), key=f'timestamp_sec'), sg.Text('s')],
     ]
 
+    # Add devices and their outputs to the control window.
     device_counter = 0
     device_names = []
     for d in devices:
@@ -268,6 +269,7 @@ def control_window(devices, config_devices, fw):
             else:
                 pass
 
+        # check all possible changes the devices have
         if event == 'Change':
             layout_change = []
             device_counter = 0
@@ -402,6 +404,7 @@ def control_window(devices, config_devices, fw):
 
                     window_device_interaction = sg.Window(f'{device_change.__class__.__name__}', layout_device_interaction)
 
+                    # handle the made change
                     while True:
                         event_interaction, values_interaction = window_device_interaction.read(timeout=0)
                         if event_interaction == sg.WIN_CLOSED or event_interaction == 'Back':
@@ -430,12 +433,15 @@ def control_window(devices, config_devices, fw):
                         if event_interaction == 'Toogle Power':
                             toogle_power(device_change)
                         if 'tooglePolarity' in d_i_d_keys:
-                            if device_change.getPolarity(iChannel) in ('p', '+'):
+                            if bool(int(device_change.getOutput(iChannel))):
+                                error_msg('Output has to be turned off!')
+                            else:
+                                if device_change.getPolarity(iChannel) in ('p', '+'):
                                 polarity_status = 'positive+'
                                 window_device_interaction['polarity_status'].update(polarity_status, text_color=red)
-                            else:
-                                polarity_status = 'negative-'
-                                window_device_interaction['polarity_status'].update(polarity_status, text_color=blue)
+                                else:
+                                    polarity_status = 'negative-'
+                                    window_device_interaction['polarity_status'].update(polarity_status, text_color=blue)
                         if event_interaction == 'Toogle Polarity':
                             toogle_polarity(device_change, iChannel)
                         if 'setMode' in d_i_d_keys:
@@ -507,6 +513,7 @@ def control_window(devices, config_devices, fw):
                         time.sleep(1)
                     iChannel = -1 # reset iChannel to its default value -1 after the change window is closed
 
+        # update the output values
         device_counter = 0
         min, s, time_now = get_timestamp(starttime)
         all_values = [time_now]
@@ -533,10 +540,10 @@ def control_window(devices, config_devices, fw):
                     elif v == 'True':
                         v = 'On'
                         window[f'{h}{device_counter}'].update(v, text_color=green)
-                    elif v == 'p':
+                    elif v in ('p', '+'):
                         v = 'positive+'
                         window[f'{h}{device_counter}'].update(v, text_color=red)
-                    elif v == 'n':
+                    elif v == ('n', '-'):
                         v = 'negative-'
                         window[f'{h}{device_counter}'].update(v, text_color=blue)
                     else:
@@ -549,7 +556,7 @@ def control_window(devices, config_devices, fw):
         if len(v_prior):
             v_prior.pop()
 
-
+        # write data to the logfile, in case a logfile is created
         if not fw == -1:
             try:
                 sh.write_line(fw, all_values)
