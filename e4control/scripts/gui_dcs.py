@@ -123,7 +123,7 @@ pass
 
 # Toggle the device polarity, if available for the device.
 def toogle_polarity(device, iChannel):
-    if device.getPolarity() == 'p':
+    if device.getPolarity() in ('p', '+'):
         device.setPolarity('n', iChannel)
     else:
         device.setPolarity('p', iChannel)
@@ -247,7 +247,7 @@ def control_window(devices, config_devices, fw):
         layout.append([sg.Text(f'\n{device_name}', size=(len(device_name), 2))])
         header, values = d.output()
         for h, v in zip(header, values):
-            layout.append([sg.Text(f'{h}:\t'), sg.Text(size=(12,1), key=f'{h}{device_counter}')])
+            layout.append([sg.Text(f'{h}:\t'), sg.Text(size=(15,1), key=f'{h}{device_counter}')])
         device_counter += 1
     layout.append([sg.Text(size=(1,1))])
     layout.append([sg.Button('Change'), sg.Button('Start New Logfile'), sg.Button('Quit')])
@@ -430,7 +430,7 @@ def control_window(devices, config_devices, fw):
                         if event_interaction == 'Toogle Power':
                             toogle_power(device_change)
                         if 'tooglePolarity' in d_i_d_keys:
-                            if device_change.getPolarity() == 'p':
+                            if device_change.getPolarity(iChannel) in ('p', '+'):
                                 polarity_status = 'positive+'
                                 window_device_interaction['polarity_status'].update(polarity_status, text_color=red)
                             else:
