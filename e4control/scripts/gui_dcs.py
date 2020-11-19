@@ -516,9 +516,9 @@ def control_window(devices, config_devices, fw):
             for h, v in zip(header, values):
                 try:
                     # color the current and temperature values
-                    if ('A]' in h or 'C]' in h) and bool(len(v_prior)) and v_prior[-1] - v > 0.1 and abs(v_prior[-1] - v) > 0.1:
+                    if ('A]' in h or 'C]' in h) and bool(len(v_prior)) and float(v_prior[-1]) - float(v) > 0.1 and abs(float(v_prior[-1]) - float(v)) > 0.1:
                         window[f'{h}{device_counter}'].update(np.round(float(v), 2), text_color=blue)
-                    elif ('A]' in h or 'C]' in h) and bool(len(v_prior)) and v_prior[-1] - v < 0.1 and abs(v_prior[-1] - v) > 0.1:
+                    elif ('A]' in h or 'C]' in h) and bool(len(v_prior)) and float(v_prior[-1]) - float(v) < 0.1 and abs(float(v_prior[-1]) - float(v)) > 0.1:
                         window[f'{h}{device_counter}'].update(np.round(float(v), 2), text_color=red)
                     else:
                         window[f'{h}{device_counter}'].update(np.round(float(v), 2), text_color=sg.DEFAULT_TEXT_COLOR)
