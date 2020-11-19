@@ -16,9 +16,11 @@ sg.DEFAULT_MARGINS = (12, 10)
 global red
 global green
 global blue
+global purple
 red = 'red'
 green = '#40C982'
 blue = '#35a7ff'
+purple = '#b935c0'
 sg.theme('DarkGrey2')
 
 
@@ -235,8 +237,8 @@ def control_window(devices, config_devices, fw):
     v_prior = [] # to later compare to the new values, neccessary for coloured values
     iChannel = -1 # default value, if a device does not has any channels
     layout = [
-            [sg.Text('CONTROL CENTER', size=(14,3))],
-            [sg.Text('Runtime: '), sg.Text(size=(2,1), key=f'timestamp_min'), sg.Text('min'), sg.Text(size=(2,1), key=f'timestamp_sec'), sg.Text('s')],
+            [sg.Text('CONTROL CENTER', size=(14,1), text_color=purple, font=('Arial', 17))],
+            [sg.Text('Runtime: ', text_color=purple), sg.Text(size=(2,1), key=f'timestamp_min'), sg.Text('min', text_color=purple), sg.Text(size=(2,1), key=f'timestamp_sec'), sg.Text('s', text_color=purple)],
     ]
 
     # Add devices and their outputs to the control window.
@@ -517,8 +519,8 @@ def control_window(devices, config_devices, fw):
         device_counter = 0
         min, s, time_now = get_timestamp(starttime)
         all_values = [time_now]
-        window['timestamp_min'].update(min)
-        window['timestamp_sec'].update(s)
+        window['timestamp_min'].update(min, text_color=purple)
+        window['timestamp_sec'].update(s, text_color=purple)
         for d in devices:
             header, values = d.output()
             for h, v in zip(header, values):
@@ -615,12 +617,12 @@ def welcome_dcs_gui(config):
 def abort(err_msg=False):
     if err_msg:
         layout = [
-                [sg.Text(f'{err_msg}')],
+                [sg.Text(f'{err_msg}', text_color=red, font=('Arial', 17))],
                 [sg.Button('Quit')]
         ]
     else:
         layout = [
-                [sg.Text(f'Aborted!', text_color=red)],
+                [sg.Text(f'\tAborted!', text_color=red, font=('Arial', 17), size=(25, 2))],
                 [sg.Button('Quit')]
         ]
     window = sg.Window(f'E4control v{version}: Device control script', layout)
@@ -634,7 +636,7 @@ def abort(err_msg=False):
 
 def error_msg(err_msg):
     layout = [
-            [sg.Text(f'{err_msg}', text_color=red)],
+            [sg.Text(f'{err_msg}', text_color=red, font=('Arial', 15))],
             [sg.Button('Close')]
     ]
     window = sg.Window(f'Error', layout)
