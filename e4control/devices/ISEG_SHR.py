@@ -181,12 +181,12 @@ class SHR(Device):
     #         self.rampVoltage(fVnew, iChannel)
 
     def output(self, show=True):
-        fLimitCh0 = self.getCurrentLimit(0) * 1E6
-        fLimitCh1 = self.getCurrentLimit(1) * 1E6
-        fVoltageCh0 = self.getVoltage(0)
-        fVoltageCh1 = self.getVoltage(1)
-        fCurrentCh0 = self.getCurrent(0) * 1E6
-        fCurrentCh1 = self.getCurrent(1) * 1E6
+        fLimitCh0 = self.getCurrentLimit(1) * 1E6
+        fLimitCh1 = self.getCurrentLimit(2) * 1E6
+        fVoltageCh0 = self.getVoltage(1)
+        fVoltageCh1 = self.getVoltage(2)
+        fCurrentCh0 = self.getCurrent(1) * 1E6
+        fCurrentCh1 = self.getCurrent(2) * 1E6
         sStatus = self.getOutput('all')
         if int(sStatus[0]):
             sStatusCh0 = '\033[32m ON  \033[0m'
