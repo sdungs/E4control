@@ -112,7 +112,7 @@ class HMP4040(Device):
             return device_dict
         else:
             sChannel = input('Choose channel! \n')
-            while sChannel != '1' and sChannel != '2' and sChannel != '3' and sChannel != '4':
+            while not sChannel in ['1', '2', '3', '4']:
                 sChannel = input('Possible Channels: 1,2,3 or 4! \n')
             iChannel = int(sChannel)
             print('1: enable Output')

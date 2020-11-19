@@ -15,17 +15,19 @@ class SHR(Device):
 
     def __checkChannel(self, channel):
         sChannel = str(channel)
-        if sChannel in ('0','1'):
-            return sChannel
+        if sChannel in ('1','2'):
+            return str(int(sChannel) - 1)
         else:
-            raise ValueError('Please use a valid channel format (\'0\' or \'1\').')
+            raise ValueError('Please use a valid channel format (\'1\' or \'2\').')
 
     def __checkChannels(self, channel):
         if channel in ('all', -1):
             return '0-1'
         else:
             sChannel = str(channel)
-            if sChannel in ('0','1','0,1','0-1'):
+            if sChannel in ('1','2'):
+                return str(int(sChannel) - 1)
+            elif sChannel in ('0,1','0-1'):
                 return sChannel
             else:
                 raise ValueError('Please use a valid channel format (\'0\',\'1\',\'0,1\',\'0-1\').')
@@ -63,10 +65,12 @@ class SHR(Device):
         return self.ask(':READ:VOLT:ON? (@{})'.format(sChannel))
 
     def enableOutput(self, channel='all'):
-        self.setOutput(True, channel)
+        sChannel = self.__checkChannels(channel)
+        self.setOutput(True, sChannel)
 
     def disableOutput(self, channel='all'):
-        self.setOutput(False, channel)
+        sChannel = self.__checkChannels(channel)
+        self.setOutput(False, sChannel)
 
 
     def setPolarity(self, polarity, channel='all'):
