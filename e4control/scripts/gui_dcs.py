@@ -247,7 +247,7 @@ def control_window(devices, config_devices, fw):
     for d in devices:
         device_name = d.__class__.__name__
         device_names.append(f'{device_name}')
-        layout.append([sg.Text(f'\n{device_name}', size=(len(device_name), 2))])
+        layout.append([sg.Text(f'\n{device_name}', size=(len(device_name) + 5, 2))])
         header, values = d.output()
         for h, v in zip(header, values):
             layout.append([sg.Text(f'{h}:\t'), sg.Text(size=(15,1), key=f'{h}{same_device_counter}')])
