@@ -504,6 +504,7 @@ def control_window(devices, config_devices, fw):
                             general_interaction(device_change, 'OVP', 'V', 'setVoltageLimit', iChannel)
                         if event_interaction == 'Enable OCP':
                             enable_OCP(device_change, iChannel)
+                        time.sleep(1)
                     iChannel = -1 # reset iChannel to its default value -1 after the change window is closed
 
         device_counter = 0
