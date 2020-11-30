@@ -21,7 +21,7 @@ class TTI2(Device):
     def getVoltageLimit(self, iOutput):
         sOVP = self.ask('OVP%i?' % iOutput)
         return float(sOVP)
-        
+
     def setCurrentLimit(self, iOutput, fValue):
         self.write('OCP%i %f' % (iOutput, fValue))
 
@@ -56,11 +56,11 @@ class TTI2(Device):
             self.write('OP{:d} 1'.format(iChannel))
         else:
             self.write('OP{:d} 0'.format(iChannel))
-               
+
     def getOutput(self, iChannel):
         iEO = self.ask('OP{}?'.format(iChannel))
         return int(iEO)
-        
+
     def output(self, show=True):
         bPower = []
         fVoltage = []
@@ -91,30 +91,38 @@ class TTI2(Device):
             i += 1
         sHeader = ['CH1', 'U1[V]', 'I1[A]', 'CH2', 'U2[V]', 'I2[A]']
         return([sHeader, sValues])
-	    
- 
-    def interaction(self):
-        sChannel = input('Choose channel! \n')
-        while sChannel != '1' and sChannel != '2':
-            sChannel = input('Possible Channels: 1 or 2! \n')
-        iChannel = int(sChannel)
-        print('1: enable Output')
-        print('2: set Voltage')
-        print('3: set Current')
-        x = input('Number? \n')
-        while x != '1' and x != '2' and x != '3':
-            x = input('Possible Inputs: 1,2 or 3! \n')
-        if x == '1':
-            bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on' or bO == '1':
-                self.setOutput(True, iChannel)
-            elif bO == 'OFF' or bO == 'off' or bO == '0':
-                self.setOutput(False, iChannel)
-            else:
-                pass
-        elif x == '2':
-            sVoltage = input('Please enter new Voltage in V for CH {}\n'.format(iChannel))
-            self.setVoltage(iChannel, float(sVoltage))
-        elif x == '3':
-            sCurrent = input('Please enter new Current in A for CH {}\n'.format(iChannel))
-            self.setCurrent(iChannel, float(sCurrent))
+
+
+    def interaction(self, dui=False):
+        if gui:
+            device_dict = {
+            'toogleOutput': True,
+            'setVoltage': True,
+            'setCurrent': True,
+            }
+            return device_dict
+        else:
+            sChannel = input('Choose channel! \n')
+            while sChannel != '1' and sChannel != '2':
+                sChannel = input('Possible Channels: 1 or 2! \n')
+            iChannel = int(sChannel)
+            print('1: enable Output')
+            print('2: set Voltage')
+            print('3: set Current')
+            x = input('Number? \n')
+            while x != '1' and x != '2' and x != '3':
+                x = input('Possible Inputs: 1,2 or 3! \n')
+            if x == '1':
+                bO = input('Please enter ON or OFF! \n')
+                if bO == 'ON' or bO == 'on' or bO == '1':
+                    self.setOutput(True, iChannel)
+                elif bO == 'OFF' or bO == 'off' or bO == '0':
+                    self.setOutput(False, iChannel)
+                else:
+                    pass
+            elif x == '2':
+                sVoltage = input('Please enter new Voltage in V for CH {}\n'.format(iChannel))
+                self.setVoltage(iChannel, float(sVoltage))
+            elif x == '3':
+                sCurrent = input('Please enter new Current in A for CH {}\n'.format(iChannel))
+                self.setCurrent(iChannel, float(sCurrent))

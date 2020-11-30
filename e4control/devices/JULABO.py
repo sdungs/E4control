@@ -21,7 +21,7 @@ class JULABO(Device):
     def initialize(self, iChannel=-1):
         self.getAndSetParameter()
 
-    def enablePower(self, bEnable):
+    def enablePower(self, bEnable, iChannel=-1):
         if bEnable:
             self.write('out_mode_05 1')
             self.Power = '1'
@@ -29,10 +29,10 @@ class JULABO(Device):
             self.write('out_mode_05 0')
             self.Power = '0'
 
-    def getPowerStatus(self):
+    def getPowerStatus(self, iChannel=-1):
         return self.ask('in_mode_05')
 
-    def getStatus(self):
+    def getStatus(self, iChannel=-1):
         return self.ask('status')
 
     def getAndSetParameter(self):
@@ -41,23 +41,23 @@ class JULABO(Device):
         self.Mode = self.getOperationMode()
         pass
 
-    def setTemperature(self, fValue):
+    def setTemperature(self, fValue, iChannel=-1):
         self.write('out_sp_00 {:2.1f}'.format(fValue))
         pass
 
-    def getSetTemperature(self):
+    def getSetTemperature(self, iChannel=-1):
         return float(self.ask('in_sp_00'))
 
-    def getInTemperature(self):
+    def getInTemperature(self, iChannel=-1):
         return float(self.ask('in_pv_00'))
 
-    def getExTemperature(self):
+    def getExTemperature(self, iChannel=-1):
         return float(self.ask('in_pv_02'))
 
-    def getHeaterPower(self):
+    def getHeaterPower(self, iChannel=-1):
         return float(self.ask('in_pv_01'))
 
-    def setOperationMode(self, sMode):
+    def setOperationMode(self, sMode, iChannel=-1):
         if (sMode == 'int'):
             self.write('out_mode_04 0')
             self.Mode = 'int'
@@ -67,7 +67,7 @@ class JULABO(Device):
         else:
             print('Unknown mode:{:s}'.format(sMode))
 
-    def getOperationMode(self):
+    def getOperationMode(self, iChannel=-1):
         if (self.ask('in_mode_04') == '0'):
             return('int')
         else:
@@ -96,25 +96,33 @@ class JULABO(Device):
 
         return([['Mode', 'Power', 'Tset[C]', 'Tin[C]', 'Tex[C]', 'Pheat[]'], [str(sMode), str(bPower), str(fTset), str(fTin), str(fTex), str(fHeat)]])
 
-    def interaction(self):
-        print('1: enable Power')
-        print('2: change Mode')
-        print('3: set new Temperature')
-        x = input('Number? \n')
-        while x != '1' and x != '2' and x != '3':
-            x = input('Possible Inputs: 1,2 or 3! \n')
-        if x == '1':
-            bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on':
-                self.enablePower(1)
-            elif bO == 'OFF' or bO == 'off':
-                self.enablePower(0)
-            else:
-                pass
-        elif x == '2':
-            sM = input('choose: int or ext \n')
-            self.setOperationMode(sM)
-        elif x == '3':
-            fT = input('Please enter new Temperature in °C \n')
-            self.setTemperature(float(fT))
-            time.sleep(0.5)
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+			'getSetTemperature': True,
+			'enablePower': True,
+			'setMode': True,
+			}
+            return device_dict
+        else:
+            print('1: enable Power')
+            print('2: change Mode')
+            print('3: set new Temperature')
+            x = input('Number? \n')
+            while x != '1' and x != '2' and x != '3':
+                x = input('Possible Inputs: 1,2 or 3! \n')
+            if x == '1':
+                bO = input('Please enter ON or OFF! \n')
+                if bO == 'ON' or bO == 'on':
+                    self.enablePower(1)
+                elif bO == 'OFF' or bO == 'off':
+                    self.enablePower(0)
+                else:
+                    pass
+            elif x == '2':
+                sM = input('choose: int or ext \n')
+                self.setOperationMode(sM)
+            elif x == '3':
+                fT = input('Please enter new Temperature in °C \n')
+                self.setTemperature(float(fT))
+                time.sleep(0.5)

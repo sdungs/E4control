@@ -20,23 +20,23 @@ class HUBER(Device):
         self.T_set = self.getSetTemperature()
         self.Power = self.getPowerStatus()
 
-    def getPowerStatus(self):
+    def getPowerStatus(self, iChannel=-1):
         sPower = self.ask('CA?')
         return bool(sPower[7])
 
-    def enablePower(self, sBool):
+    def enablePower(self, sBool, iChannel=-1):
             self.write('CA@{:05.0f}'.format(sBool))
             self.Power = sBool
 
-    def getSetTemperature(self):
+    def getSetTemperature(self, iChannel=-1):
         sTemp = self.ask('SP?')
         return float('{:+06.2f}'.format(float(sTemp[3:])/100))
 
-    def getInTemperature(self):
+    def getInTemperature(self, iChannel=-1):
         sTemp = self.ask('TI?')
         return float('{:+06.2f}'.format(float(sTemp[3:])/100))
 
-    def setTemperature(self, Tset):
+    def setTemperature(self, Tset, iChannel=-1):
         self.write('SP@{:+06.0f}'.format(100 * Tset))
         pass
 
@@ -54,22 +54,28 @@ class HUBER(Device):
             self.printOutput('T_set = {:.2f}'.format(fTset) + '\t' + 'T_in = {:.2f}'.format(fTin))
         return([['Power', 'Tset[C]', 'Tin[C]'], [ str(bPower), str(fTset), str(fTin)]])
 
-    def interaction(self):
-        print('1: enable Power')
-        print('2: set new Temperature')
-        x = input('Number? \n')
-        while x != '1' and x != '2':
-            x = input('Possible Inputs: 1 or 2! \n')
-        if x == '1':
-            bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on':
-                self.enablePower(True)
-            elif bO == 'OFF' or bO == 'off':
-                self.enablePower(False)
-            else:
-                pass
-        elif x == '2':
-            fT = input('Please enter new Temperature in °C \n')
-            self.setTemperature(float(fT))
-            time.sleep(0.5)
-
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+            'enablePower': True,
+            'getSetTemperature': True,
+            }
+            return device_dict
+        else:
+            print('1: enable Power')
+            print('2: set new Temperature')
+            x = input('Number? \n')
+            while x != '1' and x != '2':
+                x = input('Possible Inputs: 1 or 2! \n')
+            if x == '1':
+                bO = input('Please enter ON or OFF! \n')
+                if bO == 'ON' or bO == 'on':
+                    self.enablePower(True)
+                elif bO == 'OFF' or bO == 'off':
+                    self.enablePower(False)
+                else:
+                    pass
+            elif x == '2':
+                fT = input('Please enter new Temperature in °C \n')
+                self.setTemperature(float(fT))
+                time.sleep(0.5)

@@ -27,7 +27,7 @@ class LU114(Device):
             print(msg)
             self.Power = False
 
-    def getPowerStatus(self):
+    def getPowerStatus(self, iChannel=-1):
         msg = self.ask('MODE?')
         if msg == 'STANDBY':
             return False
@@ -46,7 +46,7 @@ class LU114(Device):
         self.T_set = self.getSetTemperature()
         pass
 
-    def setTemperature(self, Temp):
+    def setTemperature(self, Temp, iChannel=-1):
         if self.Power:
             msg = self.ask('TEMP, S%s' % Temp)
             self.T_set = Temp
@@ -55,14 +55,14 @@ class LU114(Device):
             self.enablePower(True)
             self.setTemperature(Temp)
 
-    def getTemperature(self):
+    def getTemperature(self, iChannel=-1):
         msg = self.ask('TEMP?').split(',')
         return float(msg[0])
 
-    def getSetTemperature(self):
+    def getSetTemperature(self, iChannel=-1):
         msg = self.ask('TEMP?').split(',')
         return float(msg[1])
-    
+
     def userCmd(self, cmd):
         print("userCmd: %s" % cmd)
         return self.ask(cmd)
@@ -70,24 +70,6 @@ class LU114(Device):
     def close(self):
         #self.close()
         pass
-
-    def interaction(self):
-        print('1: enable Power')
-        print('2: set new Temperature')
-        x = input('Number? \n')
-        while x != '1' and x != '2':
-            x = input('Possible Inputs: 1 or 2! \n')
-        if x == '1':
-            bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on':
-                self.enablePower(1)
-            elif bO == 'OFF' or bO == 'off':
-                self.enablePower(0)
-            else:
-                pass
-        if x == '2':
-            fT = input('Please enter new Temperature in °C \n')
-            self.setTemperature(float(fT))
 
     def output(self, show = True):
         bPower = self.Power
@@ -106,3 +88,27 @@ class LU114(Device):
             print('Temperature:' + '\t' + 'set: %.1f °C' % fTset + '\t' + 'actual: %.1f °C' % fTac)
         return([['Power', 'Tset[C]', 'Tac[C]'], [str(bPower), str(fTset), str(fTac)]])
 
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+			'setTemperature': True,
+			'enablePower': True,
+			}
+            return device_dict
+        else:
+            print('1: enable Power')
+            print('2: set new Temperature')
+            x = input('Number? \n')
+            while x != '1' and x != '2':
+                x = input('Possible Inputs: 1 or 2! \n')
+            if x == '1':
+                bO = input('Please enter ON or OFF! \n')
+                if bO == 'ON' or bO == 'on':
+                    self.enablePower(1)
+                elif bO == 'OFF' or bO == 'off':
+                    self.enablePower(0)
+                else:
+                    pass
+            if x == '2':
+                fT = input('Please enter new Temperature in °C \n')
+                self.setTemperature(float(fT))

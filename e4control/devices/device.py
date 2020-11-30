@@ -43,6 +43,8 @@ class Device(object):
         elif (connection_type == 'prologix'):
             self.com = Prologix(host, port)
             self.com.open()
+        else:
+            pass
 
     def __enter__(self):
         self.open()
