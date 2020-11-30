@@ -21,7 +21,6 @@ class K2410(Device):
         self.setCurrentAutoRange(True)
         self.setVoltageRange('MAX')
         self.write(':SENS:FUNC "VOLT", "CURR"')
-
         pass
 
     def setCurrentAutoRange(self, bsetCurrentAutoRange):
@@ -153,32 +152,40 @@ class K2410(Device):
 
         return([['Output', 'Ilim[uA]', 'U[V]', 'I[uA]'], [str(bPower), str(fLimit), str(fVoltage), str(fCurrent)]])
 
-    def interaction(self):
-        print(
-            '0: Continue dcs mode without any changes\n'
-            '1: Toggle output\n'
-            '2: Set voltage (enables the output if its off)\n'
-            '3: Set currrent limit'
-            )
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+			'toogleOutput': True,
+			'rampVoltage': True,
+			'setCurrentLimit': True,
+			}
+            return device_dict
+        else:
+            print(
+                '0: Continue dcs mode without any changes\n'
+                '1: Toggle output\n'
+                '2: Set voltage (enables the output if its off)\n'
+                '3: Set currrent limit'
+                )
 
-        x = input('Number? \n')
-        while not (x in ['0','1','2','3',]):
-            x = input('Possible Inputs: 0, 1, 2 or 3! \n')
+            x = input('Number? \n')
+            while not (x in ['0','1','2','3',]):
+                x = input('Possible Inputs: 0, 1, 2 or 3! \n')
 
-        if x == '0':
-            pass
-        elif x == '1':
-            if self.getOutput() == '1':
-                self.rampVoltage(0)
-                self.setOutput(False)
-            else:
-                self.setOutput(True)
-        elif x == '2':
-            fV = input('Please enter new Voltage in V \n')
-            if not self.getOutput() == '1':
-                print('Enabled output. Now ramping...')
-                self.setOutput(True)
-            self.rampVoltage(float(fV))
-        elif x == '3':
-            fIlim = input('Please enter new current limit in uA \n')
-            self.setCurrentLimit(float(fIlim)/1E6)
+            if x == '0':
+                pass
+            elif x == '1':
+                if self.getOutput() == '1':
+                    self.rampVoltage(0)
+                    self.setOutput(False)
+                else:
+                    self.setOutput(True)
+            elif x == '2':
+                fV = input('Please enter new Voltage in V \n')
+                if not self.getOutput() == '1':
+                    print('Enabled output. Now ramping...')
+                    self.setOutput(True)
+                self.rampVoltage(float(fV))
+            elif x == '3':
+                fIlim = input('Please enter new current limit in uA \n')
+                self.setCurrentLimit(float(fIlim)/1E6)

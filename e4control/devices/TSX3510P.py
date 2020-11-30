@@ -15,36 +15,36 @@ class TSX3510P(Device):
     def initialize(self):
         pass
 
-    def setVoltageLimit(self, fValue):
+    def setVoltageLimit(self, fValue, iChannel=-1):
         self.write('OVP %f' % fValue)
 
-    def getVoltageLimit(self):
+    def getVoltageLimit(self, iChannel=-1):
         sOVP = self.ask('OVP?')
         return float(sOVP[4:])
 
-    def setVoltage(self, fValue):
+    def setVoltage(self, fValue, iChannel=-1):
         self.write('V %0.2f' % fValue)
 
-    def setCurrent(self, fValue):
+    def setCurrent(self, fValue, iChannel=-1):
         self.write('I %0.2f' % fValue)
 
-    def getVoltage(self):
+    def getVoltage(self, iChannel=-1):
         sV = self.ask('VO?')
         return float(sV[:sV.find('V')])
 
-    def getVoltageSet(self):
+    def getVoltageSet(self, iChannel=-1):
         sV = self.ask('V?')
         return float(sV[2:])
 
-    def getCurrent(self):
+    def getCurrent(self, iChannel=-1):
         sI = self.ask('IO?')
         return float(sI[:sI.find('A')])
 
-    def getCurrentSet(self):
+    def getCurrentSet(self, iChannel=-1):
         sI = self.ask('I?')
         return float(sI[2:])
 
-    def getPower(self):
+    def getPower(self, iChannel=-1):
         sP = self.ask('POWER?')
         return float(sP[:sP.find('W')])
 
@@ -73,28 +73,38 @@ class TSX3510P(Device):
         header = ['Output', 'OVP[V]', 'U[V]', 'I[A]', 'P[W]']
         return([header, values])
 
-    def interaction(self):
-        print('1: enable Output')
-        print('2: set OVP')
-        print('3: set Voltage')
-        print('4: set Current')
-        x = input('Number? \n')
-        while x != '1' and x != '2' and x != '3' and x != '4':
-            x = input('Possible Inputs: 1,2,3 or 4! \n')
-        if x == '1':
-            bO = input('Please enter ON or OFF! \n')
-            if bO == 'ON' or bO == 'on' or bO == '1':
-                self.setOutput(True)
-            elif bO == 'OFF' or bO == 'off' or bO == '0':
-                self.setOutput(False)
-            else:
-                pass
-        elif x == '2':
-            sOVP = input('Please enter new OVP in V\n')
-            self.setVoltageLimit(float(sOVP))
-        elif x == '3':
-            sV = input('Please enter new Voltage in V\n')
-            self.setVoltage(float(sV))
-        elif x == '4':
-            sI = input('Please enter new Current in A\n')
-            self.setCurrent(float(sI))
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+			'channel': 4,
+			'toogleOutput': True,
+			'setVoltage': True,
+			'setCurrent': True,
+			'setOVP': True,
+			}
+            return device_dict
+        else:
+            print('1: enable Output')
+            print('2: set OVP')
+            print('3: set Voltage')
+            print('4: set Current')
+            x = input('Number? \n')
+            while x != '1' and x != '2' and x != '3' and x != '4':
+                x = input('Possible Inputs: 1,2,3 or 4! \n')
+            if x == '1':
+                bO = input('Please enter ON or OFF! \n')
+                if bO == 'ON' or bO == 'on' or bO == '1':
+                    self.setOutput(True)
+                elif bO == 'OFF' or bO == 'off' or bO == '0':
+                    self.setOutput(False)
+                else:
+                    pass
+            elif x == '2':
+                sOVP = input('Please enter new OVP in V\n')
+                self.setVoltageLimit(float(sOVP))
+            elif x == '3':
+                sV = input('Please enter new Voltage in V\n')
+                self.setVoltage(float(sV))
+            elif x == '4':
+                sI = input('Please enter new Current in A\n')
+                self.setCurrent(float(sI))

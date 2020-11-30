@@ -17,7 +17,7 @@ class SHT75(Device):
         call(["ssh", userAtHost, " ~/software/E4control/e4control/devices/StartServer.sh"])
         sleep(0.4) # This is to give the RasPi some time to start up properply
         self.trm = ''
-        
+
         # How to create a rsa-keypair to log on without password:
         # ssh-keygen
         # ssh-copy-id user@host
@@ -67,7 +67,11 @@ class SHT75(Device):
 
         return([header, [str(i) for i in values]])
 
-    def interaction(self):
-        print('For this device there is nothing to do...')
-
-
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+            'pass': True,
+            }
+            return device_dict
+        else:
+            print('Nothing to do...')

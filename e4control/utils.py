@@ -19,12 +19,13 @@ from .devices import (
     K2000,
     K2410,
     SB22,
-    TSX3510P,
     LU114,
     SHT75,
     HUBER,
     TENMA72,
     TENMA72_13330,
+    Test_device,
+    TSX3510P,
     TTI2,
 )
 

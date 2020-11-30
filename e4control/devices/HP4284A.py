@@ -125,5 +125,11 @@ class HP4284A(Device):
         self.printOutput('no output')
         return([[], []])
 
-    def interaction(self):
-        print('Nothing to do...')
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+            'pass': True,
+            }
+            return device_dict
+        else:
+            print('Nothing to do...')

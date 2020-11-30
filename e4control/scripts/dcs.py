@@ -25,7 +25,7 @@ class pressedKeyThread(Thread):
         try:
             tty.setraw(sys.stdin.fileno())
             ch = sys.stdin.read(1)
-     
+
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         self.pressed_key = ch
@@ -51,7 +51,7 @@ def main():
     devices = sh.connect_dcs_devices(config_devices)
 
     # check if SHT75 is used for T and H, remove one as T and H are always displayed
-    for idx_h,d_h in enumerate(config_devices):     
+    for idx_h,d_h in enumerate(config_devices):
         if d_h[0]=='H' and d_h[1]=='SHT75':
             for idx_t,d_t in enumerate(config_devices):
                 if d_t[0]=='T' and d_t[1]=='SHT75':

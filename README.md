@@ -1,4 +1,4 @@
-# E4control v1.7.1
+# E4control v1.8.0
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -32,6 +32,7 @@ Following devices are currently supported:
 - *e4control_measure_It* , to perform a current vs time measurement
 <!-- - *e4control_measure_Cint*, to perform a capcity vs. voltage measurement with hold for 'hold_t' at 'hold_v' for 'times' times -->
 - *e4control_dcs* , for manual real time device controlling
+- *e4control_dcs_gui* , for manual real time device controlling using a gui
 
 
 ## Installation
@@ -103,26 +104,6 @@ To measure the capacitance against voltage, enter:
 example:
 `e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`
 
-<!-- #### e4control_measure_Cint
-enter:
-`e4control_measure_Cint V_min V_max output config -I_lim -I I_Lim -s V_steps -n ndaqs -d delay -f lcr_frequenz -times times
--hold_V hold_v -hold_t hold_t`
-
-- V_min   -> starting voltage | float | in V
-- V_max   -> end voltage | float | in V
-- output  -> output directory name | string
-- config  -> config file name | string
-- V_steps -> number of voltage steps | int
-- ndaqs   -> number of data acquistion at every set voltage | int
-- delay   -> delay after setting new voltage | int | in s
-- lcr_frequenz -> LCR meter frequenz | float | in Hz
-- times -> number of times the routine is repeated | int
-- hold_V -> voltage applied during the 'hold' phase | float | in V
-- hold_t -> duration of the 'hold' phase | int | in s
-
-example:
-`e4control_measure_CV 0 100 meas_2 config_CV -s 11 -n 5 -d 2 -f 10000`
- -->
 #### e4control_measure_It
 To measure the current against time at a fixed voltage, enter:
 `e4control_measure_It output config -v voltage -n ndaqs -d delay -p noLivePlot -db database`
@@ -140,13 +121,17 @@ To measure the current against time at a fixed voltage, enter:
 example:
 `e4control_measure_It meas_3 config_It -v 50 -n 5 -d 30 -p 1`
 
-#### e4control_dcs
-enter:
-`e4control_dcs config -l logfile `
+#### e4control_dcs and e4control_gui_dcs
+To access the terminal interface enter:
+`e4control_dcs config -l logfile ` 
+or the quivalent for the gui-dcs:
+`e4control_gui_dcs config -l logfile `
 
 - config  -> config file name | string
 - logfile -> logfile name | string
 
-example:
+examples:
 `e4control_dcs config_dcs -l log_1 ` *with log named log_1*  
 `e4control_dcs config_dcs ` *without log*
+`e4control_gui_dcs config -l log_2 ` *gui-dcs with log named log_2*
+`e4control_gui_dcs config ` *gui-dcs without log*
