@@ -133,5 +133,5 @@ or the quivalent for the gui-dcs:
 examples:
 `e4control_dcs config_dcs -l log_1 ` *with log named log_1*  
 `e4control_dcs config_dcs ` *without log*
-`e4control_gui_dcs config -l log_2 ´ *gui-dcs with log named log_2*
-`e4control_gui_dcs config `*gui-dcs without log*
+`e4control_gui_dcs config -l log_2 ` *gui-dcs with log named log_2*
+`e4control_gui_dcs config ` *gui-dcs without log*
