@@ -572,7 +572,7 @@ def control_window(devices, config_devices, fw):
     pass
 
 
-# Verification window, it the entries in the configfile are correct
+# Verification window, if the entries in the configfile are correct
 def show_dcs_device_list_gui(devices):
 
     layout = []
@@ -618,7 +618,7 @@ def welcome_dcs_gui(config):
     pass
 
 
-# Abort window. It is opend, when the gui is closed.
+# Abort window. It is opend, when the control window is closed.
 def abort(err_msg=False):
     if err_msg:
         layout = [
@@ -639,7 +639,7 @@ def abort(err_msg=False):
     pass
 
 
-# Window which prensets a error message. Is used for example when no channel is assigned.
+# Window which prensets a error message.
 def error_msg(err_msg):
     layout = [
             [sg.Text(f'{err_msg}', text_color=red, font=('Arial', 15))],
