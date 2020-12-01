@@ -202,7 +202,7 @@ def change_operation_mode(device):
 
 
 # General interaction, to change a given parameter of a device.
-# For example, the device coltage, current, temperature and many more can be changed this way.
+# For example, the device voltage, current, temperature and many more can be changed this way.
 def general_interaction(device, interaction_name, interaction_unit, interaction_function, channel):
     key_str = 'new_value'
     layout_general_interaction = [
@@ -271,7 +271,7 @@ def control_window(devices, config_devices, fw):
             else:
                 pass
 
-        # check all possible changes the devices have
+        # check all possible interactions the devices have
         if event == 'Change':
             layout_change = []
             same_device_counter = 0
@@ -406,7 +406,7 @@ def control_window(devices, config_devices, fw):
 
                     window_device_interaction = sg.Window(f'{device_change.__class__.__name__}', layout_device_interaction)
 
-                    # handle the made change
+                    # handle the interaction / setting change
                     while True:
                         event_interaction, values_interaction = window_device_interaction.read(timeout=0)
                         if event_interaction == sg.WIN_CLOSED or event_interaction == 'Back':
@@ -515,7 +515,7 @@ def control_window(devices, config_devices, fw):
                         time.sleep(1)
                     iChannel = -1 # reset iChannel to its default value -1 after the change window is closed
 
-        # update the output values
+        # update the output values in the Control Window
         same_device_counter = 0
         min, s, time_now = get_timestamp(starttime)
         all_values = [time_now]
@@ -526,6 +526,8 @@ def control_window(devices, config_devices, fw):
             for h, v in zip(header, values):
                 try:
                     # color the current and temperature values
+                    # if the current or temperature rises above 0.1 compared to the prior value, the output is coloured rise.
+                    # if the value is 0.1 lower it is coloured blue, if the change is below 0.1 it is coloured white.
                     if ('A]' in h or 'C]' in h) and bool(len(v_prior)) and float(v_prior[-1]) - float(v) > 0.1 and abs(float(v_prior[-1]) - float(v)) > 0.1:
                         window[f'{h}{same_device_counter}'].update(np.round(float(v), 2), text_color=blue)
                     elif ('A]' in h or 'C]' in h) and bool(len(v_prior)) and float(v_prior[-1]) - float(v) < 0.1 and abs(float(v_prior[-1]) - float(v)) > 0.1:
@@ -558,7 +560,7 @@ def control_window(devices, config_devices, fw):
         if len(v_prior):
             v_prior.pop()
 
-        # write data to the logfile, in case a logfile is created
+        # write data to the logfile
         if not fw == -1:
             try:
                 sh.write_line(fw, all_values)
@@ -570,6 +572,7 @@ def control_window(devices, config_devices, fw):
     pass
 
 
+# Verification window, it the entries in the configfile are correct
 def show_dcs_device_list_gui(devices):
 
     layout = []
@@ -592,6 +595,7 @@ def show_dcs_device_list_gui(devices):
     pass
 
 
+# Welcome window, which presents the used version of E4control and reads out the name of the config file
 def welcome_dcs_gui(config):
     layout = [
             [sg.Text(f'This is e4control'), sg.Text(f'v{version}.', text_color=red)],
@@ -614,6 +618,7 @@ def welcome_dcs_gui(config):
     pass
 
 
+# Abort window. It is opend, when the gui is closed.
 def abort(err_msg=False):
     if err_msg:
         layout = [
@@ -634,6 +639,7 @@ def abort(err_msg=False):
     pass
 
 
+# Window which prensets a error message. Is used for example when no channel is assigned.
 def error_msg(err_msg):
     layout = [
             [sg.Text(f'{err_msg}', text_color=red, font=('Arial', 15))],
@@ -647,6 +653,8 @@ def error_msg(err_msg):
             break
     pass
 
+
+# creates a logfile with the given name
 def create_logfile(file_name, config_devices, devices):
     blockPrint()
     checktxtfile = (file_name + '.txt')
@@ -670,6 +678,7 @@ def create_logfile(file_name, config_devices, devices):
         sh.write_line(fw, header)
         return fw
 
+    
 # Suppress output to the console.
 def blockPrint():
     sys.stdout = open(os.devnull, 'w')
@@ -683,8 +692,10 @@ def enablePrint():
 
 
 def main():
+    # parse arguments
     args = parser.parse_args()
 
+    # create welcome window
     welcome_dcs_gui(args.config)
 
     # Read config file.
@@ -719,6 +730,7 @@ def main():
     # in the hardware settings can be performed.
     control_window(devices, config_devices, fw)
 
+    # Clean disconnect from the devices and clean closure of the logfile
     for d in devices:
         d.close()
     if args.logfile:
