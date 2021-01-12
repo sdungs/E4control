@@ -52,6 +52,8 @@ def main():
     Ameter_channel = []
     if devices['T']:
         temperature, temperature_channel = sh.device_connection(devices['T'])
+    if devices['T2W']:
+        temperature, temperature_channel = sh.device_connection(devices['T2W'])
     if devices['H']:
         humidity, humidity_channel = sh.device_connection(devices['H'])
     if devices['V']:
@@ -89,6 +91,8 @@ def main():
         l.setVoltage(args.lvolt)
     for t in temperature:
         t.initialize('T')
+    for t in temperature:
+        t.initialize('T2W')
     for h in humidity:
         h.initialize('H')
     for v in Vmeter:
