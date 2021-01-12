@@ -1,4 +1,5 @@
 # E4control v1.8.1
+
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -123,7 +124,9 @@ example:
 
 #### e4control_dcs and e4control_gui_dcs
 To access the terminal interface enter:
+
 `e4control_dcs config -l logfile `
+
 or the quivalent for the gui-dcs:
 `e4control_gui_dcs config -l logfile `
 
