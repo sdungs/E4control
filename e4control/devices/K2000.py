@@ -22,11 +22,11 @@ class K2000(Device):
             self.setRange('RO')
             self.mode = 'H'
         elif (sMode == 'T2W'):
-            self.setKind('OHM')
+            self.setKind('OHM') # 2-wire measurment
             self.setRange('R2')
             self.mode = 'T2W'
         elif (sMode == 'T'):
-            self.setKind('OHM4')
+            self.setKind('OHM4') # 4-wire measurment
             self.setRange('R2')
             self.mode = 'T'
         elif (sMode == 'V'):

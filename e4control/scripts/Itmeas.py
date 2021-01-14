@@ -45,6 +45,8 @@ def main():
     # Vmeter_channel = []
     if devices['T']:
         temperature, temperature_channel = sh.device_connection(devices['T'])
+    if devices['T2W']:
+        temperature, temperature_channel = sh.device_connection(devices['T2W'])
     if devices['H']:
         humidity, humidity_channel = sh.device_connection(devices['H'])
 
@@ -53,7 +55,7 @@ def main():
         if d_h[0]=='SHT75':
             for idx_t,d_t in enumerate(devices['T']):
                 if d_t[0]=='SHT75':
-                    if d_h[1]==d_t[1] and d_h[2]==d_t[2] and d_h[3]==d_t[3]: 
+                    if d_h[1]==d_t[1] and d_h[2]==d_t[2] and d_h[3]==d_t[3]:
                         humidity[idx_h]=temperature[idx_t]
                         print('Linked H{} with T{}.'.format(idx_h+1,idx_t+1))
 
@@ -72,6 +74,8 @@ def main():
             source[d].setOutput(True, source_channel[d])
     for t in temperature:
         t.initialize('T')
+    for t in temperature:
+        t.initialize('T2W')
     for h in humidity:
         h.initialize('H')
 
@@ -122,7 +126,7 @@ def main():
     sh.write_line(fwshort, header)
 
     # create database output file
-    if args.database:        
+    if args.database:
         db_file, db_input = sh.initialize_db('It', args)
 
     # ramp to const bias voltage
