@@ -20,7 +20,7 @@ class K196(Device):
             self.setKind('DCV')
             self.setRange('RO')
             self.mode = 'H'
-        elif (sMode == 'T'):
+        elif (sMode in ['T', 'T2W']):   # the device itself selects 2- or 4-wire mode automatically (ohm sense leads connected or not)
             self.setKind('OHM')
             self.setRange('R2')
             self.mode = 'T'
