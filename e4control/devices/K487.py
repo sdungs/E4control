@@ -30,7 +30,7 @@ class K487(Device):
         self.getVoltage()
 
     def getOutput(self, iChannel=-1):
-        sStatus = self.aks('U0X')
+        sStatus = self.ask('U0X')
         return bool(sStatus[sStatus.find('O') + 1])
 
     def setOutput(self, bEnable, iChannel=-1):
