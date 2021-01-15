@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='e4control',
-    version='1.8.2',
+    version='1.8.3',
     author='Sascha Dungs, Andreas Gisen, Jonas Lönker, Sebastian Pape',
     author_email='sascha.dungs@tu-dortmund.de, andreas.gisen@tu-dortmund.de, jonas.loenker@tu-dortmund.de, sebastian2.pape@tu-dortmund.de',
     packages=[

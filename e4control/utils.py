@@ -51,7 +51,7 @@ def print_welcome():
 
 
 def read_config(configfile):
-    devices = {"S": [], "T": [], "H": [], "P": [], "L": [], "C": [], "V": [], "I": []}
+    devices = {"S": [], "T": [], "T2W": [], "H": [], "P": [], "L": [], "C": [], "V": [], "I": []}
     for line in open(configfile):
         if line[0] == '#':
             continue
@@ -82,6 +82,10 @@ def settings_query(device_list, **kwargs):
     if device_list["T"]:
         print("Temperature device(s):")
         for i in device_list["T"]:
+            print(i)
+    if device_list["T2W"]:
+        print("Temperature device(s):")
+        for i in device_list["T2W"]:
             print(i)
     if device_list["H"]:
         print("Humidity device(s):")
