@@ -151,7 +151,7 @@ class K487(Device):
             fCurrent = 0
         return([['Output', 'U[V]', 'I[uA]'], [str(bPower), str(fVoltage), str(fCurrent)]])
 
-    def interaction(self):
+    def interaction(self, gui=False):
         if gui:
             device_dict = {
 			'toogleOutput': True,
