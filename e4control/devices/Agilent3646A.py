@@ -14,10 +14,6 @@ class Agilent3646A(Device):
         super(Agilent3646A, self).__init__(
             connection_type=connection_type, host=host, port=port)
 
-    def userCmd(self, cmd):
-        print('user cmd: %s' % cmd)
-        return self.ask(cmd)
-
     def initialize(self):
     	self.write('SYST:REM')
     	self.setVoltageRange('MAX', 1)
