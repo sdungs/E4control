@@ -7,6 +7,7 @@ import json
 import time
 
 from .devices import (
+    Agilent3646A,
     C804,
     HMP4040,
     HP4284A,
@@ -18,6 +19,7 @@ from .devices import (
     K617,
     K2000,
     K2410,
+    K2614,
     SB22,
     LU114,
     SHT75,
