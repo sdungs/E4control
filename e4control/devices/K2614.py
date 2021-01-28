@@ -14,10 +14,6 @@ class K2614(Device):
         super(K2614, self).__init__(
             connection_type=connection_type, host=host, port=port)
 
-    def userCmd(self, cmd):
-        print('user cmd: %s' % cmd)
-        return self.ask(cmd)
-
     def initialize(self, iChannel='all'):
         if iChannel == 'all':
             self.setVoltageRange('AUTO', 1)
