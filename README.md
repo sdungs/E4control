@@ -1,4 +1,4 @@
-# E4control v1.8.4
+# E4control v1.8.5
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
