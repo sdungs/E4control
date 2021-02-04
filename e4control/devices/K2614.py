@@ -13,6 +13,7 @@ class K2614(Device):
     def __init__(self, connection_type, host, port):
         super(K2614, self).__init__(
             connection_type=connection_type, host=host, port=port)
+        self.trm = '\n'
 
     def initialize(self, iChannel='all'):
         if iChannel == 'all':
@@ -33,20 +34,20 @@ class K2614(Device):
 
     def setCurrentAutoRange(self, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        self.write(f'smu{iChannel}.source.autorangei = smu{iChannel}.AUTORANGE_ON\n')
+        self.write(f'smu{iChannel}.source.autorangei = smu{iChannel}.AUTORANGE_ON')
 
     def setVoltageRange(self, sRange, iChannel):
         iChannel = self.convert_iChannel(iChannel)
         if isinstance(sRange, int):
-            self.write(f'smu{iChannel}.source.rangev = {sRange}\n')
+            self.write(f'smu{iChannel}.source.rangev = {sRange}')
         elif sRange == 'AUTO':
-            self.write(f'smu{iChannel}.source.autorangev = smu{iChannel}.AUTORANGE_ON\n')
+            self.write(f'smu{iChannel}.source.autorangev = smu{iChannel}.AUTORANGE_ON')
         else:
             print('Unknown Range')
 
     def setCurrentLimit(self, fIlim, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        self.write(f'smu{iChannel}.source.limiti = {fIlim}\n')
+        self.write(f'smu{iChannel}.source.limiti = {fIlim}')
 
     def setVoltageLimit(self, fVlim, iChannel):
         iChannel = self.convert_iChannel(iChannel)
@@ -54,18 +55,18 @@ class K2614(Device):
 
     def setVoltage(self, fVset, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        self.write(f'smu{iChannel}.source.levelv = {fVset}\n')
+        self.write(f'smu{iChannel}.source.levelv = {fVset}')
 
     def setOutput(self, bEnable, iChannel):
         iChannel = self.convert_iChannel(iChannel)
         if bEnable:
-            self.write(f'smu{iChannel}.source.output = smu{iChannel}.OUTPUT_ON\n')
+            self.write(f'smu{iChannel}.source.output = smu{iChannel}.OUTPUT_ON')
         else:
-            self.write(f'smu{iChannel}.source.output = smu{iChannel}.OUTPUT_OFF\n')
+            self.write(f'smu{iChannel}.source.output = smu{iChannel}.OUTPUT_OFF')
 
     def getOutput(self, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        bPower = float(self.ask(f'print(smu{iChannel}.source.output)\n'))
+        bPower = float(self.ask(f'print(smu{iChannel}.source.output)'))
         if bPower == 0:
             return False
         if bPower == 1:
@@ -73,17 +74,17 @@ class K2614(Device):
 
     def getVoltage(self, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        sValue = self.ask(f'print(smu{iChannel}.source.levelv)\n')
+        sValue = self.ask(f'print(smu{iChannel}.source.levelv)')
         return float(sValue)
 
     def getCurrent(self, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        sValue = self.ask(f'print(smu{iChannel}.source.leveli)\n')
+        sValue = self.ask(f'print(smu{iChannel}.source.leveli)')
         return float(sValue)
 
     def getCurrentLimit(self, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        sCurrLim = self.ask(f'print(smu{iChannel}.source.limiti)\n')
+        sCurrLim = self.ask(f'print(smu{iChannel}.source.limiti)')
         return float(sCurrLim)
 
     def getVoltageLimit(self, iChannel):
@@ -120,7 +121,7 @@ class K2614(Device):
             pass
 
     def reset(self):
-        self.write('reset()\n')
+        self.write('reset()')
 
     def output(self, show=True):
         bPower_CH1 = self.getOutput(1)
