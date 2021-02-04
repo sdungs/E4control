@@ -51,7 +51,7 @@ class K2614(Device):
 
     def setVoltageLimit(self, fVlim, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        self.write(':SENSE:VOLT:PROT %f' % fVlim)
+        self.write(f'smu{iChannel}.source.limitv = {fVlim}')
 
     def setVoltage(self, fVset, iChannel):
         iChannel = self.convert_iChannel(iChannel)
