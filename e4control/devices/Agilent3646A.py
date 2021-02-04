@@ -13,64 +13,61 @@ class Agilent3646A(Device):
     def __init__(self, connection_type, host, port):
         super(Agilent3646A, self).__init__(
             connection_type=connection_type, host=host, port=port)
+        self.trm = '\n'
 
     def initialize(self):
-    	self.write('SYST:REM')
+    	self.write(':SYST:REM')
     	self.setVoltageRange('MAX', 1)
     	self.setVoltageRange('MAX', 2)
     	pass
 
     def setVoltageRange(self, sRange, iChannel):
-        self.write(f'INST OUT{iChannel}')
+        self.write(f':INST:SEL OUT{iChannel}')
         if sRange == 'MAX':
-            self.write('VOLT:RANG MAX')
+            self.write(':VOLT:RANG HIGH')
         elif sRange == 'MIN':
-            self.write('VOLT:RANG MIN')
+            self.write(':VOLT:RANG LOW')
         elif sRange == 'AUTO':
-            self.write('VOLT:RANG:AUTO ON')
+            self.write(':VOLT:RANG:AUTO ON')
         else:
             print('Unknown Range')
 
     def setVoltageLimit(self, fVlim, iChannel):
-        self.write(f'INST OUT{iChannel}')
-        self.write(f'VOL :PROT {fVlim}')
+        self.write(f':INST:SEL OUT{iChannel}')
+        self.write(f':VOLT:PROT {fVlim}')
 
     def setCurrent(self, fIset, iChannel):
-        self.write(f'INST OUT{iChannel}')
-        self.write(f'CURR {fIset}')
+        self.write(f':INST:SEL OUT{iChannel}')
+        self.write(f':CURR {fIset}')
 
     def setVoltage(self, fVset, iChannel):
-        self.write(f'INST OUT{iChannel}')
-        self.write(f'VOLT {fVset}')
+        self.write(f':INST:SEL OUT{iChannel}')
+        self.write(f':VOLT {fVset}')
 
     def setOutput(self, bEnable, iChannel):
-        self.write(f'INST OUT{iChannel}')
+        self.write(f':INST:SEL OUT{iChannel}')
         if bEnable:
-            self.write('OUTPUT ON')
+            self.write(':OUTPUT ON')
         else:
-            self.write('OUTPUT OFF')
+            self.write(':OUTPUT OFF')
 
     def getOutput(self, iChannel):
-        self.write(f'INST OUT{iChannel}')
-        return self.ask('OUTPUT?')
+        self.write(f':INST:SEL OUT{iChannel}')
+        return self.ask(':OUTPUT?')
 
     def getVoltage(self, iChannel):
-        self.write(f'INST OUT{iChannel}')
-        sValues = self.ask('VOLT?')
-        if ',' not in sValues:
-            sValues = self.ask('VOLT?')
-            if ',' not in sValues:
-                return 'error'
-        return float(sValues.split(',')[0])
+        self.write(f':INST:SEL OUT{iChannel}')
+        sValues = self.ask(':VOLT?')
+        return float(sValues)
 
     def getCurrent(self, iChannel):
-        self.write(f'INST OUT{iChannel}')
-        sValues = self.ask('CURR?')
-        return float(sValues.split(',')[1])
+        self.write(f':INST:SEL OUT{iChannel}')
+        sValues = self.ask(':CURR?')
+        return float(sValues)
 
     def getVoltageLimit(self, iChannel):
-        self.write(f'INST OUT{iChannel}')
-        return float(self.ask('VOLT:PROT?'))
+        self.write(f':INST:SEL OUT{iChannel}')
+        return float(self.ask(':VOLT:PROT?'))
 
     def setRampSpeed(self, iRampSpeed, iDelay):
         if iRampSpeed < 1 or iRampSpeed > 255:
