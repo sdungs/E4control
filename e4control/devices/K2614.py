@@ -89,7 +89,7 @@ class K2614(Device):
 
     def getVoltageLimit(self, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        sVoltLim = self.ask('print(smu{iChannel}.source.rangev)')
+        sVoltLim = self.ask(f'print(smu{iChannel}.source.rangev)')
         return float(sVoltLim)
 
     def setRampSpeed(self, iRampSpeed, iDelay):
