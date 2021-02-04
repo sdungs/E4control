@@ -1,4 +1,4 @@
-# E4control v1.8.5
+# E4control v1.8.6
 E4control is a python based software for device controlling and data taking.
 
 It consists of two packages: **devices** and **scripts**.
@@ -18,6 +18,7 @@ Following devices are currently supported:
 - Keithley 617 (Electrometer)
 - Keithley 2000 (Multimeter)
 - Keithley 2410 (Source Meter)
+- Keithley 2614 (Source Meter)
 - Physical Instruments C804 (xyz-stage controller)
 - Rohde&Schwarz HMP4040 (Power Supply)
 - Sensirion SHT75 (Temperature & Humidity Sensor, connected via a RasPi)

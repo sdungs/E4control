@@ -28,7 +28,7 @@ class Device(object):
         elif (connection_type == 'lan_udp'):
             self.com = UDPLink(host, port)
             self.com.open()
-            self.com._socket.bind(('',port))
+            self.com._socket.bind(('', port))
             self.com._socket.settimeout(0.1)
             self.com.settimeout(0.1)
         elif (connection_type == 'gpib'):
@@ -36,8 +36,8 @@ class Device(object):
             self.com = vxi11.Instrument(host, sPort)
         elif (connection_type == 'gpibSerial'):
             sPort = 'COM1,488'
-            self.com = vxi11.Instrument(host,sPort)
-            #This probably will solely work with Keysight E5810B
+            self.com = vxi11.Instrument(host, sPort)
+            # This probably will solely work with Keysight E5810B
         elif (connection_type == 'usb'):
             self.com = serial.Serial(host, 9600)
         elif (connection_type == 'prologix'):

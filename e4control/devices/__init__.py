@@ -24,6 +24,7 @@ from .TTI2 import TTI2
 
 __all__ = [
     'Device',
+    'Agilent3646A',
     'C804',
     'HMP4040',
     'HP4284A',
@@ -34,6 +35,7 @@ __all__ = [
     'K487',
     'K617',
     'K2000',
+    'K2410',
     'K2614',
     'SB22',
     'LU114',
