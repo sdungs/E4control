@@ -37,11 +37,11 @@ class Agilent3646A(Device):
 
     def setCurrent(self, fIset, iChannel):
         self.write(f'INST OUT{iChannel}')
-        self.write( 'CURR {fIset}')
+        self.write(f'CURR {fIset}')
 
     def setVoltage(self, fVset, iChannel):
         self.write(f'INST OUT{iChannel}')
-        self.write( 'VOLT {fVset}')
+        self.write(f'VOLT {fVset}')
 
     def setOutput(self, bEnable, iChannel):
         self.write(f'INST OUT{iChannel}')
