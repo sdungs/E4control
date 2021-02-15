@@ -10,16 +10,17 @@ import matplotlib.pyplot as plt
 
 from .. import utils as sh
 
-
 # arg parser
 parser = argparse.ArgumentParser()
 parser.add_argument('voltage', help='preset constant voltage', type=float, nargs='+')
 parser.add_argument('output', help='name of output file')
 parser.add_argument('config', help='path to config file')
 parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=3', type=int, default=3)
-parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=60', type=int, default=60)
+parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=60', type=int,
+                    default=60)
 parser.add_argument('-p', '--noLivePlot', help='disables the livePlot', action='store_true')
-parser.add_argument('-db', '--database', help='creates an additional logfile, matching the pixel database requirements', action='store_true')
+parser.add_argument('-db', '--database', help='creates an additional logfile, matching the pixel database requirements',
+                    action='store_true')
 
 
 def main():
@@ -51,13 +52,13 @@ def main():
         humidity, humidity_channel = sh.device_connection(devices['H'])
 
     # check if SHT75 is used for T and H
-    for idx_h,d_h in enumerate(devices['H']):
-        if d_h[0]=='SHT75':
-            for idx_t,d_t in enumerate(devices['T']):
-                if d_t[0]=='SHT75':
-                    if d_h[1]==d_t[1] and d_h[2]==d_t[2] and d_h[3]==d_t[3]:
-                        humidity[idx_h]=temperature[idx_t]
-                        print('Linked H{} with T{}.'.format(idx_h+1,idx_t+1))
+    for idx_h, d_h in enumerate(devices['H']):
+        if d_h[0] == 'SHT75':
+            for idx_t, d_t in enumerate(devices['T']):
+                if d_t[0] == 'SHT75':
+                    if d_h[1] == d_t[1] and d_h[2] == d_t[2] and d_h[3] == d_t[3]:
+                        humidity[idx_h] = temperature[idx_t]
+                        print('Linked H{} with T{}.'.format(idx_h + 1, idx_t + 1))
 
     # initialize
     for d in range(len(source)):
@@ -153,7 +154,8 @@ def main():
     try:
         while True:
             timestamp0 = time.time()
-            print('This measurement has been runing for a total time of {}.'.format(str(dt.timedelta(seconds=timestamp0-t0)).split('.')[0]))
+            print('This measurement has been runing for a total time of {}.'.format(
+                str(dt.timedelta(seconds=timestamp0 - t0)).split('.')[0]))
             Us = []
             Is = []
             Ts = []
@@ -168,7 +170,7 @@ def main():
                     Ts.append(ts[4])
                 else:
                     Ts.append(temperature[n].getTemperature(temperature_channel[n]))
-            for idx,h in enumerate(humidity):
+            for idx, h in enumerate(humidity):
                 Hs.append(h.getHumidity(humidity_channel[idx]))
             for j in range(args.ndaqs):
                 timestamp = time.time()
@@ -179,19 +181,19 @@ def main():
                         I = source[d].getCurrent(source_channel[1])
                         values.append(I)
                         if livePlot:
-                            plt.plot(timestamp-t0, abs(I), 'C0x' % iS, label=r'0' % iS)
+                            plt.plot(timestamp - t0, abs(I), 'C0x' % iS, label=r'0' % iS)
                         values.append(source[d].getVoltage(source_channel[2]))
                         I = source[d].getCurrent(source_channel[2])
                         values.append(I)
                         if livePlot:
-                            plt.plot(timestamp-t0, abs(I), 'C1x' % iS, label=r'1' % iS)
+                            plt.plot(timestamp - t0, abs(I), 'C1x' % iS, label=r'1' % iS)
                     else:
                         Us.append(source[d].getVoltage(source_channel[d]))
                         values.append(Us[-1])
                         Is.append(source[d].getCurrent(source_channel[d]))
                         values.append(Is[-1])
                         if livePlot:
-                            plt.plot(timestamp-t0, abs(Is[-1]), 'C0x', label=r'0')
+                            plt.plot(timestamp - t0, abs(Is[-1]), 'C0x', label=r'0')
                 for t in Ts:
                     values.append(t)
                 for h in Hs:
@@ -201,10 +203,10 @@ def main():
                 plt.pause(0.0001)
                 # time.sleep(0.1)
 
-            duration = round(timestamp-timestamp0, 1)
+            duration = round(timestamp - timestamp0, 1)
             Umean = np.mean(Us)
-            Imean = np.mean(Is)*1e6
-            Istd = np.std(Is)*1e6
+            Imean = np.mean(Is) * 1e6
+            Istd = np.std(Is) * 1e6
             Tmean = np.mean(Ts)
             Hmean = np.mean(Hs)
 
@@ -220,7 +222,8 @@ def main():
                 else:
                     Hs = Hs[db_input['db_humChannel']]
 
-                sh.write_line(db_file, [round(timestamp0-t0), Umean, '{:.4}'.format(Imean), '{:.4}'.format(Istd), '{:.4}'.format(Ts), '{:.4}'.format(Hs)])
+                sh.write_line(db_file, [round(timestamp0 - t0), Umean, '{:.4}'.format(Imean), '{:.4}'.format(Istd),
+                                        '{:.4}'.format(Ts), '{:.4}'.format(Hs)])
 
             time.sleep(args.delay)
             k += 1

@@ -97,7 +97,7 @@ class K2410(Device):
             self.rampSpeed_delay = iDelay
 
     def getRampSpeed(self):
-        return([int(self.rampSpeed_step), int(self.rampSpeed_delay)])
+        return ([int(self.rampSpeed_step), int(self.rampSpeed_delay)])
 
     def rampVoltage(self, fVnew, iChannel=-1):
         V = self.getVoltage(iChannel)
@@ -121,7 +121,7 @@ class K2410(Device):
             self.write(':ROUT:TERM REAR')
 
     def getOutputSide(self):
-        return(self.ask(':ROUT:TERM?'))
+        return (self.ask(':ROUT:TERM?'))
 
     def reset(self):
         self.write('*RST')
@@ -150,15 +150,15 @@ class K2410(Device):
                 self.printOutput('Voltage = ---- V')
                 self.printOutput('Current = ---- uA')
 
-        return([['Output', 'Ilim[uA]', 'U[V]', 'I[uA]'], [str(bPower), str(fLimit), str(fVoltage), str(fCurrent)]])
+        return ([['Output', 'Ilim[uA]', 'U[V]', 'I[uA]'], [str(bPower), str(fLimit), str(fVoltage), str(fCurrent)]])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-			'toogleOutput': True,
-			'rampVoltage': True,
-			'setCurrentLimit': True,
-			}
+                'toogleOutput': True,
+                'rampVoltage': True,
+                'setCurrentLimit': True,
+            }
             return device_dict
         else:
             print(
@@ -166,10 +166,10 @@ class K2410(Device):
                 '1: Toggle output\n'
                 '2: Set voltage (enables the output if its off)\n'
                 '3: Set currrent limit'
-                )
+            )
 
             x = input('Number? \n')
-            while not (x in ['0','1','2','3',]):
+            while not (x in ['0', '1', '2', '3', ]):
                 x = input('Possible Inputs: 0, 1, 2 or 3! \n')
 
             if x == '0':
@@ -188,4 +188,4 @@ class K2410(Device):
                 self.rampVoltage(float(fV))
             elif x == '3':
                 fIlim = input('Please enter new current limit in uA \n')
-                self.setCurrentLimit(float(fIlim)/1E6)
+                self.setCurrentLimit(float(fIlim) / 1E6)

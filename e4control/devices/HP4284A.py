@@ -83,15 +83,15 @@ class HP4284A(Device):
 
     def setMeasurementMode(self, sMode):
         if sMode in ['CPD', 'CPQ', 'CPG', 'CPRP', 'CSD', 'CSQ', 'CSRS',  # capacitance related modes
-                     'LPQ', 'LPD', 'LPRP', 'LSD', 'LSQ', 'LSRS',         # inductance related modes
-                     'RX', 'ZTD', 'ZTR', 'GB', 'YTD', 'YTR']:            # impedance /addmitance related modes
+                     'LPQ', 'LPD', 'LPRP', 'LSD', 'LSQ', 'LSRS',  # inductance related modes
+                     'RX', 'ZTD', 'ZTR', 'GB', 'YTD', 'YTR']:  # impedance /addmitance related modes
             self.write(':FUNC:IMP {}'.format(sMode))
             self.mode = sMode
         else:
             print(f'Setting measurement mode failed! Unkown mode.')
 
     def getMeasurementMode(self):
-        return(self.ask(':FUNC:IMP?'))
+        return (self.ask(':FUNC:IMP?'))
 
     def setTriggerMode(self, sMode):
         if (sMode == 'INT'):
@@ -109,7 +109,7 @@ class HP4284A(Device):
         self.write(':VOLT %f V' % fVolt)
 
     def getVoltage(self):
-        return(self.ask(':VOLT?'))
+        return (self.ask(':VOLT?'))
 
     def setIntegrationTimeAndAveragingRate(self, sType, iAR):
         if (sType == 'SHOR'):
@@ -122,7 +122,7 @@ class HP4284A(Device):
             print('Setting ITAR failed!')
 
     def getIntegrationTimeAndAveragingRate(self):
-        return(self.ask(':APER?'))
+        return (self.ask(':APER?'))
 
     def reset(self):
         self.write('*RST')
@@ -130,7 +130,7 @@ class HP4284A(Device):
     def output(self, show=True):
         self.printOutput('HP4284A:')
         self.printOutput('no output')
-        return([[], []])
+        return ([[], []])
 
     def interaction(self, gui=False):
         if gui:

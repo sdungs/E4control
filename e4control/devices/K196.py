@@ -20,7 +20,8 @@ class K196(Device):
             self.setKind('DCV')
             self.setRange('RO')
             self.mode = 'H'
-        elif (sMode in ['T', 'T2W']):   # the device itself selects 2- or 4-wire mode automatically (ohm sense leads connected or not)
+        elif (sMode in ['T',
+                        'T2W']):  # the device itself selects 2- or 4-wire mode automatically (ohm sense leads connected or not)
             self.setKind('OHM')
             self.setRange('R2')
             self.mode = 'T'
@@ -96,8 +97,8 @@ class K196(Device):
         R0 = 100.00
         R = self.getValue()
         if R > 10000000:
-            return(9999)
-        return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+            return (9999)
+        return (-a / (2 * b) - math.sqrt(R / (R0 * b) - 1 / b + (a / (2 * b)) * (a / (2 * b))))
 
     def getTempPT1000(self, iChannel=-1):
         a = 3.90802E-3
@@ -105,22 +106,22 @@ class K196(Device):
         R0 = 1000.00
         R = self.getValue()
         if R > 10000000:
-            return(9999)
-        return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+            return (9999)
+        return (-a / (2 * b) - math.sqrt(R / (R0 * b) - 1 / b + (a / (2 * b)) * (a / (2 * b))))
 
     def getHumidity(self, fTemp, iChannel=-1):
         a = 0.0315
         b = 0.826
         V = self.getValue()
-        return ((V-b)/a)/(1.0546-0.00216*fTemp)
+        return ((V - b) / a) / (1.0546 - 0.00216 * fTemp)
 
     def getVoltage(self, iChannel=-1):
         fV = self.getValue()
-        return(fV)
+        return (fV)
 
-    def getCurrent(self, iChannel = -1):
+    def getCurrent(self, iChannel=-1):
         fV = self.getValue()
-        return(fV)
+        return (fV)
 
     def setRange(self, sRange):
         if (sRange == 'R0'):
@@ -169,7 +170,7 @@ class K196(Device):
             values.append(str(fTemperature))
             header.append('T[C]')
             if show:
-                print('values:'+'\t'+'%.2f Ohm' % fResistance + '\t' + '%.1f °C' % fTemperature)
+                print('values:' + '\t' + '%.2f Ohm' % fResistance + '\t' + '%.1f °C' % fTemperature)
         elif (self.mode == 'V'):
             fVoltage = self.getVoltage()
             values.append(str(fVoltage))
@@ -178,12 +179,12 @@ class K196(Device):
                 print('Voltage = %0.4f V' % fVoltage)
         else:
             print('Error!')
-        return([header, values])
+        return ([header, values])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-            'pass': True,
+                'pass': True,
             }
             return device_dict
         else:

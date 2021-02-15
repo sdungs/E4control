@@ -19,12 +19,14 @@ parser.add_argument('config', help='path to config file')
 parser.add_argument('-s', '--v_steps', help='number of voltage steps', type=int, default=2)
 parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=5', type=int, default=5)
 parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=1', type=int, default=1)
-parser.add_argument('-f', '--frequency', help='measuring frequency of the LCR meter, in Hz, default=10000', type=float, default=10000)
+parser.add_argument('-f', '--frequency', help='measuring frequency of the LCR meter, in Hz, default=10000', type=float,
+                    default=10000)
 parser.add_argument('-l', '--lvolt', help='signal amplitude, in V, default=0.050', type=float, default=0.05)
 parser.add_argument('-m', '--mode', type=str)
 parser.add_argument('-i', '--integration', type=str)
 parser.add_argument('-p', '--noLivePlot', help='disables the livePlot', action='store_true')
-parser.add_argument('-db', '--database', help='creates an additional logfile, matching the pixel database requirements', action='store_true')
+parser.add_argument('-db', '--database', help='creates an additional logfile, matching the pixel database requirements',
+                    action='store_true')
 
 
 def main():
@@ -37,7 +39,9 @@ def main():
     devices = sh.read_config(args.config)
 
     # create setting query
-    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, ndaqs=args.ndaqs, delay=args.delay, lcr_freq=args.frequency, lcr_volt=args.lvolt, lcr_aper=args.integration, lcr_mode=args.mode)
+    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, ndaqs=args.ndaqs,
+                      delay=args.delay, lcr_freq=args.frequency, lcr_volt=args.lvolt, lcr_aper=args.integration,
+                      lcr_mode=args.mode)
 
     # connection
     source, source_channel = sh.device_connection(devices['S'])
@@ -60,13 +64,13 @@ def main():
         Ameter, Ameter_channel = sh.device_connection(devices['I'])
 
     # check if SHT75 is used for T and H
-    for idx_h,d_h in enumerate(devices['H']):
-        if d_h[0]=='SHT75':
-            for idx_t,d_t in enumerate(devices['T']):
-                if d_t[0]=='SHT75':
-                    if d_h[1]==d_t[1] and d_h[2]==d_t[2] and d_h[3]==d_t[3]:
-                        humidity[idx_h]=temperature[idx_t]
-                        print('Linked H{} with T{}.'.format(idx_h+1,idx_t+1))
+    for idx_h, d_h in enumerate(devices['H']):
+        if d_h[0] == 'SHT75':
+            for idx_t, d_t in enumerate(devices['T']):
+                if d_t[0] == 'SHT75':
+                    if d_h[1] == d_t[1] and d_h[2] == d_t[2] and d_h[3] == d_t[3]:
+                        humidity[idx_h] = temperature[idx_t]
+                        print('Linked H{} with T{}.'.format(idx_h + 1, idx_t + 1))
 
     # set active source
     d = source[0]
@@ -110,7 +114,7 @@ def main():
     lcr_volt = l.getVoltage()
     lcr_aper = l.getIntegrationTimeAndAveragingRate()
     lcr_mode = l.getMeasurementMode()
-    lcr_details = ['freq='+str(lcr_freq), 'volt='+str(lcr_volt), 'aper='+str(lcr_aper), 'mode='+str(lcr_mode)]
+    lcr_details = ['freq=' + str(lcr_freq), 'volt=' + str(lcr_volt), 'aper=' + str(lcr_aper), 'mode=' + str(lcr_mode)]
     sh.write_line(fw, lcr_details)
 
     header = ['time', 'no.', 'U[V]', 'I[uA]', 'C[pF]', 'Rlcr']
@@ -181,10 +185,10 @@ def main():
         plt.pause(0.0001)
 
     # start measurement
-    t0 = time.time()+args.delay
+    t0 = time.time() + args.delay
     try:
         for i in range(args.v_steps):
-            voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
+            voltage = args.v_min + (args.v_max - args.v_min) / (args.v_steps - 1) * i
             print('Set voltage: %.2f V' % voltage)
             d.rampVoltage(voltage, ch)
             time.sleep(args.delay)
@@ -206,7 +210,7 @@ def main():
                 else:
                     Ts.append(temperature[n].getTemperature(temperature_channel[n]))
 
-            for idx,h in enumerate(humidity):
+            for idx, h in enumerate(humidity):
                 Hs.append(h.getHumidity(humidity_channel[idx]))
 
             for n in range(len(Ameter)):
@@ -222,7 +226,7 @@ def main():
             for j in range(args.ndaqs):
                 getVoltage = d.getVoltage(ch)
                 print('Get voltage: %.2f V' % (getVoltage))
-                getCurrent = d.getCurrent(ch)*1E6
+                getCurrent = d.getCurrent(ch) * 1E6
                 print('Get current: %.2f uA' % (getCurrent))
 
                 Lvalues = l.getValues()
@@ -247,7 +251,7 @@ def main():
                     values.append(a)
                 sh.write_line(fw, values)
 
-                Ns.append(j+1)
+                Ns.append(j + 1)
                 if livePlot:
                     ax2.clear()
                     ax2.set_title(r'Voltage step : %0.2f V' % voltage)
@@ -276,7 +280,8 @@ def main():
                 else:
                     Hs = Hs[db_input['db_humChannel']]
 
-                sh.write_line(db_file, [round(timestamp0-t0), Us[i], '{:.4}'.format(Cmeans[i]), '{:.4}'.format(Cstd), '{:.4}'.format(Ts), '{:.4}'.format(Hs)])
+                sh.write_line(db_file, [round(timestamp0 - t0), Us[i], '{:.4}'.format(Cmeans[i]), '{:.4}'.format(Cstd),
+                                        '{:.4}'.format(Ts), '{:.4}'.format(Hs)])
 
     except(KeyboardInterrupt, SystemExit):
         print('Measurement was terminated...')
@@ -299,13 +304,13 @@ def main():
         # show and save curve
         plt.close('all')
         nCmeans = np.array(Cmeans)
-        c1 = 1/nCmeans**2
+        c1 = 1 / nCmeans ** 2
         plt.plot(Us, c1, 'o')
         plt.grid()
         plt.title(r'CV curve: %s' % outputname)
         plt.xlabel(r'$U $ $ [\mathrm{V}]$')
         plt.ylabel(r'$1/C_{mean}^2 $ [$\mathrm{1/pF}^2$]')
-        plt.xlim(min(Us)-5, max(Us)+5)
+        plt.xlim(min(Us) - 5, max(Us) + 5)
         plt.tight_layout()
         plt.savefig('%s.pdf' % outputname)
 

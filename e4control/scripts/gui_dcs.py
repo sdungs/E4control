@@ -218,7 +218,7 @@ def move_stage_device(device):
         [sg.Input(key='x'), sg.Text('mm', size=(5, 2)), sg.Button('Move x')],
         [sg.Input(key='y'), sg.Text('mm', size=(5, 2)), sg.Button('Move y')],
         [sg.Input(key='z'), sg.Text('mm', size=(5, 2)), sg.Button('Move z')],
-        [sg.Button('Set Home'),  sg.Button('Go Home')],
+        [sg.Button('Set Home'), sg.Button('Go Home')],
         [sg.Button('Back')]
     ]
     window_move = sg.Window(f'Move', layout_move)

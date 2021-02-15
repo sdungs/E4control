@@ -33,7 +33,8 @@ class pressedKeyThread(Thread):
 
 
 def print(string):
-    sys.stdout.write(string+'\r\n')
+    sys.stdout.write(string + '\r\n')
+
 
 def main():
     args = parser.parse_args()
@@ -51,14 +52,14 @@ def main():
     devices = sh.connect_dcs_devices(config_devices)
 
     # check if SHT75 is used for T and H, remove one as T and H are always displayed
-    for idx_h,d_h in enumerate(config_devices):
-        if d_h[0]=='H' and d_h[1]=='SHT75':
-            for idx_t,d_t in enumerate(config_devices):
-                if d_t[0]=='T' and d_t[1]=='SHT75':
-                    if d_h[3]==d_t[3]:
+    for idx_h, d_h in enumerate(config_devices):
+        if d_h[0] == 'H' and d_h[1] == 'SHT75':
+            for idx_t, d_t in enumerate(config_devices):
+                if d_t[0] == 'T' and d_t[1] == 'SHT75':
+                    if d_h[3] == d_t[3]:
                         # devices[idx_h]=devices[idx_t]
                         devices.pop(idx_h)
-                        print('Linked H{} with T{}.'.format(idx_h+1,idx_t+1))
+                        print('Linked H{} with T{}.'.format(idx_h + 1, idx_t + 1))
 
     # logfile
     if args.logfile:
@@ -86,10 +87,10 @@ def main():
         while key_thread.is_alive():
             values = [str(time.time())]
             print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-            timestamp = (time.time()-starttime) / 60
+            timestamp = (time.time() - starttime) / 60
             h, s = divmod(timestamp, 1)
             # timestamp = time.strftime('%a, %d %b %Y %H:%M:%S ', time.localtime())
-            print(' \033[35m CONTROL CENTER \t ' + 'runtime: %.0f min %.0f s \033[0m' % (h, s*60))
+            print(' \033[35m CONTROL CENTER \t ' + 'runtime: %.0f min %.0f s \033[0m' % (h, s * 60))
             print('-----------------------------------------------------')
             for d in devices:
                 try:
@@ -123,10 +124,10 @@ def main():
             print('List of active Devices:')
             print('0: Continue dcs mode without changes')
             for i in range(len(config_devices)):
-                print('%i: %s' % (i+1, config_devices[i][1]))
+                print('%i: %s' % (i + 1, config_devices[i][1]))
             x = int(input('Choose the number of a Device:'))
-            if (x-1) in range(len(config_devices)):
-                devices[x-1].interaction()
+            if (x - 1) in range(len(config_devices)):
+                devices[x - 1].interaction()
             else:
                 continue
         else:

@@ -21,7 +21,8 @@ parser.add_argument('-s', '--v_steps', help='number of voltage steps', type=int,
 parser.add_argument('-n', '--ndaqs', help='number of measurement repetitions, default=10', type=int, default=10)
 parser.add_argument('-d', '--delay', help='delay between the measurements, in seconds, default=5', type=int, default=5)
 parser.add_argument('-p', '--noLivePlot', help='disables the livePlot', action='store_true')
-parser.add_argument('-db', '--database', help='creates an additional logfile, matching the pixel database requirements', action='store_true')
+parser.add_argument('-db', '--database', help='creates an additional logfile, matching the pixel database requirements',
+                    action='store_true')
 
 
 def main():
@@ -34,7 +35,8 @@ def main():
     devices = sh.read_config(args.config)
 
     # create setting query
-    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, I_lim=args.I_lim, ndaqs=args.ndaqs, delay=args.delay)
+    sh.settings_query(devices, v_min=args.v_min, v_max=args.v_max, v_steps=args.v_steps, I_lim=args.I_lim,
+                      ndaqs=args.ndaqs, delay=args.delay)
 
     # connection
     source, source_channel = sh.device_connection(devices['S'])
@@ -59,13 +61,13 @@ def main():
 
     # check if SHT75 is used for T and H
     # start = time.time()
-    for idx_h,d_h in enumerate(devices['H']):
-        if d_h[0]=='SHT75':
-            for idx_t,d_t in enumerate(devices['T']):
-                if d_t[0]=='SHT75':
-                    if d_h[1]==d_t[1] and d_h[2]==d_t[2] and d_h[3]==d_t[3]:
-                        humidity[idx_h]=temperature[idx_t]
-                        print('Linked H{} with T{}.'.format(idx_h+1,idx_t+1))
+    for idx_h, d_h in enumerate(devices['H']):
+        if d_h[0] == 'SHT75':
+            for idx_t, d_t in enumerate(devices['T']):
+                if d_t[0] == 'SHT75':
+                    if d_h[1] == d_t[1] and d_h[2] == d_t[2] and d_h[3] == d_t[3]:
+                        humidity[idx_h] = temperature[idx_t]
+                        print('Linked H{} with T{}.'.format(idx_h + 1, idx_t + 1))
     # print('Process time: {}'.format(time.time() - start))
 
     # set active source
@@ -88,7 +90,7 @@ def main():
         a.initialize('I')
 
     # Check Current limit
-    sh.check_limits(d, ch, I_lim=args.I_lim/1e6)
+    sh.check_limits(d, ch, I_lim=args.I_lim / 1e6)
 
     # create directory
     argsoutput = sh.check_outputname(args.output)
@@ -166,10 +168,10 @@ def main():
         plt.pause(0.0001)
 
     # start measurement
-    t0 = time.time()+args.delay
+    t0 = time.time() + args.delay
     try:
         for i in range(args.v_steps):
-            voltage = args.v_min + (args.v_max-args.v_min)/(args.v_steps-1)*i
+            voltage = args.v_min + (args.v_max - args.v_min) / (args.v_steps - 1) * i
             print('Set voltage: %.2f V' % voltage)
             d.rampVoltage(voltage, ch)
             time.sleep(args.delay)
@@ -197,7 +199,7 @@ def main():
                     Ts.append(temperature[n].getTemperature(temperature_channel[n]))
                     print('Get temperature: {}'.format(Ts[-1]))
 
-            for idx,h in enumerate(humidity):
+            for idx, h in enumerate(humidity):
                 if h.connection_type == 'lan':
                     Hs.append(h.getHumidity(humidity_channel[idx]))
                 else:
@@ -208,7 +210,7 @@ def main():
                 Vs.append(Vmeter[n].getVoltage(Vmeter_channel[n]))
 
             for n in range(len(Ameter)):
-                As.append(Ameter[n].getCurrent(Ameter_channel[n])*1E6)
+                As.append(Ameter[n].getCurrent(Ameter_channel[n]) * 1E6)
 
             if livePlot:
                 ax2.clear()
@@ -219,7 +221,7 @@ def main():
             for j in range(args.ndaqs):
                 getVoltage = d.getVoltage(ch)
                 print('Get voltage: %.2f V' % (getVoltage))
-                current = d.getCurrent(ch)*1E6
+                current = d.getCurrent(ch) * 1E6
                 print('Get current: %.2f uA' % (current))
                 if (abs(current) > args.I_lim):
                     print('Software Limit reached!')
@@ -240,7 +242,7 @@ def main():
                 sh.write_line(fw, values)
 
                 if livePlot:
-                    ax2.plot(j+1, current, 'r--o')
+                    ax2.plot(j + 1, current, 'r--o')
                     plt.pause(0.0001)
 
             if softLimit:
@@ -250,8 +252,8 @@ def main():
             Istd = np.std(Is)
             Isem.append(sem(Is))
             if livePlot:
-               ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
-               plt.pause(0.0001)
+                ax1.errorbar(Us, Imeans, yerr=Isem, fmt='g--o')
+                plt.pause(0.0001)
 
             # write to short and data base file
             sh.write_line(fwshort, [Us[i], Imeans[i], Isem[i]])
@@ -265,7 +267,8 @@ def main():
                 else:
                     Hs = Hs[db_input['db_humChannel']]
 
-                sh.write_line(db_file, [round(timestamp0-t0), Us[i], '{:.4}'.format(Imeans[i]), '{:.4}'.format(Istd), '{:.4}'.format(Ts), '{:.4}'.format(Hs)])
+                sh.write_line(db_file, [round(timestamp0 - t0), Us[i], '{:.4}'.format(Imeans[i]), '{:.4}'.format(Istd),
+                                        '{:.4}'.format(Ts), '{:.4}'.format(Hs)])
 
     except (KeyboardInterrupt, SystemExit):
         print('Measurement was terminated...')
@@ -285,7 +288,7 @@ def main():
         plt.title(r'IV curve: %s' % outputname)
         plt.xlabel(r'$U $ $ [\mathrm{V}]$')
         plt.ylabel(r'$I_{mean} $ $ [\mathrm{uA}]$')
-        plt.xlim(min(Us)-5, max(Us)+5)
+        plt.xlim(min(Us) - 5, max(Us) + 5)
         plt.tight_layout()
         plt.savefig('%s.pdf' % outputname)
         print('Plot saved.')

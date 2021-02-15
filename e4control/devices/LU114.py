@@ -2,6 +2,7 @@
 from .device import Device
 import time
 
+
 # declare climate chamber over TCP, Port 57732
 # clima = TCPLink('lan','129.217.167.99', 57732)
 
@@ -12,9 +13,9 @@ class LU114(Device):
     Power = None
 
     def __init__(self, connection_type, host, port):
-            super(LU114, self).__init__(connection_type=connection_type, host=host, port=port)
+        super(LU114, self).__init__(connection_type=connection_type, host=host, port=port)
 
-# Turn Device on or Off an set Temperature to 20°C
+    # Turn Device on or Off an set Temperature to 20°C
     def enablePower(self, bEnable):
         if bEnable:
             msg = self.ask('POWER, ON')
@@ -68,10 +69,10 @@ class LU114(Device):
         return self.ask(cmd)
 
     def close(self):
-        #self.close()
+        # self.close()
         pass
 
-    def output(self, show = True):
+    def output(self, show=True):
         bPower = self.Power
         if show:
             print('Climate Chamber:')
@@ -86,14 +87,14 @@ class LU114(Device):
         fTac = self.getTemperature()
         if show:
             print('Temperature:' + '\t' + 'set: %.1f °C' % fTset + '\t' + 'actual: %.1f °C' % fTac)
-        return([['Power', 'Tset[C]', 'Tac[C]'], [str(bPower), str(fTset), str(fTac)]])
+        return ([['Power', 'Tset[C]', 'Tac[C]'], [str(bPower), str(fTset), str(fTac)]])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-			'setTemperature': True,
-			'enablePower': True,
-			}
+                'setTemperature': True,
+                'enablePower': True,
+            }
             return device_dict
         else:
             print('1: enable Power')

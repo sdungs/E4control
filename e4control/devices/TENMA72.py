@@ -53,7 +53,7 @@ class TENMA72(Device):
         elif not answ:
             if secondAttempt:
                 return None
-            print('Output-mode unknown! Asking again.') # known bug that the status query needs a second attempt.
+            print('Output-mode unknown! Asking again.')  # known bug that the status query needs a second attempt.
             self.getOutput(True)
         return self.outputEnabled
 
@@ -112,22 +112,24 @@ class TENMA72(Device):
                 self.printOutput('Output: \t \033[31m OFF \033[0m')
                 bReachedCurrLimit = False
             if bReachedCurrLimit:
-                self.printOutput('Voltage = \033[31m{:0.2f} V\033[0m \t Current = \033[31m{:0.3f} A\033[0m'.format(fVoltage, fCurrent))
+                self.printOutput(
+                    'Voltage = \033[31m{:0.2f} V\033[0m \t Current = \033[31m{:0.3f} A\033[0m'.format(fVoltage,
+                                                                                                      fCurrent))
             else:
                 self.printOutput('Voltage = {:0.32} V \t Current = {:0.3f} A'.format(fVoltage, fCurrent))
         sValues = [str(bOutput), str(fVoltage), str(fCurrent)]
         sHeader = ['Output', 'U[V]', 'I[A]']
-        return([sHeader, sValues])
+        return ([sHeader, sValues])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-			'channel': 4,
-			'toogleOutput': True,
-			'setVoltage': True,
-			'setCurrent': True,
-			'enableOCP': True,
-			}
+                'channel': 4,
+                'toogleOutput': True,
+                'setVoltage': True,
+                'setCurrent': True,
+                'enableOCP': True,
+            }
             return device_dict
         else:
             print('1: enable Output')

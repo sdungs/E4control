@@ -263,7 +263,7 @@ class K2614(Device):
         int
             Ramp speed delay.
         """
-        return([int(self.rampSpeed_step), int(self.rampSpeed_delay)])
+        return ([int(self.rampSpeed_step), int(self.rampSpeed_delay)])
 
     def rampVoltage(self, fVnew, iChannel):
         """
@@ -316,7 +316,6 @@ class K2614(Device):
         fILimit_CH1 = self.getCurrentLimit(1) * 1E6
         fILimit_CH2 = self.getCurrentLimit(2) * 1E6
 
-
         if bPower_CH1:
             fVoltage_CH1 = self.getVoltage(1)
             fCurrent_CH1 = self.getCurrent(1) * 1E6
@@ -354,7 +353,9 @@ class K2614(Device):
                 self.printOutput('Voltage = ---- V')
                 self.printOutput('Current = ---- uA')
 
-        return([['Output_CH1', 'Output_CH2', 'U_CH1[V]', 'I_CH1[uA]', 'U_CH2[V]', 'I_CH2[uA]'], [str(bPower_CH1), str(bPower_CH2), str(fVoltage_CH1), str(fCurrent_CH1), str(fVoltage_CH2), str(fCurrent_CH2)]])
+        return ([['Output_CH1', 'Output_CH2', 'U_CH1[V]', 'I_CH1[uA]', 'U_CH2[V]', 'I_CH2[uA]'],
+                 [str(bPower_CH1), str(bPower_CH2), str(fVoltage_CH1), str(fCurrent_CH1), str(fVoltage_CH2),
+                  str(fCurrent_CH2)]])
 
     def interaction(self, gui=False):
         """
@@ -369,17 +370,17 @@ class K2614(Device):
         """
         if gui:
             device_dict = {
-            'channel': 2,
-			'toogleOutput': True,
-			'rampVoltage': True,
-			'setCurrent': True,
-            'setCurrentLimit': True,
-			}
+                'channel': 2,
+                'toogleOutput': True,
+                'rampVoltage': True,
+                'setCurrent': True,
+                'setCurrentLimit': True,
+            }
             return device_dict
         else:
             print(
                 'Select a channel!'
-                )
+            )
             iChannel = input('Possible inputs: 1 or 2\n')
             while not iChannel in ['1', '2']:
                 iChannel = input('Possible Inputs: 1 or 2! \n')
@@ -389,10 +390,10 @@ class K2614(Device):
                 '1: Toggle output\n'
                 '2: Set voltage (enables the output if its off)\n'
                 '3: Set currentlimit'
-                )
+            )
 
             x = input('Number? \n')
-            while not (x in ['0','1','2','3']):
+            while not (x in ['0', '1', '2', '3']):
                 x = input('Possible Inputs: 0, 1, 2 or 3! \n')
 
             if x == '0':
@@ -411,4 +412,4 @@ class K2614(Device):
                 self.rampVoltage(float(fV), iChannel)
             elif x == '3':
                 fIlim = input('Please enter new current limit in uA \n')
-                self.setCurrentLimit(float(fIlim)/1E6, iChannel)
+                self.setCurrentLimit(float(fIlim) / 1E6, iChannel)

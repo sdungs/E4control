@@ -15,14 +15,14 @@ class HMP4040(Device):
     def initialize(self):
         pass
 
-    #Global power (=OUTPUT button on PS)
+    # Global power (=OUTPUT button on PS)
     def enablePower(self, bValue, iChannel):
         self.write('OUTP:GEN {0:d}'.format(bValue))
 
     def getEnablePower(self):
         return self.ask('OUTP:GEN?')
 
-    #Output for individual channels
+    # Output for individual channels
     def setOutput(self, bEnable, iChannel):
         self.write('INST OUT{}'.format(iChannel))
         self.write('OUTP {:d}'.format(bEnable))
@@ -37,7 +37,7 @@ class HMP4040(Device):
     def disableOutput(self, iChannel):
         self.setOutput(False, iChannel)
 
-    #Over voltage protection
+    # Over voltage protection
     def setVoltageLimit(self, fValue, iChannel):
         self.write('INST OUT{}'.format(iChannel))
         self.write('VOLT:PROT {}'.format(fValue))
@@ -46,7 +46,7 @@ class HMP4040(Device):
         self.write('INST OUT {}'.format(iChannel))
         return float(self.ask('VOLT:PROT?'))
 
-    #Nominal voltage to apply
+    # Nominal voltage to apply
     def setVoltage(self, fValue, iChannel):
         self.write('INST OUT{}'.format(iChannel))
         self.write('VOLT {}'.format(fValue))
@@ -59,7 +59,7 @@ class HMP4040(Device):
         self.write('INST OUT{}'.format(iChannel))
         return float(self.ask('MEAS:VOLT?'))
 
-    #Current (limit)
+    # Current (limit)
     def setCurrent(self, fValue, iChannel):
         self.write('INST OUT{}'.format(iChannel))
         self.write('CURR {}'.format(fValue))
@@ -71,7 +71,6 @@ class HMP4040(Device):
     def measCurrent(self, iChannel):
         self.write('INST OUT{}'.format(iChannel))
         return float(self.ask('MEAS:CURR?'))
-
 
     def output(self, show=True):
         bPower = []
@@ -93,21 +92,21 @@ class HMP4040(Device):
                     self.printOutput('CH {}: \t \033[32m ON \033[0m'.format(i))
                 else:
                     self.printOutput('CH {}: \t \033[31m OFF \033[0m'.format(i))
-                self.printOutput('Voltage = {:0.1f}V \t Current = {:0.3f}A'.format(b,c))
+                self.printOutput('Voltage = {:0.1f}V \t Current = {:0.3f}A'.format(b, c))
             sValues.append(str(a))
             sValues.append(str(b))
             sValues.append(str(c))
             i += 1
         sHeader = ['CH1', 'U1[V]', 'I1[A]', 'CH2', 'U2[V]', 'I2[A]', 'CH3', 'U3[V]', 'I3[A]', 'CH4', 'U4[V]', 'I4[A]']
-        return([sHeader, sValues])
+        return ([sHeader, sValues])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-            'channel': 4,
-            'toogleOutput': True,
-            'setVoltage': True,
-            'setCurrent': True,
+                'channel': 4,
+                'toogleOutput': True,
+                'setVoltage': True,
+                'setCurrent': True,
             }
             return device_dict
         else:

@@ -35,6 +35,7 @@ from e4control import __version__
 
 yes = ['Yes', 'yes', 'Y', 'y', 'Ja', 'ja', 'J', 'j']
 
+
 # have an input with a prefilled text
 def rlinput(prompt, prefill=''):
     readline.set_startup_hook(lambda: readline.insert_text(prefill))
@@ -49,7 +50,7 @@ def print_welcome():
         'This is e4control, v{}.\n'
         'If you are not familiar with this version, please check the log (via "git log") for recent changes.'
         ''.format(__version__)
-        )
+    )
 
 
 def read_config(configfile):
@@ -70,7 +71,7 @@ def read_config(configfile):
             devices[x].append([model, connection_type, host, port, channel])
         except:
             sys.exit("Unknown parameter while reading configfile!")
-    return(devices)
+    return (devices)
 
 
 def settings_query(device_list, **kwargs):
@@ -142,7 +143,7 @@ def device_connection(values):
         except:
             sys.exit("Unknown Device: %s" % k[0])
         ch.append(int(k[4]))
-    return(d, ch)
+    return (d, ch)
 
 
 def check_limits(device, channel, V_lim=None, I_lim=None, P_lim=None):
@@ -168,7 +169,7 @@ def check_limits(device, channel, V_lim=None, I_lim=None, P_lim=None):
 
 def new_txt_file(output):
     fw = open("%s.txt" % output, "w")
-    return(fw)
+    return (fw)
 
 
 def close_txt_file(outputfile):
@@ -199,7 +200,10 @@ def load_data_from_json(file, default_data):
 
 def initialize_db(meas_type, args):
     json_file = '../objs_{}.json'.format(meas_type.lower())
-    db_input = load_data_from_json(json_file, {'db_operator':'operator', 'db_sensorID':'sensorID', 'db_sensorComment':'"none"', 'db_tempChannel':'2', 'db_temperature':'20.0', 'db_humChannel':'1', 'db_humidity':'40.0'})
+    db_input = load_data_from_json(json_file,
+                                   {'db_operator': 'operator', 'db_sensorID': 'sensorID', 'db_sensorComment': '"none"',
+                                    'db_tempChannel': '2', 'db_temperature': '20.0', 'db_humChannel': '1',
+                                    'db_humidity': '40.0'})
 
     print('Please provide input for the pixel database file.')
     db_input['db_operator'] = rlinput('operator: ', db_input['db_operator'])
@@ -215,19 +219,25 @@ def initialize_db(meas_type, args):
 
     db_file = new_txt_file('{}_{}_1'.format(db_input['db_sensorID'], meas_type))
     write_line(db_file, [db_input['db_sensorID'], meas_type])  # 'serial number'
-    write_line(db_file, [db_input['db_sensorComment']])   # 'comment or local device name'
-    write_line(db_file, ['TUDO', db_input['db_operator'], db_date])   # 'group', 'operator', 'date + time'
+    write_line(db_file, [db_input['db_sensorComment']])  # 'comment or local device name'
+    write_line(db_file, ['TUDO', db_input['db_operator'], db_date])  # 'group', 'operator', 'date + time'
     if meas_type == 'IV':
-        write_line(db_file, [(args.v_max-args.v_min) / (args.v_steps-1), args.delay, args.ndaqs, args.I_lim/1e6])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'compliance (in A)'
+        write_line(db_file, [(args.v_max - args.v_min) / (args.v_steps - 1), args.delay, args.ndaqs,
+                             args.I_lim / 1e6])  # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'compliance (in A)'
     elif meas_type == 'It':
-        write_line(db_file, [args.voltage[0], args.delay, args.ndaqs, 1e-5])   # 'constant voltage', 'delay between steps (in s)', 'measurements per step', 'compliance (in A)'
+        write_line(db_file, [args.voltage[0], args.delay, args.ndaqs,
+                             1e-5])  # 'constant voltage', 'delay between steps (in s)', 'measurements per step', 'compliance (in A)'
     elif meas_type == 'CV':
-        write_line(db_file, [(args.v_max-args.v_min) / (args.v_steps-1), args.delay, args.ndaqs, args.frequency])   # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'frequecy (in Hz)'
-    write_line(db_file, [db_input['db_temperature'], db_input['db_humidity']])   # 'temperature (in °C)', 'humidity (in %)', at start of measurement
+        write_line(db_file, [(args.v_max - args.v_min) / (args.v_steps - 1), args.delay, args.ndaqs,
+                             args.frequency])  # 'voltage step', 'delay between steps (in s)', 'measurements per step', 'frequecy (in Hz)'
+    write_line(db_file, [db_input['db_temperature'],
+                         db_input['db_humidity']])  # 'temperature (in °C)', 'humidity (in %)', at start of measurement
     if meas_type == 'IV' or meas_type == 'It':
-        write_line(db_file, ['t/s', 'U/V', 'Iavg/uA', 'Istd/uA', 'T/C', 'RH/%']) # 'time', 'U', 'average of all I's', 'std deviation of all I's', temperature, relative humidity
+        write_line(db_file, ['t/s', 'U/V', 'Iavg/uA', 'Istd/uA', 'T/C',
+                             'RH/%'])  # 'time', 'U', 'average of all I's', 'std deviation of all I's', temperature, relative humidity
     elif meas_type == 'CV':
-        write_line(db_file, ['t/s', 'U/V', 'Cavg/pF', 'Cstd/pF', 'T/C', 'RH/%']) # 'time', 'U', 'average of all C's', 'std deviation of all C's', temperature, relative humidity
+        write_line(db_file, ['t/s', 'U/V', 'Cavg/pF', 'Cstd/pF', 'T/C',
+                             'RH/%'])  # 'time', 'U', 'average of all C's', 'std deviation of all C's', temperature, relative humidity
 
     json.dump(db_input, open(json_file, 'w'))
 
@@ -240,9 +250,9 @@ def initialize_db(meas_type, args):
 def create_plot(filename, kind, x, y, xerr=None, yerr=None, save=True, show=True):
     if (kind == "IV"):
         pass
-    elif(kind == "CV"):
+    elif (kind == "CV"):
         pass
-    elif(kind == "IT"):
+    elif (kind == "IT"):
         pass
     else:
         pass
@@ -255,13 +265,13 @@ def check_outputname(output):
         print("Outputname: " + outputname)
         n = input("File already exists! Overwrite? (y/n)")
         if n in yes:
-            return(output)
+            return (output)
         else:
             newoutput = output + "_X"
             name = check_outputname(newoutput)
-            return(name)
+            return (name)
     print("Outputname: " + outputname)
-    return(output)
+    return (output)
 
 
 def read_dcs_config(configfile):
@@ -277,7 +287,7 @@ def read_dcs_config(configfile):
         host = n[3]
         port = n[4]
         devices.append([x, model, connection_type, host, port])
-    return(devices)
+    return (devices)
 
 
 def show_dcs_device_list(devices):
@@ -306,4 +316,4 @@ def connect_dcs_devices(devices):
             print(e)
             sys.exc_info()[0]
             sys.exit("Unknown Device: %s" % k[1])
-    return(d)
+    return (d)

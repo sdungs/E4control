@@ -55,7 +55,7 @@ class TSX3510P(Device):
             self.write('OP 0')
 
     def output(self, show=True):
-        #self.setOutput(False)
+        # self.setOutput(False)
         bOutput = None
         fVlim = self.getVoltageLimit()
         fVoltage = self.getVoltage()
@@ -71,17 +71,17 @@ class TSX3510P(Device):
             print('OVP = %0.1fV' % fVlim + '\t' + 'Power = %0.1fW' % fPower)
         values = [str(bOutput), str(fVlim), str(fVoltage), str(fCurrent), str(fPower)]
         header = ['Output', 'OVP[V]', 'U[V]', 'I[A]', 'P[W]']
-        return([header, values])
+        return ([header, values])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-			'channel': 4,
-			'toogleOutput': True,
-			'setVoltage': True,
-			'setCurrent': True,
-			'setOVP': True,
-			}
+                'channel': 4,
+                'toogleOutput': True,
+                'setVoltage': True,
+                'setCurrent': True,
+                'setOVP': True,
+            }
             return device_dict
         else:
             print('1: enable Output')

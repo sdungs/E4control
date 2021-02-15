@@ -15,7 +15,7 @@ class TENMA72_13330(Device):
 
     def __checkChannel(self, iChannel):
         sChannel = str(iChannel)
-        if sChannel in ('1','2'):
+        if sChannel in ('1', '2'):
             return sChannel
         else:
             raise ValueError('Please use a valid channel format (\'1\' or \'2\').')
@@ -54,7 +54,6 @@ class TENMA72_13330(Device):
         elif sChannel == '2':
             return sStatus[0]
 
-
     def setVoltage(self, fValue, iChannel):
         sChannel = self.__checkChannel(iChannel)
         self.write('VSET{}:{:.2f}'.format(sChannel, fValue))
@@ -82,7 +81,6 @@ class TENMA72_13330(Device):
         sCurrent = self.ask('IOUT{}?'.format(sChannel))
         return float(sCurrent)
 
-
     def getIP(self):
         return self.ask(':SYST:IPAD?')
 
@@ -98,11 +96,9 @@ class TENMA72_13330(Device):
     def getDeviceInfo(self):
         devinfo = []
         self.write(':SYST:DEVINFO?')
-        for i in range(0,7):
+        for i in range(0, 7):
             devinfo.append(self.read())
         return devinfo
-
-
 
     def output(self, show=True):
         if show:
@@ -138,24 +134,24 @@ class TENMA72_13330(Device):
             # if self.connection_type == 'lan_udp':
             #     self.printOutput('Yay, not frozen!')
             # self.printOutput('TENMA72-13330:')
-            self.printOutput('          \t {:10} \t {:10}'.format('Channel 1','Channel 2'))
-            self.printOutput('Output:   \t {:18} \t {:18}'.format(sStatusCh1,sStatusCh2))
-            self.printOutput('Voltage:  \t {:6.7} V  \t {:6.7} V '.format(fVoltageCh1,fVoltageCh2))
-            self.printOutput('Set Voltage: \t {:6.7} V  \t {:6.7} V '.format(fSetVoltageCh1,fSetVoltageCh2))
-            self.printOutput('Current:  \t {:6.8} A \t {:6.8} A'.format(fCurrentCh1,fCurrentCh2))
-            self.printOutput('Limit:    \t {:6.8} A \t {:6.8} A'.format(fLimitCh1,fLimitCh2))
+            self.printOutput('          \t {:10} \t {:10}'.format('Channel 1', 'Channel 2'))
+            self.printOutput('Output:   \t {:18} \t {:18}'.format(sStatusCh1, sStatusCh2))
+            self.printOutput('Voltage:  \t {:6.7} V  \t {:6.7} V '.format(fVoltageCh1, fVoltageCh2))
+            self.printOutput('Set Voltage: \t {:6.7} V  \t {:6.7} V '.format(fSetVoltageCh1, fSetVoltageCh2))
+            self.printOutput('Current:  \t {:6.8} A \t {:6.8} A'.format(fCurrentCh1, fCurrentCh2))
+            self.printOutput('Limit:    \t {:6.8} A \t {:6.8} A'.format(fLimitCh1, fLimitCh2))
         sValues = [str(fVoltageCh1), str(fCurrentCh1), str(fVoltageCh2), str(fCurrentCh2)]
         sHeader = ['U1[V]', 'I1[A]', 'U2[V]', 'I2[A]']
-        return([sHeader, sValues])
+        return ([sHeader, sValues])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-			'channel': 5,
-			'toogleOutput': True,
-			'setVoltage': True,
-			'setCurrentLimit': True,
-			}
+                'channel': 5,
+                'toogleOutput': True,
+                'setVoltage': True,
+                'setCurrentLimit': True,
+            }
             return device_dict
         else:
             print(
@@ -164,16 +160,16 @@ class TENMA72_13330(Device):
                 '1: Set voltage\n'
                 '2: Set current limit\n'
                 '3: Toggle channel output\n'
-                )
+            )
 
             x = input('Number? \n')
-            while not (x in ['0','1','2','3','4','5']):
+            while not (x in ['0', '1', '2', '3', '4', '5']):
                 x = input('Possible Inputs: 0, 1, 2, 3, 5! \n')
             if x == '0':
                 return
             else:
                 sChannel = input('Which channel? \n')
-                while not (sChannel in ['1','2']):
+                while not (sChannel in ['1', '2']):
                     sChannel = input('Possible Channels: 1 or 2! \n')
 
             if x == '1':

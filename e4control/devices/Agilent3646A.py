@@ -230,7 +230,6 @@ class Agilent3646A(Device):
             sleep(self.rampSpeed_delay)
             self.rampVoltage(fVnew, iChannel)
 
-
     def reset(self):
         """
         Reset the device to its factory standard values.
