@@ -24,6 +24,10 @@ class Test_device(Device):
 		self.Humidity = 20
 		self.rampSpeed = 5
 		self. polarity = 'n'
+		self.x_pos = 0
+		self.y_pos = 0
+		self.z_pos = 0
+		self.Home = [self.x_pos, self.y_pos, self.z_pos]
 		pass
 
 	def initialize(self):
@@ -44,6 +48,31 @@ class Test_device(Device):
 		self.printOutput(f'x_data: {self.x_data}')
 		self.printOutput(f'y_data: {self.y_data}')
 		return [['Power', 'Polarity', 'x_data[C]', 'y_data[µA]'], [str(self.Power), str(self.polarity), self.x_data, self.y_data]]
+
+	def xRelMove(self, x):
+		self.x_pos += x
+
+	def getX(self):
+		return self.x_pos
+
+	def yRelMove(self, y):
+		self.y_pos += y
+
+	def getY(self):
+		return self.y_pos
+
+	def zRelMove(self, z):
+		self.z_pos += z
+
+	def getZ(self):
+		return self.z_pos
+
+	def setHome(self):
+		self.Home = [self.getX(), self.getY(), self.getZ()]
+
+
+	def goHome(self):
+		self.Home = [0, 0, 0]
 
 	def getOutput(self, iChannel=-1):
 		return self.output_status
@@ -190,6 +219,9 @@ class Test_device(Device):
 			'setRampSpeed': True,
 			'rampDeviceDown': True,
 			'tooglePolarity': True,
+			'move': True,
+			'setHome': True,
+			'goHome': True,
 			}
 			return device_dict
 		pass
