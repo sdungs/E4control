@@ -309,7 +309,7 @@ class K2614(Device):
         -------
         tuple (list[str], list[str])
             The first part of the tuple is a list with the names of the output features.
-            The second part of the tuple are the corresponding valies.
+            The second part of the tuple are the corresponding values.
         """
         bPower_CH1 = self.getOutput(1)
         bPower_CH2 = self.getOutput(2)
