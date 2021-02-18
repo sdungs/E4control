@@ -135,7 +135,7 @@ class Agilent3646A(Device):
             Voltage of a given channel.
         """
         self.write(f':INST:SEL OUT{iChannel}')
-        return float(self.ask(':VOLT?'))
+        return float(str(self.ask(':VOLT?')))
 
     def getCurrent(self, iChannel):
         """
