@@ -109,4 +109,4 @@ class Device(object):
         return self.read()
 
     def printOutput(self, string):
-        sys.stdout.write(string+'\r\n')
+        sys.stdout.write(string + '\r\n')

@@ -25,22 +25,22 @@ class HUBER(Device):
         return bool(sPower[7])
 
     def enablePower(self, sBool, iChannel=-1):
-            self.write('CA@{:05.0f}'.format(sBool))
-            self.Power = sBool
+        self.write('CA@{:05.0f}'.format(sBool))
+        self.Power = sBool
 
     def getSetTemperature(self, iChannel=-1):
         sTemp = self.ask('SP?')
-        return float('{:+06.2f}'.format(float(sTemp[3:])/100))
+        return float('{:+06.2f}'.format(float(sTemp[3:]) / 100))
 
     def getInTemperature(self, iChannel=-1):
         sTemp = self.ask('TI?')
-        return float('{:+06.2f}'.format(float(sTemp[3:])/100))
+        return float('{:+06.2f}'.format(float(sTemp[3:]) / 100))
 
     def setTemperature(self, Tset, iChannel=-1):
         self.write('SP@{:+06.0f}'.format(100 * Tset))
         pass
 
-    def output(self, show = True):
+    def output(self, show=True):
         bPower = self.Power
         if show:
             self.printOutput('Minichiller:')
@@ -52,13 +52,13 @@ class HUBER(Device):
         fTin = self.getInTemperature()
         if show:
             self.printOutput('T_set = {:.2f}'.format(fTset) + '\t' + 'T_in = {:.2f}'.format(fTin))
-        return([['Power', 'Tset[C]', 'Tin[C]'], [ str(bPower), str(fTset), str(fTin)]])
+        return ([['Power', 'Tset[C]', 'Tin[C]'], [str(bPower), str(fTset), str(fTin)]])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-            'enablePower': True,
-            'getSetTemperature': True,
+                'enablePower': True,
+                'getSetTemperature': True,
             }
             return device_dict
         else:

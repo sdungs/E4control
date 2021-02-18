@@ -22,11 +22,11 @@ class K2000(Device):
             self.setRange('RO')
             self.mode = 'H'
         elif (sMode == 'T2W'):
-            self.setKind('OHM') # 2-wire measurment
+            self.setKind('OHM')  # 2-wire measurment
             self.setRange('R2')
             self.mode = 'T2W'
         elif (sMode == 'T'):
-            self.setKind('OHM4') # 4-wire measurment
+            self.setKind('OHM4')  # 4-wire measurment
             self.setRange('R2')
             self.mode = 'T'
         elif (sMode == 'V'):
@@ -89,7 +89,7 @@ class K2000(Device):
         # self.ask('U0X')
         sKind = self.read()
         # return s[0:4]
-        return(sKind)
+        return (sKind)
 
     def getValue(self):
         # self.ask('U0X')
@@ -115,7 +115,7 @@ class K2000(Device):
         b = -5.802E-7
         R0 = 100.00
         R = self.getResistance(iChannel)
-        return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+        return (-a / (2 * b) - math.sqrt(R / (R0 * b) - 1 / b + (a / (2 * b)) * (a / (2 * b))))
 
     def getTempPT1000(self, iChannel):
         a = 3.90802E-3
@@ -123,8 +123,8 @@ class K2000(Device):
         R0 = 1000.00
         R = self.getResistance(iChannel)
         if R > 10000000:
-            return(9999)
-        return (-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+            return (9999)
+        return (-a / (2 * b) - math.sqrt(R / (R0 * b) - 1 / b + (a / (2 * b)) * (a / (2 * b))))
 
     def getTempPT1000all(self):
         a = 3.90802E-3
@@ -137,15 +137,15 @@ class K2000(Device):
             if R > 10000000:
                 Ts.append(9999)
             else:
-                Ts.append(-a/(2*b)-math.sqrt(R/(R0*b)-1/b+(a/(2*b))*(a/(2*b))))
+                Ts.append(-a / (2 * b) - math.sqrt(R / (R0 * b) - 1 / b + (a / (2 * b)) * (a / (2 * b))))
             i += 1
-        return(Ts)
+        return (Ts)
 
     def getHumidity(self, fTemp, iChannel):
         a = 0.0315
         b = 0.826
         V = self.getVoltage(iChannel)
-        return ((V-b)/a)/(1.0546-0.00216*fTemp)
+        return ((V - b) / a) / (1.0546 - 0.00216 * fTemp)
 
     def restart(self):
         self.write('L0X')
@@ -171,7 +171,7 @@ class K2000(Device):
                 values.append(str(fTemperature))
                 header.append('T%i[C]' % i)
                 if show:
-                    self.printOutput('Ch %i:' % i+'\t'+'%.2f Ohm' % fResistance + '\t' + '%.1f C' % fTemperature)
+                    self.printOutput('Ch %i:' % i + '\t' + '%.2f Ohm' % fResistance + '\t' + '%.1f C' % fTemperature)
                 i += 1
         elif (self.mode == 'T'):
             i = 1
@@ -183,7 +183,7 @@ class K2000(Device):
                 values.append(str(fTemperature))
                 header.append('T%i[C]' % i)
                 if show:
-                    self.printOutput('Ch %i:' % i+'\t'+'%.2f Ohm' % fResistance + '\t' + '%.1f °C' % fTemperature)
+                    self.printOutput('Ch %i:' % i + '\t' + '%.2f Ohm' % fResistance + '\t' + '%.1f °C' % fTemperature)
                 i += 1
         elif (self.mode == 'V'):
             fVoltage = self.getVoltage(1)
@@ -193,12 +193,12 @@ class K2000(Device):
             header.append('U[V]')
         else:
             self.printOutput('Error!')
-        return([header, values])
+        return ([header, values])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-            'pass': True,
+                'pass': True,
             }
             return device_dict
         else:

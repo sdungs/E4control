@@ -23,27 +23,47 @@ blue = '#35a7ff'
 purple = '#b935c0'
 sg.theme('DarkGrey2')
 
-
 # arg parser
 parser = argparse.ArgumentParser()
 parser.add_argument('config', help='config file')
 parser.add_argument('-l', '--logfile', help='potential logfile')
 
 
-#  Returns the minuts and seconds until the starttime, and the current time.
 def get_timestamp(starttime):
+    """
+    Get a time stamp after a given and fixed starting time.
+
+    Parameters
+    ----------
+    starttime : float
+        Object from the time.time() function, which represents the starting time.
+
+    Returns
+    -------
+    min : int
+        Minutes of the time stamp after the starting time.
+    s : int
+        Seconds of the time stamp after the starting time.
+    """
     time_now = time.time()
     timestamp = (time_now - starttime) / 60
     min, s = divmod(timestamp, 1)
-    return int(np.round(min, 0)) , int(np.round(s * 60, 0)), time_now
+    return int(np.round(min, 0)), int(np.round(s * 60, 0)), time_now
 
 
-# Opens a GUI window, which asks for the name of a logfile, which is returned.
 def get_file_name():
+    """
+    Opens a GUI window which asks for a file name for the log file.
+
+    Returns
+    -------
+    file_name : str
+        Name of the Logfile.
+    """
     layout_file_name = [
-            [sg.Text('Type in a name for the logfile:')],
-            [sg.Input(key='file_name'), sg.Button('Ok')],
-            [sg.Button('Back')]
+        [sg.Text('Type in a name for the logfile:')],
+        [sg.Input(key='file_name'), sg.Button('Ok')],
+        [sg.Button('Back')]
     ]
 
     window_file_name = sg.Window('Choose logfile name', layout_file_name)
@@ -66,12 +86,27 @@ def get_file_name():
         pass
 
 
-# Interactive window which asks for the device channel, where the changes should
-# be performed. The window is only triggered, when the device has multiple channels.
 def change_channel(device_dict, iChannel):
+    """
+    Interactive window which asks for the device channel, where the changes should
+    be performed. The window is only triggered, when the device has multiple channels.
+
+    Parameters
+    ----------
+    device_dict : dict
+        Dictionary of a multi-channel device. The dictionary contains all the tasks the device
+        is capable of.
+    iChannel : int
+        Currently assigned channel of the device.
+
+    Returns
+    -------
+    iChannel : int
+        Channel to perform an operation with.
+    """
     number_channels = device_dict['channel']
     layout_device_channel = [
-            [sg.Text('Which Channel?')]
+        [sg.Text('Which Channel?')]
     ]
     button_names_channel = []
     for i in np.linspace(1, number_channels, number_channels):
@@ -104,46 +139,120 @@ def change_channel(device_dict, iChannel):
         return iChannel + 1
 
 
-# Toggle the Output of a given device channel, if available for the device.
 def toogle_output(device, iChannel):
+    """
+    Toggle the Output of a given device channel, if available for the device.
+
+    Parameters
+    ----------
+    device : e4control.devices
+        The device for that the output is toggled.
+    iChannel : int
+        Currently assigned channel of the device.
+    """
     if bool(int(device.getOutput(iChannel))):
         device.rampVoltage(0, iChannel)
         device.setOutput(False, iChannel)
     else:
         device.setOutput(True, iChannel)
-pass
 
 
-# Toggle the device power, if available for the device.
 def toogle_power(device):
+    """
+    Toggle the device power, if available for the device.
+
+    Parameters
+    ----------
+    device : e4control.devices
+        The device for that the power is toggled.
+    """
+
     if int(bool(device.getPowerStatus())):
         device.enablePower(False)
     else:
         device.enablePower(True)
-pass
 
 
-# Toggle the device polarity, if available for the device.
 def toogle_polarity(device, iChannel):
+    """
+    Toggle the device polarity, if available for the device.
+
+    Parameters
+    ----------
+    device : e4control.devices
+        The device for that the output is toggled.
+    iChannel : int
+        Currently assigned channel of the device.
+    """
+
     if device.getPolarity(iChannel) in ('p', '+'):
         device.setPolarity('n', iChannel)
     else:
         device.setPolarity('p', iChannel)
 
-pass
 
-# Reset/Ramp down if available for the device.
 def reset(device):
+    """
+    Reset/Ramp down if available for the device.
+
+    Parameters
+    ----------
+    device : e4control.devices
+        The device that is reset.
+    """
     device.reset()
-    pass
 
 
-# Interactive window, where the OCP can be enabled, if available for the device.
-def enable_OCP(device, iChannel):
+def move_stage_device(device):
+    """
+    Starts an GUI window where a PI-stage can be moved and the home can be set.
+    This function is available for the C804 PI-stage.
+
+    Parameters
+    ----------
+    device : e4control.devices
+        Stage device, which can move in x, y, and z direction.
+    """
+    layout_move = [
+        [sg.Text(f'Type in new movement:')],
+        [sg.Input(key='x'), sg.Text('mm', size=(5, 2)), sg.Button('Move x')],
+        [sg.Input(key='y'), sg.Text('mm', size=(5, 2)), sg.Button('Move y')],
+        [sg.Input(key='z'), sg.Text('mm', size=(5, 2)), sg.Button('Move z')],
+        [sg.Button('Set Home'), sg.Button('Go Home')],
+        [sg.Button('Back')]
+    ]
+    window_move = sg.Window(f'Move', layout_move)
+    while True:
+        event_move, value_move = window_move.read()
+        if event_move == sg.WIN_CLOSED or event_move == 'Back':
+            window_move.close()
+            break
+        if event_move in ['Move x', 'Move y', 'Move z']:
+            try:
+                exec(f'device.{event_move[-1]}RelMove(float({value_move[event_move[-1]]}))')
+            except:
+                window_move.close()
+                error_msg('Wrong input.')
+                break
+        if event_move == 'Set Home':
+            device.setHome()
+        if event_move == 'Go Home':
+            device.goHome()
+
+
+def enable_OCP(device):
+    """
+    Starts an GUI window where the OCP can be enabled, if available for the device.
+
+    Parameters
+    ----------
+    device : e4control.devices
+        The device for that the OCP can be toogled.
+    """
     layout_OCP = [
-            [sg.Text(f'Enable OCP:')],
-            [sg.Button('Yes'), sg.Button('No')],
-            [sg.Button('Back')]
+        [sg.Text(f'Enable OCP:')],
+        [sg.Button('Yes'), sg.Button('No')],
+        [sg.Button('Back')]
     ]
     window_OCP = sg.Window(f'Set Mode', layout_OCP)
     while True:
@@ -158,15 +267,21 @@ def enable_OCP(device, iChannel):
                 device.enableOCP(False)
             window_OCP.close()
             break
-    pass
 
 
-# Change the runnig mode of a device. Only available for the JULABO.
 def change_mode(device):
+    """
+    Starts an GUI window to change the runnig mode of a device. Only available for the JULABO.
+
+    Parameters
+    ----------
+    device : e4control.devices
+        The device for that the mode can be changed.
+    """
     layout_mode = [
-            [sg.Text(f'Choose Mode:')],
-            [sg.Button('int'), sg.Button('ext')],
-            [sg.Button('Back')]
+        [sg.Text(f'Choose Mode:')],
+        [sg.Button('int'), sg.Button('ext')],
+        [sg.Button('Back')]
     ]
     window_mode = sg.Window(f'Set Mode', layout_mode)
     while True:
@@ -178,15 +293,21 @@ def change_mode(device):
             device.setOperationMode(event_mode)
             window_mode.close()
             break
-    pass
 
 
-# Change the operation mode. only Only available for the SB22 climate chamber.
 def change_operation_mode(device):
+    """
+    Starts an GUI window to change the operation mode. Only available for the SB22 climate chamber.
+
+    Parameters
+    ----------
+    device : e4control.devices
+        The device for that the operation mode can be changed.
+    """
     layout_operation_mode = [
-            [sg.Text(f'Choose Operation Mode:')],
-            [sg.Button('climate'), sg.Button('normal')],
-            [sg.Button('Back')]
+        [sg.Text(f'Choose Operation Mode:')],
+        [sg.Button('climate'), sg.Button('normal')],
+        [sg.Button('Back')]
     ]
     window_operation_mode = sg.Window(f'Set Mode', layout_operation_mode)
     while True:
@@ -198,17 +319,31 @@ def change_operation_mode(device):
             device.setOperationMode(event_operation_mode)
             window_operation_mode.close()
             break
-    pass
 
 
-# General interaction, to change a given parameter of a device.
-# For example, the device voltage, current, temperature and many more can be changed this way.
 def general_interaction(device, interaction_name, interaction_unit, interaction_function, channel):
+    """
+    General interaction to change a given parameter of a device.
+    For example, the device voltage, current, or temperature can be changed this way.
+
+    Parameters
+    ----------
+    device : e4control.devices
+        The device for that the interaction is done.
+    interaction_name : str
+        Name of the interaction, as it should be named in the GUI window.
+    interaction_unit : str
+        Unit of the changing parameter, e.g. 'V' or 'A'.
+    interaction_function : str
+        Name of the interaction function, as it is given in the device's script.
+    channel : int
+        Channel where the change should be performed.
+    """
     key_str = 'new_value'
     layout_general_interaction = [
-            [sg.Text(f'Type in new {interaction_name}:')],
-            [sg.Input(key=key_str), sg.Text(interaction_unit, size=(5, 2)), sg.Button('Ok')],
-            [sg.Button('Back')]
+        [sg.Text(f'Type in new {interaction_name}:')],
+        [sg.Input(key=key_str), sg.Text(interaction_unit, size=(5, 2)), sg.Button('Ok')],
+        [sg.Button('Back')]
     ]
     window_general_interaction = sg.Window(f'Set {interaction_name}', layout_general_interaction)
     while True:
@@ -225,20 +360,31 @@ def general_interaction(device, interaction_name, interaction_unit, interaction_
                 window_general_interaction.close()
                 error_msg('Wrong input.')
                 break
-    pass
 
 
-# General control window for the DCS GUI.
-# The main part of this function handels the various
-# possible setting changes for the implemented devices.
 def control_window(devices, config_devices, fw):
+    """
+    General control window for the DCS GUI. The main part of this function handles
+    the various possible setting changes for the implemented devices.
+
+    Parameters
+    ----------
+    devices : list[e4control.device]
+        List of e4control.devices, which are given in the config file.
+    config_devices : list[str]
+        List which contains the information of the config file.
+    fw : file
+        Logfile, where the devices output can be logged.
+    """
     blockPrint()
     starttime = time.time()
-    v_prior = [] # to later compare to the new values, neccessary for coloured values
-    iChannel = -1 # default value, if a device does not has any channels
+    v_prior = []  # to later compare to the new values, neccessary for coloured values
+    iChannel = -1  # default value, if a device does not has any channels
     layout = [
-            [sg.Text('CONTROL CENTER', size=(20,1), text_color=purple, font=('Arial', 17))],
-            [sg.Text('Runtime: ', text_color=purple), sg.Text(size=(2,1), key=f'timestamp_min'), sg.Text('min', text_color=purple), sg.Text(size=(2,1), key=f'timestamp_sec'), sg.Text('s', text_color=purple)],
+        [sg.Text('CONTROL CENTER', size=(20, 1), text_color=purple, font=('Arial', 17))],
+        [sg.Text('Runtime: ', text_color=purple), sg.Text(size=(2, 1), key=f'timestamp_min'),
+         sg.Text('min', text_color=purple), sg.Text(size=(2, 1), key=f'timestamp_sec'),
+         sg.Text('s', text_color=purple)],
     ]
 
     # Add devices and their outputs to the control window.
@@ -250,9 +396,9 @@ def control_window(devices, config_devices, fw):
         layout.append([sg.Text(f'\n{device_name}', size=(len(device_name) + 5, 2))])
         header, values = d.output()
         for h, v in zip(header, values):
-            layout.append([sg.Text(f'{h}:\t'), sg.Text(size=(15,1), key=f'{h}{same_device_counter}')])
+            layout.append([sg.Text(f'{h}:\t'), sg.Text(size=(15, 1), key=f'{h}{same_device_counter}')])
         same_device_counter += 1
-    layout.append([sg.Text(size=(1,1))])
+    layout.append([sg.Text(size=(1, 1))])
     layout.append([sg.Button('Change'), sg.Button('Start New Logfile'), sg.Button('Quit')])
 
     window = sg.Window(f'E4control v{version}: Device control script', layout)
@@ -305,106 +451,144 @@ def control_window(devices, config_devices, fw):
                         iChannel = change_channel(device_interaction_dict, iChannel)
 
                         layout_device_interaction.append(
-                                [sg.Text(f'Current Channel: ', size=(18, 2)), sg.Text(size=(3, 2), key='CH'), sg.Button('Switch Channel')]
+                            [sg.Text(f'Current Channel: ', size=(18, 2)), sg.Text(size=(3, 2), key='CH'),
+                             sg.Button('Switch Channel')]
                         )
 
                     if 'toogleOutput' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Output: ', size=(18, 2)), sg.Text(size=(3, 2), key='Output_status'), sg.Button('Toogle Output')]
+                            [sg.Text(f'Output: ', size=(18, 2)), sg.Text(size=(3, 2), key='Output_status'),
+                             sg.Button('Toogle Output')]
                         )
 
                     if 'enablePower' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Power: ', size=(18, 2)), sg.Text(size=(3, 2), key='power_status'), sg.Button('Toogle Power')]
+                            [sg.Text(f'Power: ', size=(18, 2)), sg.Text(size=(3, 2), key='power_status'),
+                             sg.Button('Toogle Power')]
                         )
 
                     if 'tooglePolarity' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Polarity: ', size=(18, 2)), sg.Text(size=(10, 2), key='polarity_status'), sg.Button('Toogle Polarity')]
+                            [sg.Text(f'Polarity: ', size=(18, 2)), sg.Text(size=(10, 2), key='polarity_status'),
+                             sg.Button('Toogle Polarity')]
                         )
 
                     if 'setMode' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Mode: ', size=(18, 2)), sg.Text(size=(3, 2), key='mode_status'), sg.Button('Change Mode')]
+                            [sg.Text(f'Mode: ', size=(18, 2)), sg.Text(size=(3, 2), key='mode_status'),
+                             sg.Button('Change Mode')]
                         )
 
                     if 'setOperationMode' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Operation Mode: ', size=(18, 2)), sg.Text(size=(8, 2), key='operation_mode_status'), sg.Button('Change Operation Mode')]
+                            [sg.Text(f'Operation Mode: ', size=(18, 2)),
+                             sg.Text(size=(8, 2), key='operation_mode_status'), sg.Button('Change Operation Mode')]
                         )
 
                     if 'getStatus' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Status: ', size=(18, 2)), sg.Text(size=(15, 2), key='status_status')]
+                            [sg.Text(f'Status: ', size=(18, 2)), sg.Text(size=(15, 2), key='status_status')]
                         )
 
                     if 'rampVoltage' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_voltage_status'), sg.Text('V', size=(5,2)), sg.Button('Change Voltage')]
+                            [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_voltage_status'),
+                             sg.Text('V', size=(5, 2)), sg.Button('Change Voltage')]
                         )
 
                     if 'setVoltage' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_voltage_status'), sg.Text('V', size=(5,2)), sg.Button('Set Voltage')]
+                            [sg.Text(f'Voltage: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_voltage_status'),
+                             sg.Text('V', size=(5, 2)), sg.Button('Set Voltage')]
                         )
 
                     if 'rampDeviceDown' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Set HV to 0V and turn HV off with ramp for all channels', size=(65, 2)), sg.Button('Ramp Down')]
+                            [sg.Text(f'Set HV to 0V and turn HV off with ramp for all channels', size=(65, 2)),
+                             sg.Button('Ramp Down')]
                         )
 
                     if 'setRampSpeed' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Ramp Speed: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_speed_status'), sg.Text('V/s', size=(5,2)), sg.Button('Set Ramp Speed')]
+                            [sg.Text(f'Ramp Speed: ', size=(18, 2)), sg.Text(size=(15, 2), key='ramp_speed_status'),
+                             sg.Text('V/s', size=(5, 2)), sg.Button('Set Ramp Speed')]
                         )
 
                     if 'setCurrent' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Current: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_status'), sg.Text('A', size=(5,2)), sg.Button('Set Current')]
+                            [sg.Text(f'Current: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_status'),
+                             sg.Text('A', size=(5, 2)), sg.Button('Set Current')]
                         )
 
                     if 'setCurrentLimit' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Current Limit: ', size=(18, 2)), sg.Text(size=(15, 2), key='current_limit_status'), sg.Text('uA', size=(5,2)), sg.Button('Set Current Limit')]
+                            [sg.Text(f'Current Limit: ', size=(18, 2)),
+                             sg.Text(size=(15, 2), key='current_limit_status'), sg.Text('uA', size=(5, 2)),
+                             sg.Button('Set Current Limit')]
                         )
 
                     if 'getSetTemperature' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getin_temperature_status'), sg.Text('C', size=(5,2))]
+                            [sg.Text(f'Temperature: ', size=(18, 2)),
+                             sg.Text(size=(15, 2), key='getin_temperature_status'), sg.Text('C', size=(5, 2))]
                         )
                         layout_device_interaction.append(
-                                [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='getset_temperature_status'), sg.Text('C', size=(5,2)), sg.Button('Set Temperature')]
+                            [sg.Text(f'Set Temperature: ', size=(18, 2)),
+                             sg.Text(size=(15, 2), key='getset_temperature_status'), sg.Text('C', size=(5, 2)),
+                             sg.Button('Set Temperature')]
                         )
 
                     if 'setHumidity' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='humidity_status'), sg.Text('%', size=(5,2))]
+                            [sg.Text(f'Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='humidity_status'),
+                             sg.Text('%', size=(5, 2))]
                         )
                         layout_device_interaction.append(
-                                [sg.Text(f'Set Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_humidity_status'), sg.Text('%', size=(5,2)), sg.Button('Change Set Humidity')]
+                            [sg.Text(f'Set Humidity: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_humidity_status'),
+                             sg.Text('%', size=(5, 2)), sg.Button('Change Set Humidity')]
                         )
 
                     if 'setTemperature' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='temperature_status'), sg.Text('C', size=(5,2))]
+                            [sg.Text(f'Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='temperature_status'),
+                             sg.Text('C', size=(5, 2))]
                         )
                         layout_device_interaction.append(
-                                [sg.Text(f'Set Temperature: ', size=(18, 2)), sg.Text(size=(15, 2), key='set_temperature_status'), sg.Text('C', size=(5,2)), sg.Button('Set Temperature')]
+                            [sg.Text(f'Set Temperature: ', size=(18, 2)),
+                             sg.Text(size=(15, 2), key='set_temperature_status'), sg.Text('C', size=(5, 2)),
+                             sg.Button('Set Temperature')]
                         )
 
                     if 'setOVP' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Text(f'OVP: ', size=(18, 2)), sg.Text(size=(15, 2), key='ovp_status'), sg.Text('V', size=(5,2)), sg.Button('Set OVP')]
+                            [sg.Text(f'OVP: ', size=(18, 2)), sg.Text(size=(15, 2), key='ovp_status'),
+                             sg.Text('V', size=(5, 2)), sg.Button('Set OVP')]
                         )
 
                     if 'enableOCP' in d_i_d_keys:
                         layout_device_interaction.append(
-                                [sg.Button('Enable OCP')]
+                            [sg.Button('Enable OCP')]
+                        )
+
+                    if 'move' in d_i_d_keys:
+                        layout_device_interaction.append(
+                            [sg.Button('Move')]
+                        )
+
+                    if 'setHome' in d_i_d_keys:
+                        layout_device_interaction.append(
+                            [sg.Button('Set Home')]
+                        )
+
+                    if 'goHome' in d_i_d_keys:
+                        layout_device_interaction.append(
+                            [sg.Button('Go Home')]
                         )
 
                     layout_device_interaction.append([sg.Button('Back')])
 
-                    window_device_interaction = sg.Window(f'{device_change.__class__.__name__}', layout_device_interaction)
+                    window_device_interaction = sg.Window(f'{device_change.__class__.__name__}',
+                                                          layout_device_interaction)
 
                     # handle the interaction / setting change
                     while True:
@@ -511,9 +695,16 @@ def control_window(devices, config_devices, fw):
                         if event_interaction == 'Set OVP':
                             general_interaction(device_change, 'OVP', 'V', 'setVoltageLimit', iChannel)
                         if event_interaction == 'Enable OCP':
-                            enable_OCP(device_change, iChannel)
+                            enable_OCP(device_change)
+                        if event_interaction == 'Set Home':
+                            device_change.setHome()
+                        if event_interaction == 'Go Home':
+                            device_change.goHome()
+                        if event_interaction == 'Move':
+                            move_stage_device(device_change)
+
                         time.sleep(1)
-                    iChannel = -1 # reset iChannel to its default value -1 after the change window is closed
+                    iChannel = -1  # reset iChannel to its default value -1 after the change window is closed
 
         # update the output values in the Control Window
         same_device_counter = 0
@@ -528,12 +719,15 @@ def control_window(devices, config_devices, fw):
                     # color the current and temperature values
                     # if the current or temperature rises above 0.1 compared to the prior value, the output is coloured rise.
                     # if the value is 0.1 lower it is coloured blue, if the change is below 0.1 it is coloured white.
-                    if ('A]' in h or 'C]' in h) and bool(len(v_prior)) and float(v_prior[-1]) - float(v) > 0.1 and abs(float(v_prior[-1]) - float(v)) > 0.1:
+                    if ('A]' in h or 'C]' in h) and bool(len(v_prior)) and float(v_prior[-1]) - float(v) > 0.1 and abs(
+                            float(v_prior[-1]) - float(v)) > 0.1:
                         window[f'{h}{same_device_counter}'].update(np.round(float(v), 2), text_color=blue)
-                    elif ('A]' in h or 'C]' in h) and bool(len(v_prior)) and float(v_prior[-1]) - float(v) < 0.1 and abs(float(v_prior[-1]) - float(v)) > 0.1:
+                    elif ('A]' in h or 'C]' in h) and bool(len(v_prior)) and float(v_prior[-1]) - float(
+                            v) < 0.1 and abs(float(v_prior[-1]) - float(v)) > 0.1:
                         window[f'{h}{same_device_counter}'].update(np.round(float(v), 2), text_color=red)
                     else:
-                        window[f'{h}{same_device_counter}'].update(np.round(float(v), 2), text_color=sg.DEFAULT_TEXT_COLOR)
+                        window[f'{h}{same_device_counter}'].update(np.round(float(v), 2),
+                                                                   text_color=sg.DEFAULT_TEXT_COLOR)
                     all_values.append(float(v))
                     if bool(len(v_prior)):
                         v_prior.pop()
@@ -569,16 +763,20 @@ def control_window(devices, config_devices, fw):
                 sh.write_line(fw, '\n\nGiven Name of the configfile was invalid!\n')
                 sh.write_line(fw, all_values)
         time.sleep(1)
-    pass
 
 
-# Verification window, if the entries in the configfile are correct
-def show_dcs_device_list_gui(devices):
+def show_dcs_device_list_gui(config_devices):
+    """
+    Verification window, if the entries in the configfile are correct.
 
+    Parameters
+    ----------
+    config_devices : list[str]
+        List which contains the information of the config file.
+    """
     layout = []
-    for i in devices:
+    for i in config_devices:
         layout.append([sg.Text(i)])
-
 
     layout.append([sg.Text('Correct devices?')])
     layout.append([sg.Button('Yes'), sg.Button('No')])
@@ -592,17 +790,24 @@ def show_dcs_device_list_gui(devices):
         elif event == 'Yes':
             window.close()
             break
-    pass
 
 
-# Welcome window, which presents the used version of E4control and reads out the name of the config file
 def welcome_dcs_gui(config):
+    """
+    Welcome window which presents the used version of E4control and reads out the name of the config file.
+
+    Parameters
+    ----------
+    config : str
+        Name of the config file, which was passed to the parser.
+    """
     layout = [
-            [sg.Text(f'This is e4control'), sg.Text(f'v{version}.', text_color=red)],
-            [sg.Text(f'If you are not familiar with this version, please check the log (via \"git log\") for recent changes.')],
-            [sg.Text('')],
-            [sg.Text(f'Selected configfile: {config}')],
-            [sg.Button('Contine'), sg.Button('Quit')]
+        [sg.Text(f'This is e4control'), sg.Text(f'v{version}.', text_color=red)],
+        [sg.Text(
+            f'If you are not familiar with this version, please check the log (via \"git log\") for recent changes.')],
+        [sg.Text('')],
+        [sg.Text(f'Selected configfile: {config}')],
+        [sg.Button('Contine'), sg.Button('Quit')]
     ]
     window = sg.Window(f'E4control v{version}: Device control script', layout)
 
@@ -615,20 +820,26 @@ def welcome_dcs_gui(config):
         elif event == 'Contine':
             window.close()
             break
-    pass
 
 
-# Abort window. It is opend, when the control window is closed.
 def abort(err_msg=False):
+    """
+    Abort window. It is opened, when the control window is closed or crashed.
+
+    Parameters
+    ----------
+    err_msg : str, optional
+        Error message.
+    """
     if err_msg:
         layout = [
-                [sg.Text(f'{err_msg}', text_color=red, font=('Arial', 17))],
-                [sg.Button('Quit')]
+            [sg.Text(f'{err_msg}', text_color=red, font=('Arial', 17))],
+            [sg.Button('Quit')]
         ]
     else:
         layout = [
-                [sg.Text(f'\tAborted!', text_color=red, font=('Arial', 17), size=(25, 2))],
-                [sg.Button('Quit')]
+            [sg.Text(f'\tAborted!', text_color=red, font=('Arial', 17), size=(25, 2))],
+            [sg.Button('Quit')]
         ]
     window = sg.Window(f'E4control v{version}: Device control script', layout)
     while True:
@@ -636,14 +847,20 @@ def abort(err_msg=False):
         if event == sg.WIN_CLOSED or event == 'Quit':
             window.close()
             sys.exit()
-    pass
 
 
-# Window which prensets a error message.
 def error_msg(err_msg):
+    """
+    Window which prensets a error message.
+
+    Parameters
+    ----------
+    err_msg : str
+        Error message.
+    """
     layout = [
-            [sg.Text(f'{err_msg}', text_color=red, font=('Arial', 15))],
-            [sg.Button('Close')]
+        [sg.Text(f'{err_msg}', text_color=red, font=('Arial', 15))],
+        [sg.Button('Close')]
     ]
     window = sg.Window(f'Error', layout)
     while True:
@@ -651,11 +868,25 @@ def error_msg(err_msg):
         if event == sg.WIN_CLOSED or event == 'Close':
             window.close()
             break
-    pass
 
 
-# creates a logfile with the given name
 def create_logfile(file_name, config_devices, devices):
+    """
+    Creates a logfile with the given name.
+
+    Parameters
+    ----------
+    file_name : str
+        Error message.
+    devices : list[e4control.device]
+        List of e4control.devices, which are given in the config file.
+    config_devices : list[str]
+        List which contains the information of the config file.
+    Returns
+    -------
+    fw : file
+        The created logfile with the name file_name.
+    """
     blockPrint()
     checktxtfile = (file_name + '.txt')
     if os.path.isfile(checktxtfile):
@@ -678,17 +909,19 @@ def create_logfile(file_name, config_devices, devices):
         sh.write_line(fw, header)
         return fw
 
-    
-# Suppress output to the console.
+
 def blockPrint():
+    """
+    Suppress output to the console.
+    """
     sys.stdout = open(os.devnull, 'w')
-    pass
 
 
-# Restore output to the console.
 def enablePrint():
+    """
+    Restores output to the console.
+    """
     sys.stdout = sys.__stdout__
-    pass
 
 
 def main():
@@ -711,14 +944,14 @@ def main():
     devices = sh.connect_dcs_devices(config_devices)
 
     # Check if SHT75 is used for T and H, remove one as T and H are always displayed.
-    for idx_h,d_h in enumerate(config_devices):
-        if d_h[0]=='H' and d_h[1]=='SHT75':
-            for idx_t,d_t in enumerate(config_devices):
-                if d_t[0]=='T' and d_t[1]=='SHT75':
-                    if d_h[3]==d_t[3]:
+    for idx_h, d_h in enumerate(config_devices):
+        if d_h[0] == 'H' and d_h[1] == 'SHT75':
+            for idx_t, d_t in enumerate(config_devices):
+                if d_t[0] == 'T' and d_t[1] == 'SHT75':
+                    if d_h[3] == d_t[3]:
                         # devices[idx_h]=devices[idx_t]
                         devices.pop(idx_h)
-                        print('Linked H{} with T{}.'.format(idx_h+1,idx_t+1))
+                        print('Linked H{} with T{}.'.format(idx_h + 1, idx_t + 1))
 
     # Create a logfile. A logfile can as well be created later
     if args.logfile:

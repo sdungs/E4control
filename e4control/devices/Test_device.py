@@ -7,189 +7,220 @@ from .device import Device
 
 class Test_device(Device):
 
-	def __init__(self, connection_type, host, port):
-		self.data_x = 0
-		self.data_y = 0
-		self.output_status = '0'
-		self.voltage = 0
-		self.current = 0
-		self.current_limit = 1
-		self.Power = False
-		self.setTemp = -20
-		self.InTemp = 21
-		self.sMode = 'int'
-		self.status = 'status'
-		self.voltage_limit = 100
-		self.sHumidity = 40
-		self.Humidity = 20
-		self.rampSpeed = 5
-		self. polarity = 'n'
-		pass
+    def __init__(self, connection_type, host, port):
+        self.data_x = 0
+        self.data_y = 0
+        self.output_status = '0'
+        self.voltage = 0
+        self.current = 0
+        self.current_limit = 1
+        self.Power = False
+        self.setTemp = -20
+        self.InTemp = 21
+        self.sMode = 'int'
+        self.status = 'status'
+        self.voltage_limit = 100
+        self.sHumidity = 40
+        self.Humidity = 20
+        self.rampSpeed = 5
+        self.polarity = 'n'
+        self.x_pos = 0
+        self.y_pos = 0
+        self.z_pos = 0
+        self.Home = [self.x_pos, self.y_pos, self.z_pos]
+        pass
 
-	def initialize(self):
-		pass
+    def initialize(self):
+        pass
 
-	def detData(self):
-		return normal(0, 0.1, 1)[0]
+    def detData(self):
+        return normal(0, 0.1, 1)[0]
 
+    def output(self, show=False):
+        self.x_data = self.detData()
+        self.y_data = self.detData()
+        self.Power = self.getPowerStatus()
+        self.polarity = self.getPolarity()
+        self.printOutput('Test_device')
+        self.printOutput(f'Power: {self.Power}')
+        self.printOutput(f'Polarity: {self.polarity}')
+        self.printOutput(f'x_data: {self.x_data}')
+        self.printOutput(f'y_data: {self.y_data}')
+        return [['Power', 'Polarity', 'x_data[C]', 'y_data[µA]'],
+                [str(self.Power), str(self.polarity), self.x_data, self.y_data]]
 
-	def output(self, show=False):
-		self.x_data = self.detData()
-		self.y_data = self.detData()
-		self.Power = self.getPowerStatus()
-		self.polarity = self.getPolarity()
-		self.printOutput('Test_device')
-		self.printOutput(f'Power: {self.Power}')
-		self.printOutput(f'Polarity: {self.polarity}')
-		self.printOutput(f'x_data: {self.x_data}')
-		self.printOutput(f'y_data: {self.y_data}')
-		return [['Power', 'Polarity', 'x_data[C]', 'y_data[µA]'], [str(self.Power), str(self.polarity), self.x_data, self.y_data]]
+    def xRelMove(self, x):
+        self.x_pos += x
 
-	def getOutput(self, iChannel=-1):
-		return self.output_status
+    def getX(self):
+        return self.x_pos
 
-	def setOutput(self, value, iChannel=-1):
-		if value:
-			self.output_status = '1'
-		else:
-			self.output_status = '0'
-		pass
+    def yRelMove(self, y):
+        self.y_pos += y
 
-	def getPolarity(self, iChannel=-1):
-		return self.polarity
+    def getY(self):
+        return self.y_pos
 
-	def setPolarity(self, new_polarity, iChannel=-1):
-		self.polarity = new_polarity
-		pass
+    def zRelMove(self, z):
+        self.z_pos += z
 
-	def getVoltage(self, iChannel=-1):
-		return self.voltage
+    def getZ(self):
+        return self.z_pos
 
-	def rampVoltage(self, new_voltage, iChannel=-1):
-		self.voltage = new_voltage
-		pass
+    def setHome(self):
+        self.Home = [self.getX(), self.getY(), self.getZ()]
 
-	def setVoltage(self, new_voltage, iChannel=-1):
-		self.voltage = new_voltage
-		pass
+    def goHome(self):
+        self.Home = [0, 0, 0]
 
-	def getRampSpeed(self, iChannel=-1):
-		return self.rampSpeed
+    def getOutput(self, iChannel=-1):
+        return self.output_status
 
-	def setRampSpeed(self, new_rampSpeed, iChannel=-1):
-		self.rampSpeed = new_rampSpeed
-		pass
+    def setOutput(self, value, iChannel=-1):
+        if value:
+            self.output_status = '1'
+        else:
+            self.output_status = '0'
+        pass
 
-	def getCurrent(self, iChannel=-1):
-		return self.current
+    def getPolarity(self, iChannel=-1):
+        return self.polarity
 
-	def setCurrent(self, new_current, iChannel=-1):
-		self.current = new_current
-		pass
+    def setPolarity(self, new_polarity, iChannel=-1):
+        self.polarity = new_polarity
+        pass
 
-	def getCurrentLimit(self, iChannel=-1):
-		return self.current_limit
+    def getVoltage(self, iChannel=-1):
+        return self.voltage
 
-	def setCurrentLimit(self, new_current_limit, iChannel=-1):
-		self.current_limit = new_current_limit
-		pass
+    def rampVoltage(self, new_voltage, iChannel=-1):
+        self.voltage = new_voltage
+        pass
 
-	def getVoltageLimit(self, iChannel=-1):
-		return self.voltage_limit
+    def setVoltage(self, new_voltage, iChannel=-1):
+        self.voltage = new_voltage
+        pass
 
-	def setVoltageLimit(self, new_voltage_limit, iChannel=-1):
-		self.voltage_limit = new_voltage_limit
-		pass
+    def getRampSpeed(self, iChannel=-1):
+        return self.rampSpeed
 
-	def getPowerStatus(self, iChannel=-1):
-		return self.Power
+    def setRampSpeed(self, new_rampSpeed, iChannel=-1):
+        self.rampSpeed = new_rampSpeed
+        pass
 
-	def enablePower(self, sBool, iChannel=-1):
-		self.Power = sBool
-		pass
+    def getCurrent(self, iChannel=-1):
+        return self.current
 
-	def getSetTemperature(self, iChannel=-1):
-		return float(self.setTemp)
+    def setCurrent(self, new_current, iChannel=-1):
+        self.current = new_current
+        pass
 
-	def getInTemperature(self, iChannel=-1):
-		return float(self.InTemp)
+    def getCurrentLimit(self, iChannel=-1):
+        return self.current_limit
 
-	def setTemperature(self, Tset, iChannel=-1):
-		self.setTemp = Tset
-		pass
+    def setCurrentLimit(self, new_current_limit, iChannel=-1):
+        self.current_limit = new_current_limit
+        pass
 
-	def getTemperature(self, iChannel=-1):
-		return float(self.setTemp)
+    def getVoltageLimit(self, iChannel=-1):
+        return self.voltage_limit
 
-	def getHumidity(self, iChannel=-1):
-		return float(self.Humidity)
+    def setVoltageLimit(self, new_voltage_limit, iChannel=-1):
+        self.voltage_limit = new_voltage_limit
+        pass
 
-	def getSetHumidity(self, iChannel=-1):
-		return float(self.sHumidity)
+    def getPowerStatus(self, iChannel=-1):
+        return self.Power
 
-	def setHumidity(self, value, iChannel=-1):
-		self.sHumidity = value
-		pass
+    def enablePower(self, sBool, iChannel=-1):
+        self.Power = sBool
+        pass
 
-	def setOperationMode(self, sMode, iChannel=-1):
-		if (sMode == 'int'):
-			self.sMode = 'int'
-		elif (sMode == 'ext'):
-			self.sMode = 'ext'
-		elif (sMode == 'climate'):
-			self.sMode = 'climate'
-		elif (sMode == 'normal'):
-			self.sMode = 'normal'
-		pass
+    def getSetTemperature(self, iChannel=-1):
+        return float(self.setTemp)
 
-	def getOperationMode(self, iChannel=-1):
-		if self.sMode == 'int':
-			return 'int'
-		elif (self.sMode == 'ext'):
-			return 'ext'
-		elif (self.sMode == 'climate'):
-			return 'climate'
-		elif (self.sMode == 'normal'):
-			return 'normal'
+    def getInTemperature(self, iChannel=-1):
+        return float(self.InTemp)
 
-	def getStatus(self, iChannel=-1):
-		return self.status
+    def setTemperature(self, Tset, iChannel=-1):
+        self.setTemp = Tset
+        pass
 
-	def enableOCP(self, bool, iChannel=-1):
-		pass
+    def getTemperature(self, iChannel=-1):
+        return float(self.setTemp)
 
-	def reset(self):
-		self.voltage = 0
-		self.current = 0
-		self.Power = False
-		self.output_status = False
-		pass
+    def getHumidity(self, iChannel=-1):
+        return float(self.Humidity)
 
-	def close(self):
-		pass
+    def getSetHumidity(self, iChannel=-1):
+        return float(self.sHumidity)
 
-	def interaction(self, gui=False):
-		if gui:
-			device_dict = {
-			'pass': True,
-			'channel': 4,
-			'toogleOutput': True,
-			'rampVoltage': True,
-			'setVoltage': True,
-			'setCurrent': True,
-			'setCurrentLimit': True,
-			'getSetTemperature': True,
-			'setTemperature': True,
-			'setHumidity': True,
-			'enablePower': True,
-			'setMode': True,
-			'setOperationMode': True,
-			'getStatus': True,
-			'setOVP': True,
-			'enableOCP': True,
-			'setRampSpeed': True,
-			'rampDeviceDown': True,
-			'tooglePolarity': True,
-			}
-			return device_dict
-		pass
+    def setHumidity(self, value, iChannel=-1):
+        self.sHumidity = value
+        pass
+
+    def setOperationMode(self, sMode, iChannel=-1):
+        if (sMode == 'int'):
+            self.sMode = 'int'
+        elif (sMode == 'ext'):
+            self.sMode = 'ext'
+        elif (sMode == 'climate'):
+            self.sMode = 'climate'
+        elif (sMode == 'normal'):
+            self.sMode = 'normal'
+        pass
+
+    def getOperationMode(self, iChannel=-1):
+        if self.sMode == 'int':
+            return 'int'
+        elif (self.sMode == 'ext'):
+            return 'ext'
+        elif (self.sMode == 'climate'):
+            return 'climate'
+        elif (self.sMode == 'normal'):
+            return 'normal'
+
+    def getStatus(self, iChannel=-1):
+        return self.status
+
+    def enableOCP(self, bool, iChannel=-1):
+        pass
+
+    def reset(self):
+        self.voltage = 0
+        self.current = 0
+        self.Power = False
+        self.output_status = False
+        pass
+
+    def close(self):
+        pass
+
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+                'pass': True,
+                'channel': 4,
+                'toogleOutput': True,
+                'rampVoltage': True,
+                'setVoltage': True,
+                'setCurrent': True,
+                'setCurrentLimit': True,
+                'getSetTemperature': True,
+                'setTemperature': True,
+                'setHumidity': True,
+                'enablePower': True,
+                'setMode': True,
+                'setOperationMode': True,
+                'getStatus': True,
+                'setOVP': True,
+                'enableOCP': True,
+                'setRampSpeed': True,
+                'rampDeviceDown': True,
+                'tooglePolarity': True,
+                'move': True,
+                'setHome': True,
+                'goHome': True,
+            }
+            return device_dict
+        pass

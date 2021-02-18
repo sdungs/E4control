@@ -83,22 +83,21 @@ class TTI2(Device):
                     self.printOutput('CH {}: \t \033[32m ON \033[0m'.format(i))
                 else:
                     self.printOutput('CH {}: \t \033[31m OFF \033[0m'.format(i))
-                self.printOutput('Voltage: {:0.2f}V \t Set = {:0.2f}V'.format(b,d))
-                self.printOutput('Current: {:0.3f}A \t Set = {:0.3f}A'.format(c,e))
+                self.printOutput('Voltage: {:0.2f}V \t Set = {:0.2f}V'.format(b, d))
+                self.printOutput('Current: {:0.3f}A \t Set = {:0.3f}A'.format(c, e))
             sValues.append(str(a))
             sValues.append(str(b))
             sValues.append(str(c))
             i += 1
         sHeader = ['CH1', 'U1[V]', 'I1[A]', 'CH2', 'U2[V]', 'I2[A]']
-        return([sHeader, sValues])
-
+        return ([sHeader, sValues])
 
     def interaction(self, dui=False):
         if gui:
             device_dict = {
-            'toogleOutput': True,
-            'setVoltage': True,
-            'setCurrent': True,
+                'toogleOutput': True,
+                'setVoltage': True,
+                'setCurrent': True,
             }
             return device_dict
         else:

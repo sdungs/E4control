@@ -69,11 +69,11 @@ class JULABO(Device):
 
     def getOperationMode(self, iChannel=-1):
         if (self.ask('in_mode_04') == '0'):
-            return('int')
+            return ('int')
         else:
-            return('ext')
+            return ('ext')
 
-    def output(self,  show=True):
+    def output(self, show=True):
         sMode = self.Mode
         bPower = self.Power
         if show:
@@ -94,15 +94,16 @@ class JULABO(Device):
             print('T_set = %.1f°C' % fTset + '\t' + 'Heater Power = %.1f ' % fHeat)
             print('T_in = %.1f°C' % fTin + '\t' + 'T_ex = %.1f°C' % fTex)
 
-        return([['Mode', 'Power', 'Tset[C]', 'Tin[C]', 'Tex[C]', 'Pheat[]'], [str(sMode), str(bPower), str(fTset), str(fTin), str(fTex), str(fHeat)]])
+        return ([['Mode', 'Power', 'Tset[C]', 'Tin[C]', 'Tex[C]', 'Pheat[]'],
+                 [str(sMode), str(bPower), str(fTset), str(fTin), str(fTex), str(fHeat)]])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-			'getSetTemperature': True,
-			'enablePower': True,
-			'setMode': True,
-			}
+                'getSetTemperature': True,
+                'enablePower': True,
+                'setMode': True,
+            }
             return device_dict
         else:
             print('1: enable Power')

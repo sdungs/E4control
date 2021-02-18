@@ -56,7 +56,8 @@ class SB22(Device):
         return result
 
     def updateChanges(self):
-        line = chr(2) + '1T%sF%sR%s%s%s%s%s%s%s000000000' % (self.T_set, self.H_set, self.Power, self.D2, self.D3, self.D4, self.D5, self.D6, self.D7)
+        line = chr(2) + '1T%sF%sR%s%s%s%s%s%s%s000000000' % (
+        self.T_set, self.H_set, self.Power, self.D2, self.D3, self.D4, self.D5, self.D6, self.D7)
         pn = self.generateChecksum(line)
         cmd = '%s%s' % (line, pn) + chr(3)
         self.write(cmd)
@@ -189,7 +190,6 @@ class SB22(Device):
             fHset = float('nan')
             fHac = float('nan')
 
-
         if show:
             self.printOutput('Climate Chamber:')
             self.printOutput('Mode: ' + sMode)
@@ -197,20 +197,21 @@ class SB22(Device):
                 self.printOutput('Power: \033[32m ON \033[0m')
             else:
                 self.printOutput('Power: \033[31m OFF \033[0m')
-            self.printOutput('Temperature:  \t set: {:.1f} °C \t actual: {:.1f} °C'.format(fTset,fTac))
+            self.printOutput('Temperature:  \t set: {:.1f} °C \t actual: {:.1f} °C'.format(fTset, fTac))
             if (self.D2 == '0'):
-                self.printOutput('Humidity: \t set: {:.1f} %  \t actual: {:.1f} % '.format(fHset,fHac))
+                self.printOutput('Humidity: \t set: {:.1f} %  \t actual: {:.1f} % '.format(fHset, fHac))
 
-        return([['Mode', 'Power', 'Hset[%]', 'Hac[%]', 'Tset[C]', 'Tac[C]'], [str(sMode), str(bPower), str(fHset), str(fHac), str(fTset), str(fTac)]])
+        return ([['Mode', 'Power', 'Hset[%]', 'Hac[%]', 'Tset[C]', 'Tac[C]'],
+                 [str(sMode), str(bPower), str(fHset), str(fHac), str(fTset), str(fTac)]])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-            'enablePower': True,
-			'setTemperature': True,
-			'setHumidity': True,
-			'setOperationMode': True,
-			}
+                'enablePower': True,
+                'setTemperature': True,
+                'setHumidity': True,
+                'setOperationMode': True,
+            }
             return device_dict
         else:
             print(
@@ -220,10 +221,10 @@ class SB22(Device):
                 '3: set new Temperature\n'
                 '4: set new Humidity\n'
                 '5: set power Mode'
-                )
+            )
 
             x = input('Number? \n')
-            while not (x in ['0','1','2','3','4','5']):
+            while not (x in ['0', '1', '2', '3', '4', '5']):
                 x = input('Possible Inputs: 0, 1, 2, 3, 4 or 5! \n')
 
             if x == '0':

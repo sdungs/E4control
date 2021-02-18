@@ -142,13 +142,13 @@ class K617(Device):
         #         print('Voltage = %0.4f V' % fVoltage)
         # else:
         #     print('Error!')
-        return([header, values])
+        return ([header, values])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-			'pass': True,
-			}
+                'pass': True,
+            }
             return device_dict
         else:
             print('Not yet implemeted...')

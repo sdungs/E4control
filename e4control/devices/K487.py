@@ -41,7 +41,7 @@ class K487(Device):
 
     def getVoltage(self, iChannel=-1):
         sV = self.ask('U8X')
-        fV = float(sV[sV.find('=') + 1:sV.find('E')]) * 10**float(sV[sV.find('E') + 1:sV.find('E') + 4])
+        fV = float(sV[sV.find('=') + 1:sV.find('E')]) * 10 ** float(sV[sV.find('E') + 1:sV.find('E') + 4])
         return fV
 
     def getCurrent(self, iChannel=-1):
@@ -111,7 +111,7 @@ class K487(Device):
             self.rampSpeed_delay = iDelay
 
     def getRampSpeed(self):
-        return([int(self.rampSpeed_step), int(self.rampSpeed_delay)])
+        return ([int(self.rampSpeed_step), int(self.rampSpeed_delay)])
 
     def rampVoltage(self, fVnew, iChannel=-1):
         V = self.getVoltage(iChannel)
@@ -149,14 +149,14 @@ class K487(Device):
                 print('Current = ---- uA')
             fVoltage = 0
             fCurrent = 0
-        return([['Output', 'U[V]', 'I[uA]'], [str(bPower), str(fVoltage), str(fCurrent)]])
+        return ([['Output', 'U[V]', 'I[uA]'], [str(bPower), str(fVoltage), str(fCurrent)]])
 
     def interaction(self, gui=False):
         if gui:
             device_dict = {
-			'toogleOutput': True,
-			'rampVoltage': True,
-			}
+                'toogleOutput': True,
+                'rampVoltage': True,
+            }
             return device_dict
         else:
             print('1: enable output')
