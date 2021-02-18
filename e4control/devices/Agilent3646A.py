@@ -131,12 +131,11 @@ class Agilent3646A(Device):
 
         Returns
         -------
-        sValues : float
+        float
             Voltage of a given channel.
         """
         self.write(f':INST:SEL OUT{iChannel}')
-        sValues = self.ask(':VOLT?')
-        return float(sValues)
+        return float(self.ask(':VOLT?'))
 
     def getCurrent(self, iChannel):
         """
@@ -149,12 +148,11 @@ class Agilent3646A(Device):
 
         Returns
         -------
-        sValues : float
+        float
             Current of a given channel.
         """
         self.write(f':INST:SEL OUT{iChannel}')
-        sValues = self.ask(':CURR?')
-        return float(sValues)
+        return float(self.ask(':CURR?'))
 
     def getVoltageLimit(self, iChannel):
         """
@@ -199,12 +197,10 @@ class Agilent3646A(Device):
 
         Returns
         -------
-        int
-            Ramp speed step.
-        int
-            Ramp speed delay.
+        list[int, int]
+            Ramp speed step and Ramp speed delay.
         """
-        return ([int(self.rampSpeed_step), int(self.rampSpeed_delay)])
+        return [int(self.rampSpeed_step), int(self.rampSpeed_delay)]
 
     def rampVoltage(self, fVnew, iChannel):
         """
@@ -249,19 +245,19 @@ class Agilent3646A(Device):
         -------
         tuple (list[str], list[str])
             The first part of the tuple is a list with the names of the output features.
-            The second part of the tuple are the corresponding valies.
+            The second part of the tuple are the corresponding values.
         """
         bPower_CH1 = self.getOutput(1)
         bPower_CH2 = self.getOutput(2)
 
-        if bPower_CH1 == '1':
+        if bPower_CH1:
             fVoltage_CH1 = self.getVoltage(1)
             fCurrent_CH1 = self.getCurrent(1) * 1E6
         else:
             fVoltage_CH1 = 0
             fCurrent_CH1 = 0
 
-        if bPower_CH2 == '2':
+        if bPower_CH2:
             fVoltage_CH2 = self.getVoltage(2)
             fCurrent_CH2 = self.getCurrent(2) * 1E6
         else:
@@ -270,7 +266,7 @@ class Agilent3646A(Device):
 
         if show:
             self.printOutput('Agilent3646A:')
-            if bPower_CH1 == '1':
+            if bPower_CH1:
                 self.printOutput('Output CH1 \033[32m ON \033[0m')
                 self.printOutput('Voltage = %0.1f V' % fVoltage_CH1)
                 self.printOutput('Current = %0.3f uA' % fCurrent_CH1)
@@ -278,7 +274,7 @@ class Agilent3646A(Device):
                 self.printOutput('Output CH1 \033[31m OFF \033[0m')
                 self.printOutput('Voltage = ---- V')
                 self.printOutput('Current = ---- uA')
-            if bPower_CH2 == '1':
+            if bPower_CH2:
                 self.printOutput('Output CH2 \033[32m ON \033[0m')
                 self.printOutput('Voltage = %0.1f V' % fVoltage_CH2)
                 self.printOutput('Current = %0.3f uA' % fCurrent_CH2)
