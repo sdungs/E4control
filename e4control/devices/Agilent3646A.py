@@ -3,7 +3,6 @@
 from time import sleep
 
 from .device import Device
-import warnings
 
 
 class Agilent3646A(Device):
@@ -11,7 +10,6 @@ class Agilent3646A(Device):
     def __init__(self, connection_type, host, port):
         super(Agilent3646A, self).__init__(
             connection_type=connection_type, host=host, port=port)
-        self.trm = '\n'
         self.rampSpeed_step = 10
         self.rampSpeed_delay = 1  # s
 
@@ -118,7 +116,8 @@ class Agilent3646A(Device):
             Current output state of a given channel
         """
         self.write(f':INST:SEL OUT{iChannel}')
-        return self.ask(':OUTPUT?')
+        self.ask('')
+        return int(self.ask(':OUTPUT?'))
 
     def getVoltage(self, iChannel):
         """
@@ -134,8 +133,9 @@ class Agilent3646A(Device):
         float
             Voltage of a given channel.
         """
-        self.write(f':INST:SEL OUT{iChannel}')
-        return float(str(self.ask(':VOLT?')))
+        self.write(f'INST:SEL OUT{iChannel}')
+        self.ask('')
+        return float(self.ask('VOLT?'))
 
     def getCurrent(self, iChannel):
         """
@@ -152,6 +152,7 @@ class Agilent3646A(Device):
             Current of a given channel.
         """
         self.write(f':INST:SEL OUT{iChannel}')
+        self.ask('')
         return float(self.ask(':CURR?'))
 
     def getVoltageLimit(self, iChannel):
@@ -169,6 +170,7 @@ class Agilent3646A(Device):
             Voltage limit of a given channel.
         """
         self.write(f':INST:SEL OUT{iChannel}')
+        self.ask('')
         return float(self.ask(':VOLT:PROT?'))
 
     def setRampSpeed(self, iRampSpeed, iDelay):
