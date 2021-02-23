@@ -1,5 +1,23 @@
 # -*- coding: utf-8 -*-
 
+"""
+BUGREPORT:
+The device does not respond properly on queries via scripts e.g. dcs,
+it only returns empty strings.
+However, the device is fully functional, when queried via iPython.
+
+The error code 410 (Query INTERRUPTED) is occasionally thrown.
+The corresponding error text is:
+"A command was received which sends data to the output buffer, but the output buffer contained data
+from a previous command (the previous data is not overwritten). The output buffer is cleared when
+power has been turned off, or after a *RST (reset) command has been executed."
+
+Already tried to work with a delay between write and read, but that did not solve or improved the problem.
+Furthermore, implemented an empty query before every regular query, which was the only way to get the
+device to respond via iPython. This empty query had no influence on the device's respond on script queries.
+Tried to reset the device with self.write('*RST') when initializing, which did not help either.
+"""
+
 from time import sleep
 
 from .device import Device
@@ -254,14 +272,14 @@ class Agilent3646A(Device):
 
         if bPower_CH1:
             fVoltage_CH1 = self.getVoltage(1)
-            fCurrent_CH1 = self.getCurrent(1) * 1E6
+            fCurrent_CH1 = self.getCurrent(1)
         else:
             fVoltage_CH1 = 0
             fCurrent_CH1 = 0
 
         if bPower_CH2:
             fVoltage_CH2 = self.getVoltage(2)
-            fCurrent_CH2 = self.getCurrent(2) * 1E6
+            fCurrent_CH2 = self.getCurrent(2)
         else:
             fVoltage_CH2 = 0
             fCurrent_CH2 = 0
@@ -271,21 +289,21 @@ class Agilent3646A(Device):
             if bPower_CH1:
                 self.printOutput('Output CH1 \033[32m ON \033[0m')
                 self.printOutput('Voltage = %0.1f V' % fVoltage_CH1)
-                self.printOutput('Current = %0.3f uA' % fCurrent_CH1)
+                self.printOutput('Current = %0.3f A' % fCurrent_CH1)
             else:
                 self.printOutput('Output CH1 \033[31m OFF \033[0m')
                 self.printOutput('Voltage = ---- V')
-                self.printOutput('Current = ---- uA')
+                self.printOutput('Current = ---- A')
             if bPower_CH2:
                 self.printOutput('Output CH2 \033[32m ON \033[0m')
                 self.printOutput('Voltage = %0.1f V' % fVoltage_CH2)
-                self.printOutput('Current = %0.3f uA' % fCurrent_CH2)
+                self.printOutput('Current = %0.3f A' % fCurrent_CH2)
             else:
                 self.printOutput('Output CH2 \033[31m OFF \033[0m')
                 self.printOutput('Voltage = ---- V')
-                self.printOutput('Current = ---- uA')
+                self.printOutput('Current = ---- A')
 
-        return ([['Output_CH1', 'Output_CH2', 'U_CH1[V]', 'I_CH1[uA]', 'U_CH2[V]', 'I_CH2[uA]'],
+        return ([['Output_CH1', 'Output_CH2', 'U_CH1[V]', 'I_CH1[A]', 'U_CH2[V]', 'I_CH2[A]'],
                  [str(bPower_CH1), str(bPower_CH2), str(fVoltage_CH1), str(fCurrent_CH1), str(fVoltage_CH2),
                   str(fCurrent_CH2)]])
 
@@ -342,5 +360,5 @@ class Agilent3646A(Device):
                     self.setOutput(True, iChannel)
                 self.rampVoltage(float(fV), iChannel)
             elif x == '3':
-                fI = input('Please enter new current limit in uA \n')
-                self.setCurrent(float(fI) / 1E6, iChannel)
+                fI = input('Please enter new current limit in A \n')
+                self.setCurrent(float(fI), iChannel)
