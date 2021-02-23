@@ -151,9 +151,9 @@ class Agilent3646A(Device):
         float
             Voltage of a given channel.
         """
-        self.write(f'INST:SEL OUT{iChannel}')
+        self.write(f':INST:SEL OUT{iChannel}')
         self.ask('')
-        return float(self.ask('VOLT?'))
+        return float(self.ask(':MEAS:VOLT?'))
 
     def getCurrent(self, iChannel):
         """
@@ -171,7 +171,7 @@ class Agilent3646A(Device):
         """
         self.write(f':INST:SEL OUT{iChannel}')
         self.ask('')
-        return float(self.ask(':CURR?'))
+        return float(self.ask(':MEAS:CURR?'))
 
     def getVoltageLimit(self, iChannel):
         """
