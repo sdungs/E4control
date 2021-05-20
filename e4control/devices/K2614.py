@@ -113,7 +113,7 @@ class K2614(Device):
             print('Voltage reached: %.2f V' % fVnew)
         else:
             self.setVoltage(V + self.rampSpeed_step *
-                            (fVnew - V) / abs(fVnew - V))
+                            (fVnew - V) / abs(fVnew - V), iChannel)
             print('Ramp Voltage: %.2f V' %
                   (V + self.rampSpeed_step * (fVnew - V) / abs(fVnew - V)))
             sleep(self.rampSpeed_delay)
