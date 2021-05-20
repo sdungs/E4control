@@ -74,12 +74,12 @@ class K2614(Device):
 
     def getVoltage(self, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        sValue = self.ask(f'print(smu{iChannel}.source.levelv)')
+        sValue = self.ask(f'print(smu{iChannel}.measure.v())')
         return float(sValue)
 
     def getCurrent(self, iChannel):
         iChannel = self.convert_iChannel(iChannel)
-        sValue = self.ask(f'print(smu{iChannel}.source.leveli)')
+        sValue = self.ask(f'print(smu{iChannel}.measure.i())')
         return float(sValue)
 
     def getCurrentLimit(self, iChannel):
@@ -145,7 +145,7 @@ class K2614(Device):
             fCurrent_CH2 = 0
 
         if show:
-            self.printOutput('Agilent3646A:')
+            self.printOutput('K2614:')
             if bPower_CH1:
                 self.printOutput('Output CH1 \033[32m ON \033[0m')
                 self.printOutput('Currentlimit = %0.3f uA' % fILimit_CH1)
