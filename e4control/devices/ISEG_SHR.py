@@ -121,7 +121,13 @@ class SHR(Device):
         sChannel = self.__checkChannel(channel)
         # return self.ask(':MEAS:CURR? (@{})'.format(sChannel))
         sCurrent = self.ask(':MEAS:CURR? (@{})'.format(sChannel))
-        return float(sCurrent[:-1])
+        try:
+            fCurrent = float(sCurrent[:-1])
+        except ValueError:
+            sCurrent = self.ask(':MEAS:CURR? (@{})'.format(sChannel))
+            sleep(0.1)
+            fCurrent = float(sCurrent[:-1])
+        return fCurrent
 
 
     def setCurrentLimit(self, channel='all'):

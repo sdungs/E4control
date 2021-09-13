@@ -130,14 +130,14 @@ def settings_query(device_list, **kwargs):
         else:
             print('{0}: {1}'.format(key, value))
     print("------------------------------------------------")
-    q = input("Settings correct? (y/n)")
-    if q == "yes":
-        pass
-    elif q == "y":
-        pass
-    else:
-        sys.exit("Measurement aborted!")
-    pass
+#    q = input("Settings correct? (y/n)")
+#    if q == "yes":
+#        pass
+#    elif q == "y":
+#        pass
+#    else:
+#        sys.exit("Measurement aborted!")
+#    pass
 
 
 def device_connection(values):

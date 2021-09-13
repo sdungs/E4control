@@ -4,9 +4,11 @@ from .device import Device
 
 
 class HP4284A(Device):
+    mode = None
 
     def __init__(self, connection_type, host, port):
         super(HP4284A, self).__init__(connection_type=connection_type, host=host, port=port)
+        self.mode = self.getMeasurementMode()
 
     def userCmd(self, cmd):
         print('user cmd: %s' % cmd)
@@ -33,19 +35,27 @@ class HP4284A(Device):
         self.setTriggerMode('BUS')
         self.setIntegrationTimeAndAveragingRate('LONG', 1)
 
-    def getValues(self):
+    def getValues(self):  # general function for all measurement modes
         sV = self.ask('*TRG').split(',')
         fC = float(sV[0])
         fR = float(sV[1])
         return [fC, fR]
 
-    def getR(self):
-        fV = self.getValues()
-        return fV[1]
+    def getR(self):  # specific function to get resistance if suitable mode
+        if 'R' and not ('Y' or 'Z') in self.mode:
+            fV = self.getValues()
+            return fV[1]
+        else:
+            print('Cannot get resistance. Wrong measurement mode? Mode is {}'.format(self.mode))
+            pass
 
-    def getC(self):
-        fV = self.getValues()
-        return fV[0]
+    def getC(self):  # sepcific function to get capacitance if in suitable mode
+        if self.mode[0] is 'C':
+            fV = self.getValues()
+            return fV[0]
+        else:
+            print('Cannot get capacitance. Wrong measurement mode? Mode is {}'.format(self.mode))
+            pass
 
     def setFrequency(self, fFreq):
         self.write(':FREQ %f' % fFreq)
@@ -72,16 +82,13 @@ class HP4284A(Device):
             self.write(':CORR:SHOR:STAT OFF')
 
     def setMeasurementMode(self, sMode):
-        if (sMode == 'CPD'):
-            self.write(':FUNC:IMP CPD')
-        elif (sMode == 'CPRP'):
-            self.write(':FUNC:IMP CPRP')
-        elif (sMode == 'CSD'):
-            self.write(':FUNC:IMP CSD')
-        elif (sMode == 'CSRS'):
-            self.write(':FUNC:IMP CSRS')
+        if sMode in ['CPD', 'CPQ', 'CPG', 'CPRP', 'CSD', 'CSQ', 'CSRS',  # capacitance related modes
+                     'LPQ', 'LPD', 'LPRP', 'LSD', 'LSQ', 'LSRS',         # inductance related modes
+                     'RX', 'ZTD', 'ZTR', 'GB', 'YTD', 'YTR']:            # impedance /addmitance related modes
+            self.write(':FUNC:IMP {}'.format(sMode))
+            self.mode = sMode
         else:
-            print('Setting measurement mode failed!')
+            print(f'Setting measurement mode failed! Unkown mode.')
 
     def getMeasurementMode(self):
         return(self.ask(':FUNC:IMP?'))
@@ -125,5 +132,12 @@ class HP4284A(Device):
         self.printOutput('no output')
         return([[], []])
 
-    def interaction(self):
-        print('Nothing to do...')
+    def interaction(self, gui=False):
+        if gui:
+            device_dict = {
+                'pass': True,
+            }
+            return device_dict
+        else:
+            print('Nothing to do...')
+
